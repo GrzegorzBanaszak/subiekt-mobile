@@ -1,0 +1,53 @@
+# Build results
+bin/
+obj/
+out/
+artifacts/
+
+# .NET user/local files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+*.nupkg
+*.snupkg
+
+# Test results and coverage
+TestResults/
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+
+# Logs
+*.log
+logs/
+
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+appsettings.*.Local.json
+
+# IDEs and editors
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# NuGet
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Rider/ReSharper
+_ReSharper*/
+*.DotSettings.user

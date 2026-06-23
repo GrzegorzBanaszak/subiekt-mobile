@@ -1,0 +1,6 @@
+@SubiektMobile.Api_HostAddress = http://localhost:5118
+
+GET {{SubiektMobile.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

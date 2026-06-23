@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SubiektMobile.Api/SubiektMobile.Api.csproj" />
+    <Project Path="src/SubiektMobile.Application/SubiektMobile.Application.csproj" />
+    <Project Path="src/SubiektMobile.Domain/SubiektMobile.Domain.csproj" />
+    <Project Path="src/SubiektMobile.Infrastructure/SubiektMobile.Infrastructure.csproj" />
+  </Folder>
+</Solution>
