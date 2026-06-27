@@ -1,176 +1,236 @@
 # Subiekt Mobile
 
-Mobilna aplikacja wspierająca pracę z danymi programu Subiekt GT.
+Aplikacja API + web wspierająca mobilną pracę z danymi programu Subiekt GT.
 
-> Ten plik jest szkieletem dokumentacji projektu. Opisy umieszczone pod nagłówkami
-> wskazują, jakie informacje należy dodać wraz z rozwojem aplikacji.
-
-## Opis projektu
-
-Aplikacja ma za zadanie obudować aplikacje Subiekt GT w funkcje pozwalajace na prace mobilną za pomocą telefonu lub tableta.
-
-Główne założenia projektu:
-
-- tworzenie nowych zamówień w Subiekcie GT z poziomu aplikacji mobilnej,
-- pobieranie zamówień klienta i wspieranie procesu ich kompletowania,
-- przeglądanie danych towarów.
+Projekt ma umożliwić bezpieczny podgląd danych z Subiekta GT, a następnie obsługę procesów magazynowo-handlowych bez ryzykownego bezpośredniego zapisu do bazy Subiekta.
 
 ## Status projektu
 
-Aktualny status: **w trakcie tworzenia MVP**.
+Aktualny status: **przygotowanie fundamentów MVP**.
+
+Najbliższy cel nie polega jeszcze na implementacji kompletacji ani generowania dokumentów. Najpierw trzeba zbudować stabilny system podglądu:
+
+1. towarów,
+2. zamówień od klientów,
+3. przyjęć magazynowych.
+
+Dopiero po tym etapie projekt powinien przejść do funkcji kompletowania zamówień i generowania plików EPP / EDI++.
+
+## Główne funkcjonalności docelowe
+
+### 1. Kompletowanie zamówienia klienta
+
+Aplikacja będzie pobierać zamówienie od klienta z Subiekta GT i przetwarzać je na modele aplikacji.
+
+Planowany proces:
+
+1. Użytkownik wybiera zamówienie klienta.
+2. Aplikacja pobiera pozycje zamówienia z Subiekta.
+3. System tworzy sesję kompletacji w modelu aplikacji.
+4. Użytkownik odhacza kolejne pozycje zamówienia.
+5. System zapisuje postęp kompletacji.
+6. Użytkownik może wygenerować raport kompletacji.
+
+Ważne: sesja kompletacji jest funkcją aplikacji, a nie bezpośrednią modyfikacją dokumentu w bazie Subiekta.
+
+### 2. Zamówienie do dostawcy przez EPP / EDI++
+
+Aplikacja będzie umożliwiać przygotowanie zamówienia do dostawcy, ale nie przez bezpośrednie dodanie dokumentu do bazy Subiekta.
+
+Planowany proces:
+
+1. Użytkownik przygotowuje projekt zamówienia do dostawcy.
+2. Aplikacja waliduje pozycje, ilości i wymagane dane.
+3. System generuje plik EPP / EDI++.
+4. Plik jest importowany do Subiekta GT.
+
+Ważne: domyślna zasada projektu to **brak bezpośredniego zapisu do bazy Subiekta GT**. Integracja zapisu ma odbywać się przez pliki importu, chyba że zostanie podjęta osobna decyzja architektoniczna.
 
 ## Zakres MVP
 
-Sekcja powinna zawierać minimalny zestaw funkcji wymaganych do uznania pierwszej
-wersji aplikacji za gotową. Lista kontrolna ułatwia śledzenie postępu.
+### Etap 1 — podgląd towarów
 
-- [ ] Wyświetlanie listy towarów.
-- [ ] Wyświetlanie szczegółowych informacji o towarze w strukturze zbliżonej do Subiekta GT.
-- [ ] Pobieranie zamówień klienta.
-- [ ] Obsługa kompletowania zamówienia.
-- [ ] Tworzenie zamówienia w Subiekcie GT.
+- [ ] Lista towarów.
+- [ ] Wyszukiwanie towarów.
+- [ ] Szczegóły towaru.
+- [ ] Dane identyfikacyjne, kody, jednostki.
+- [ ] Dane magazynowe i cenowe, jeśli są dostępne w rozpoznanej strukturze bazy.
+
+### Etap 2 — podgląd zamówień od klientów
+
+- [ ] Lista zamówień od klientów.
+- [ ] Filtrowanie po dacie, numerze dokumentu i kontrahencie.
+- [ ] Szczegóły zamówienia.
+- [ ] Pozycje zamówienia.
+- [ ] Ilości, jednostki, towary i status dokumentu.
+
+### Etap 3 — podgląd przyjęć magazynowych
+
+- [ ] Lista przyjęć magazynowych.
+- [ ] Szczegóły dokumentu.
+- [ ] Pozycje dokumentu.
+- [ ] Powiązane towary, daty i kontrahent / dostawca.
+
+### Etap 4 — kompletowanie zamówienia
+
+- [ ] Utworzenie sesji kompletacji na podstawie zamówienia klienta.
+- [ ] Odhaczanie pozycji.
+- [ ] Obsługa kompletacji częściowej.
+- [ ] Status kompletacji.
+- [ ] Raport kompletacji.
+
+### Etap 5 — zamówienie do dostawcy jako EPP / EDI++
+
+- [ ] Projekt zamówienia do dostawcy.
+- [ ] Dodawanie pozycji.
+- [ ] Walidacja danych.
+- [ ] Generowanie pliku EPP / EDI++.
+- [ ] Pobranie pliku przez użytkownika.
+- [ ] Instrukcja importu pliku do Subiekta GT.
 
 ## Technologie
 
 ### Backend
 
-- ASP.NET Core Web API (.NET 10),
+- ASP.NET Core Web API,
+- .NET 10,
 - Entity Framework Core,
-- SQL Server.
+- SQL Server,
+- Clean Architecture.
 
-### Frontend (planowany)
+### Frontend
 
-- React, Vite i TypeScript,
+Frontend jest planowany jako aplikacja webowa przystosowana do pracy na telefonie, tablecie i komputerze.
+
+Planowany stos:
+
+- React / Vite / TypeScript albo Next.js,
 - Tailwind CSS,
-- TanStack Query i Axios.
+- klient API współdzielony dla wszystkich funkcji,
+- struktura feature-based.
 
-## Architektura i struktura katalogów
+## Architektura
 
-Sekcja powinna opisywać podział odpowiedzialności między warstwami aplikacji
-oraz wskazywać, gdzie znajduje się backend, frontend, dokumentacja i testy.
+Projekt stosuje Clean Architecture po stronie backendu.
 
 ```text
 subiekt-mobile/
+├── AGENTS.md
 ├── backend/
+│   ├── AGENTS.md
 │   ├── src/
 │   │   ├── SubiektMobile.Api/             # API HTTP i konfiguracja aplikacji
-│   │   ├── SubiektMobile.Application/     # logika przypadków użycia
-│   │   ├── SubiektMobile.Infrastructure/  # baza danych i integracje
-│   │   └── SubiektMobile.Domain/          # model domenowy i reguły biznesowe
+│   │   ├── SubiektMobile.Application/     # przypadki użycia i kontrakty
+│   │   ├── SubiektMobile.Domain/          # model domenowy aplikacji
+│   │   └── SubiektMobile.Infrastructure/  # EF Core, Subiekt GT, integracje
 │   └── SubiektMobile.slnx
-├── docs/                                  # dokumentacja techniczna
+├── frontend/
+│   └── AGENTS.md                          # zasady dla przyszłej aplikacji web
+├── docs/
+│   ├── architecture.md
+│   └── roadmap.md
 └── Readme.md
 ```
 
-Po utworzeniu frontendu należy dodać jego katalog i krótko opisać przyjętą
-strukturę komponentów, widoków oraz komunikacji z API.
+Najważniejsza zasada architektoniczna:
 
-## Wymagania
+```text
+Subiekt GT database -> Infrastructure -> Application -> Api / Frontend
+```
 
-Ta sekcja powinna wymieniać oprogramowanie wymagane na komputerze programisty,
-na przykład odpowiednią wersję .NET SDK, SQL Server, Node.js i dostęp do bazy
-Subiekta GT.
+Baza Subiekta GT jest technicznym źródłem danych. Modele domenowe aplikacji nie powinny być bezpośrednim odwzorowaniem tabel Subiekta.
 
-Do uzupełnienia przed udostępnieniem projektu innym osobom:
+Szczegóły są opisane w pliku [`docs/architecture.md`](docs/architecture.md).
 
-- obsługiwane systemy operacyjne,
-- wymagana wersja SQL Server,
-- wymagana wersja Node.js po dodaniu frontendu,
-- wymagane uprawnienia do bazy Subiekta GT.
+## Instrukcje dla Codex
 
-## Instalacja
+W repozytorium znajdują się pliki `AGENTS.md`, które opisują zasady pracy dla Codex:
 
-W tej sekcji powinny znaleźć się kompletne polecenia prowadzące od sklonowania
-repozytorium do zainstalowania zależności backendu i frontendu. Kroki powinny
-działać na czystym środowisku.
+- [`AGENTS.md`](AGENTS.md) — ogólne zasady projektu,
+- [`backend/AGENTS.md`](backend/AGENTS.md) — zasady backendu,
+- [`frontend/AGENTS.md`](frontend/AGENTS.md) — zasady przyszłego frontendu.
 
-Przykładowy zakres instrukcji:
+Przed większą zmianą Codex powinien przeczytać także:
 
-1. Sklonowanie repozytorium.
-2. Przywrócenie pakietów NuGet.
-3. Instalacja zależności frontendu.
-4. Przygotowanie konfiguracji lokalnej.
-5. Uruchomienie aplikacji.
+- [`docs/architecture.md`](docs/architecture.md),
+- [`docs/roadmap.md`](docs/roadmap.md).
+
+## Wymagania developerskie
+
+Minimalnie potrzebne:
+
+- .NET SDK zgodny z projektem backendu,
+- SQL Server z bazą Subiekta GT,
+- dostęp odczytowy do bazy Subiekta GT,
+- Node.js po dodaniu frontendu.
 
 ## Konfiguracja
 
-Sekcja powinna opisywać wszystkie wymagane ustawienia bez publikowania haseł
-ani innych sekretów. Należy podać nazwy kluczy konfiguracyjnych, sposób ustawienia
-ich lokalnie i przykładowe, nieprawdziwe wartości.
+Backend wymaga connection stringa o nazwie:
 
-Backend wymaga ciągu połączenia o nazwie `ConnectionStrings:SubiektGt`.
-W środowisku deweloperskim sekret można ustawić poleceniem:
+```text
+ConnectionStrings:SubiektGt
+```
+
+Przykład ustawienia lokalnego sekretu:
 
 ```powershell
 dotnet user-secrets set "ConnectionStrings:SubiektGt" "Server=NAZWA_SERWERA;Database=NAZWA_BAZY;..." --project backend/src/SubiektMobile.Api
 ```
 
-Nie należy zapisywać prawdziwego ciągu połączenia w repozytorium.
+Nie zapisuj prawdziwego connection stringa w repozytorium.
 
-## Uruchomienie projektu
-
-Ta sekcja powinna zawierać dokładne polecenia uruchamiające backend i frontend,
-adresy lokalnych usług oraz informację, w jakiej kolejności je uruchomić.
-
-Backend można uruchomić poleceniem:
+## Uruchomienie backendu
 
 ```powershell
 dotnet run --project backend/src/SubiektMobile.Api
 ```
 
-Po uruchomieniu dostępny jest endpoint diagnostyczny `GET /health`. Adres i port
-API zależą od lokalnego profilu uruchomieniowego.
+Po uruchomieniu dostępny jest endpoint:
 
-## Dokumentacja API
+```text
+GET /health
+```
 
-W tej sekcji należy opisać udostępnione endpointy, ich przeznaczenie, wymagane
-parametry, przykładowe odpowiedzi oraz możliwe błędy. Można również podać adres
-dokumentacji OpenAPI generowanej w środowisku deweloperskim.
+## Testy i sprawdzenie projektu
 
-## Integracja z Subiektem GT
+Jeżeli środowisko ma właściwe SDK:
 
-Sekcja powinna wyjaśniać sposób komunikacji z Subiektem GT: używane tabele,
-mechanizm zapisu i odczytu, ograniczenia integracji oraz wymagane uprawnienia.
-Należy też zaznaczyć, które operacje są tylko odczytem, a które modyfikują dane.
+```powershell
+dotnet build backend/SubiektMobile.slnx
+```
 
-Dokumentacja rozpoznanej struktury danych znajduje się w katalogu `docs/`.
+Po dodaniu testów:
 
-## Testy
-
-W tej sekcji powinny znaleźć się polecenia uruchamiające testy jednostkowe,
-integracyjne i frontendowe. Warto również opisać wymagania testów korzystających
-z bazy danych oraz sposób przygotowania danych testowych.
+```powershell
+dotnet test backend/SubiektMobile.slnx
+```
 
 ## Bezpieczeństwo
 
-Sekcja powinna opisywać sposób uwierzytelniania i autoryzacji, ochronę danych
-dostępowych, zasady dostępu do bazy oraz sposób zgłaszania podatności. Jest to
-szczególnie ważne, ponieważ aplikacja będzie operować na danych handlowych.
+- Nie logować connection stringów.
+- Nie commitować sekretów.
+- Nie zwracać szczegółów błędów SQL w środowisku produkcyjnym.
+- Endpointy diagnostyczne powinny być ograniczone do developmentu albo zabezpieczone.
+- Dane handlowe traktować jako dane wrażliwe firmy.
+- Domyślnie nie wykonywać bezpośredniego zapisu do bazy Subiekta GT.
 
 ## Plan rozwoju
 
-W tej sekcji należy umieszczać funkcje planowane po MVP, najlepiej w kolejności
-priorytetów. Szczegółowe zadania techniczne lepiej prowadzić w systemie zgłoszeń.
+Szczegółowa roadmapa znajduje się w [`docs/roadmap.md`](docs/roadmap.md).
 
-Przykładowe dalsze kierunki:
+Najbliższa kolejność:
 
-- skanowanie kodów kreskowych,
-- częściowa kompletacja zamówienia,
-- historia operacji,
-- obsługa pracy przy chwilowym braku sieci,
-- role i uprawnienia użytkowników.
-
-## Współtworzenie projektu
-
-Sekcja powinna opisywać zasady zgłaszania zmian: sposób tworzenia gałęzi,
-konwencję commitów, wymagane testy, formatowanie kodu i proces przeglądu zmian.
+1. Podgląd towarów.
+2. Podgląd zamówień od klientów.
+3. Podgląd przyjęć magazynowych.
+4. Kompletowanie zamówienia.
+5. Generowanie zamówienia do dostawcy jako EPP / EDI++.
 
 ## Licencja
 
-W tej sekcji należy podać licencję projektu albo jednoznacznie zaznaczyć, że kod
-jest prywatny i nie może być kopiowany ani rozpowszechniany bez zgody właściciela.
+Do uzupełnienia.
 
-## Autorzy i kontakt
+## Autor
 
-Sekcja powinna wskazywać właściciela projektu, osoby odpowiedzialne za jego
-utrzymanie oraz preferowany sposób zgłaszania pytań i problemów.
+Grzegorz Banaszak
