@@ -7,8 +7,7 @@ Mobilna aplikacja wspierająca pracę z danymi programu Subiekt GT.
 
 ## Opis projektu
 
-Ta sekcja powinna krótko wyjaśniać, jaki problem rozwiązuje aplikacja, dla kogo
-jest przeznaczona oraz w jaki sposób współpracuje z Subiektem GT.
+Aplikacja ma za zadanie obudować aplikacje Subiekt GT w funkcje pozwalajace na prace mobilną za pomocą telefonu lub tableta.
 
 Główne założenia projektu:
 
@@ -17,10 +16,6 @@ Główne założenia projektu:
 - przeglądanie danych towarów.
 
 ## Status projektu
-
-W tej sekcji należy określić aktualny etap prac, na przykład: planowanie, MVP,
-wersja testowa albo produkcyjna. Warto również wskazać, które części aplikacji
-są już dostępne, a które dopiero planowane.
 
 Aktualny status: **w trakcie tworzenia MVP**.
 
@@ -36,9 +31,6 @@ wersji aplikacji za gotową. Lista kontrolna ułatwia śledzenie postępu.
 - [ ] Tworzenie zamówienia w Subiekcie GT.
 
 ## Technologie
-
-W tej sekcji należy wymienić najważniejsze technologie, frameworki i bazy danych.
-Wersje warto podawać wtedy, gdy mają znaczenie dla uruchomienia projektu.
 
 ### Backend
 

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lista towarów - ERP</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ffede6",
+                        "primary-fixed": "#dbe1ff",
+                        "surface-tint": "#0053db",
+                        "on-surface-variant": "#434655",
+                        "on-surface": "#191b23",
+                        "surface-container-low": "#f3f3fe",
+                        "on-tertiary-fixed": "#360f00",
+                        "on-secondary-fixed": "#0b1c30",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#d0e1fb",
+                        "surface-bright": "#faf8ff",
+                        "surface-container": "#ededf9",
+                        "secondary-fixed": "#d3e4fe",
+                        "outline-variant": "#c3c6d7",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#737686",
+                        "background": "#faf8ff",
+                        "inverse-surface": "#2e3039",
+                        "primary-container": "#2563eb",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "secondary": "#505f76",
+                        "surface-variant": "#e1e2ed",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#943700",
+                        "surface-container-highest": "#e1e2ed",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "tertiary-fixed": "#ffdbcd",
+                        "inverse-on-surface": "#f0f0fb",
+                        "primary": "#004ac6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#eeefff",
+                        "on-background": "#191b23",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-container-high": "#e7e7f3",
+                        "surface-dim": "#d9d9e5",
+                        "on-secondary-container": "#54647a",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "error": "#ba1a1a",
+                        "surface": "#faf8ff",
+                        "inverse-primary": "#b4c5ff",
+                        "on-primary-fixed": "#00174b",
+                        "tertiary-container": "#bc4800"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding": "16px",
+                        "base": "8px",
+                        "tap-target": "48px",
+                        "stack-md": "12px",
+                        "stack-sm": "4px",
+                        "stack-lg": "24px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "data-mono": ["Inter", "monospace"],
+                        "label-md": ["Inter", "sans-serif"],
+                        "body-sm": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "headline-sm": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container flex flex-col h-screen overflow-hidden">
+<!-- Top App Bar (Shared Component Structure) -->
+<div class="flex items-center bg-surface-bright p-4 pb-2 justify-between shrink-0 sticky top-0 z-10 border-b border-surface-variant">
+<button aria-label="Go back" class="text-on-surface flex size-12 shrink-0 items-center justify-center hover:bg-surface-container rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h2 class="text-on-surface text-[20px] font-semibold leading-tight tracking-[-0.01em] flex-1 ml-2">Lista towarów</h2>
+</div>
+<!-- Main Scrollable Content -->
+<main class="flex-1 overflow-y-auto flex flex-col">
+<!-- Sticky Search & Filters -->
+<div class="sticky top-0 bg-surface-bright z-10 pb-2 shadow-sm border-b border-surface-variant">
+<!-- Search Bar -->
+<div class="px-container-padding py-3">
+<label class="flex flex-col w-full h-[48px]">
+<div class="flex w-full flex-1 items-stretch rounded-lg border border-outline-variant bg-surface-container-lowest focus-within:border-primary focus-within:ring-1 focus-within:ring-primary overflow-hidden transition-colors">
+<div class="text-on-surface-variant flex items-center justify-center pl-4 pr-2 bg-transparent">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</div>
+<input class="w-full bg-transparent border-none focus:ring-0 text-body-lg text-on-surface placeholder:text-on-surface-variant px-2" placeholder="Szukaj produktów (np. SKU, nazwa)" type="text"/>
+</div>
+</label>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-2 px-container-padding overflow-x-auto no-scrollbar pb-2">
+<button class="flex h-[40px] shrink-0 items-center justify-center gap-x-2 rounded-lg bg-surface-container-high px-4 border border-transparent text-on-surface font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary hover:bg-surface-variant transition-colors whitespace-nowrap">
+                    Wszystkie
+                </button>
+<button class="flex h-[40px] shrink-0 items-center justify-center gap-x-2 rounded-lg bg-surface-container px-4 border border-outline-variant text-on-surface font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary hover:bg-surface-variant transition-colors whitespace-nowrap">
+<span class="size-2 rounded-full bg-[#16a34a]"></span>
+                    Na stanie
+                </button>
+<button class="flex h-[40px] shrink-0 items-center justify-center gap-x-2 rounded-lg bg-surface-container px-4 border border-outline-variant text-on-surface font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary hover:bg-surface-variant transition-colors whitespace-nowrap">
+<span class="size-2 rounded-full bg-[#f97316]"></span>
+                    Niski stan
+                </button>
+<button class="flex h-[40px] shrink-0 items-center justify-center gap-x-2 rounded-lg bg-surface-container px-4 border border-outline-variant text-on-surface font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary hover:bg-surface-variant transition-colors whitespace-nowrap">
+<span class="size-2 rounded-full bg-error"></span>
+                    Brak
+                </button>
+</div>
+</div>
+<!-- Product List -->
+<div class="p-container-padding flex flex-col gap-stack-md">
+<!-- Card 1: Na stanie -->
+<div class="flex gap-4 bg-surface-container-lowest p-gutter rounded-lg border border-outline-variant shadow-sm active:bg-primary-fixed transition-colors cursor-pointer select-none">
+<div class="shrink-0">
+<img class="object-cover rounded bg-surface-container aspect-square size-[70px]" data-alt="A detailed product photography shot of a 1L bottle of 5W30 synthetic motor oil. The bottle is a sleek, dark grey plastic container with a modern, high-tech metallic blue and silver label. The lighting is studio-quality, emphasizing the reflections on the plastic and the sharp text of the label. The background is a clean, bright white studio setting, consistent with a professional e-commerce catalog." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0H1KqBZR6Rjl6okBUvrSsLWvBpuRnYblW8XhRv7Gf95LjU-qCQ4pNQrJzb3_9RA0woeL_h2MniGjgzcUycMLRfPMtuTVZWsJdbnPvIiHK705WGV8e8CbjIExTVMcTvmjxdKszwD0OhG9tBy3EY6GDNWQoqSTelgRVIarkFVAR64Qr56elcaAOOFGW1vyE5bxh4Wf31sZkdchdsDtrYNY4G3CCfcX9kUAXt4JBXef9TRNZGd7j6ZIPY5z344eTitm_rCpMiLU4s_8"/>
+</div>
+<div class="flex flex-1 flex-col justify-between">
+<div>
+<h3 class="text-headline-sm text-on-surface mb-1 line-clamp-1">Olej silnikowy 5W30 1L</h3>
+<p class="font-data-mono text-body-sm text-on-surface-variant uppercase tracking-wide">OL-5W30-1L</p>
+</div>
+<div class="flex items-end justify-between mt-2">
+<div class="flex flex-col">
+<span class="text-body-sm text-on-surface-variant">24 szt</span>
+<span class="font-data-mono text-[16px] font-semibold text-on-surface mt-0.5">39,99 zł</span>
+</div>
+<div class="flex h-6 items-center px-2 rounded-sm bg-[#dcfce7] text-[#166534]">
+<span class="text-[10px] font-bold uppercase tracking-wider">Na stanie</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2: Niski stan -->
+<div class="flex gap-4 bg-surface-container-lowest p-gutter rounded-lg border border-outline-variant shadow-sm active:bg-primary-fixed transition-colors cursor-pointer select-none">
+<div class="shrink-0">
+<img class="object-cover rounded bg-surface-container aspect-square size-[70px]" data-alt="A detailed, sharp image of a rectangular automotive air filter. The filter features white, evenly spaced pleated paper elements surrounded by a sturdy black rubber gasket edge. It sits against a pristine, bright white background under crisp, even studio lighting. The image conveys a sense of clean, new, ready-to-install auto parts in a professional supply chain environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmh4ci8TVhqvEsei2Y2fruHP-8TWsMuS7B65URurIPw8p8y2_dGEfVQMtRotdzKduu5zy0PbQWOeyJP97TNLla3M1DSg7NGz0bLVirBVfLPsX9AvXS2xiEd8cDmWDJETVCBDFLD4hdjsgjsMURlRWVgu0DbALvBcJl5miCQ5ZvcaIlQahvcFXqFQHZJ89VSpa3BmTTlczdns9YTIdCtmSJ9Q4cLQWJNY7107_hgMfHbwT9wjxLbXr5MpkaRYMFWEc6z_Z5tSo6vZc"/>
+</div>
+<div class="flex flex-1 flex-col justify-between">
+<div>
+<h3 class="text-headline-sm text-on-surface mb-1 line-clamp-1">Filtr powietrza AP123</h3>
+<p class="font-data-mono text-body-sm text-on-surface-variant uppercase tracking-wide">FIL-AP123</p>
+</div>
+<div class="flex items-end justify-between mt-2">
+<div class="flex flex-col">
+<span class="text-body-sm text-on-surface-variant">3 szt</span>
+<span class="font-data-mono text-[16px] font-semibold text-on-surface mt-0.5">24,50 zł</span>
+</div>
+<div class="flex h-6 items-center px-2 rounded-sm bg-[#ffedd5] text-[#9a3412]">
+<span class="text-[10px] font-bold uppercase tracking-wider">Niski stan</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3: Brak -->
+<div class="flex gap-4 bg-surface-container-lowest p-gutter rounded-lg border border-outline-variant shadow-sm active:bg-primary-fixed transition-colors cursor-pointer select-none opacity-80">
+<div class="shrink-0">
+<img class="object-cover rounded bg-surface-container aspect-square size-[70px]" data-alt="A high-resolution product shot of a 12V 74Ah automotive car battery. The battery casing is a heavy-duty, matte black plastic with a prominent, brightly colored label on top featuring industrial typography. The metallic terminal posts are clean and reflective. The lighting is bright and neutral, casting soft shadows on a sterile white background, typical of high-end industrial inventory catalogs." grayscale="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqSg24ADNMkzh2M_t5rzt9OJV10-mP8_ksd9AGRikaSI_2ctv0WIBLZoZazcVqoUsLA_SmM1-v2pKcB0RVsSze1C8QqYV6caJ3XzzuoBKStLSiuU88Nyf3518aCRhm2qDQGI3MNSmCOmvmsWqSyzfmjwPTXHiycLJWLEUk3Q13Elh6RCR6_nbJlNbrSoiyuN4b9UdU17YqlDsTWgNO6cT94ZaqEpi280lIpM4oU3GCnbXhILgmXQ57MKzeu7_u6Z68oHLoAOeZoeg"/>
+</div>
+<div class="flex flex-1 flex-col justify-between">
+<div>
+<h3 class="text-headline-sm text-on-surface mb-1 line-clamp-1">Akumulator 12V 74Ah</h3>
+<p class="font-data-mono text-body-sm text-on-surface-variant uppercase tracking-wide">AKU-74AH</p>
+</div>
+<div class="flex items-end justify-between mt-2">
+<div class="flex flex-col">
+<span class="text-body-sm text-outline">0 szt</span>
+<span class="font-data-mono text-[16px] font-semibold text-on-surface-variant mt-0.5">389,00 zł</span>
+</div>
+<div class="flex h-6 items-center px-2 rounded-sm bg-error-container text-on-error-container">
+<span class="text-[10px] font-bold uppercase tracking-wider">Brak</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Skeleton Loader -->
+<div class="flex gap-4 bg-surface-container-lowest p-gutter rounded-lg border border-surface-variant shadow-sm animate-pulse mt-2">
+<div class="shrink-0 rounded bg-surface-variant aspect-square size-[70px]"></div>
+<div class="flex flex-1 flex-col justify-between py-1">
+<div>
+<div class="h-4 bg-surface-variant rounded w-3/4 mb-2"></div>
+<div class="h-3 bg-surface-variant rounded w-1/2"></div>
+</div>
+<div class="flex items-end justify-between mt-2">
+<div class="flex flex-col gap-1 w-1/3">
+<div class="h-3 bg-surface-variant rounded w-1/2"></div>
+<div class="h-4 bg-surface-variant rounded w-full"></div>
+</div>
+<div class="h-6 w-16 rounded-sm bg-surface-variant"></div>
+</div>
+</div>
+</div>
+<div class="h-12 w-full flex items-center justify-center text-body-sm text-on-surface-variant">
+                Wczytywanie kolejnych...
+            </div>
+</div>
+</main>
+<!-- Bottom Navigation (Shared Component Immutable Block) -->
+<div class="flex gap-2 border-t border-surface-variant bg-surface-bright px-4 pb-3 pt-2 shrink-0">
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<div class="flex h-8 items-center justify-center" data-icon="House" data-size="24px" data-weight="regular">
+<span class="material-symbols-outlined">home</span>
+</div>
+<p class="text-[12px] font-medium leading-normal tracking-[0.015em]">Home</p>
+</a>
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-primary" href="#">
+<div class="flex h-8 items-center justify-center bg-primary-container text-on-primary-container px-4 rounded-full" data-icon="Package" data-size="24px" data-weight="fill">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<p class="text-[12px] font-medium leading-normal tracking-[0.015em] font-semibold">Produkty</p>
+</a>
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<div class="flex h-8 items-center justify-center" data-icon="Gear" data-size="24px" data-weight="regular">
+<span class="material-symbols-outlined">settings</span>
+</div>
+<p class="text-[12px] font-medium leading-normal tracking-[0.015em]">Ustawienia</p>
+</a>
+</div>
+</body></html>

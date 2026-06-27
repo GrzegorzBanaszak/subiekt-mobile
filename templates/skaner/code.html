@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Skaner - Subiekt Mobile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#d9d9e5",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#dbe1ff",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f3f3fe",
+                        "secondary-container": "#d0e1fb",
+                        "on-secondary-container": "#54647a",
+                        "surface-variant": "#e1e2ed",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#faf8ff",
+                        "on-tertiary-container": "#ffede6",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#943700",
+                        "tertiary-container": "#bc4800",
+                        "inverse-primary": "#b4c5ff",
+                        "on-primary-fixed": "#00174b",
+                        "secondary": "#505f76",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "on-surface-variant": "#434655",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f0f0fb",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#191b23",
+                        "on-secondary-fixed": "#0b1c30",
+                        "primary-container": "#2563eb",
+                        "surface-container-highest": "#e1e2ed",
+                        "primary": "#004ac6",
+                        "surface-container-high": "#e7e7f3",
+                        "inverse-surface": "#2e3039",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#0053db",
+                        "on-tertiary-fixed": "#360f00",
+                        "surface": "#faf8ff",
+                        "background": "#faf8ff",
+                        "surface-container": "#ededf9",
+                        "on-error": "#ffffff",
+                        "on-background": "#191b23",
+                        "on-primary-container": "#eeefff",
+                        "outline-variant": "#c3c6d7",
+                        "tertiary-fixed": "#ffdbcd",
+                        "outline": "#737686",
+                        "secondary-fixed-dim": "#b7c8e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding": "16px",
+                        "gutter": "12px",
+                        "tap-target": "48px",
+                        "stack-sm": "4px",
+                        "base": "8px",
+                        "stack-md": "12px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "data-mono": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "data-mono": ["14px", {"lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex flex-col pt-16 pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 border-b border-outline-variant bg-surface dark:bg-on-background dark:border-on-surface-variant h-16">
+<div class="flex justify-between items-center h-16 px-container-padding w-full">
+<button class="flex items-center justify-center w-tap-target h-tap-target text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Skaner kodu</h1>
+<button class="flex items-center justify-center w-tap-target h-tap-target rounded-full overflow-hidden hover:bg-surface-container-low transition-colors duration-200">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A professional close-up headshot of a warehouse manager wearing a high-visibility vest. Bright, modern, light-mode corporate environment. Soft, even lighting, high resolution, realistic business style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYoQs8133SMI61cp1UcVWw36y2Gd1FtzlvlkNJzRU_Pz-PAhvEqaQfDC5U2ShTeU-eTjQRy1I0rnsz4PJ5Vqx78IptN_hXmVMPZraThbUvjPcphKK3kHd2xndo1X8qfcVYfRIXcd9Zr8LlQzkb_-g3C4Tk88PtwN1tgGxOmaM8Z6pprKSs7AK5KvSvRDawi8lsJBm--WAVrz-hGrt4hX-pK6cnz2ZCvuYVybj7NKvypZjVsWAw2dDFkDRteQ-KJiB5N1PFv_ZfKdo"/>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-container-padding py-stack-lg gap-stack-lg relative overflow-hidden">
+<!-- Scanner Frame Placeholder -->
+<div class="relative w-64 h-64 border-2 border-dashed border-outline rounded-xl flex items-center justify-center bg-surface-container-low overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<!-- Scanning Line Animation -->
+<div class="absolute top-0 left-0 right-0 h-0.5 bg-primary shadow-[0_0_8px_2px_rgba(37,99,235,0.5)] animate-[scan_2s_ease-in-out_infinite]"></div>
+<span class="material-symbols-outlined text-[64px] text-outline-variant group-hover:text-primary transition-colors duration-300" data-icon="qr_code_scanner">qr_code_scanner</span>
+<!-- Corner Markers -->
+<div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-primary"></div>
+<div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-primary"></div>
+<div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-primary"></div>
+<div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-primary"></div>
+</div>
+<div class="text-center flex flex-col gap-stack-sm max-w-xs">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Zeskanuj kod EAN towaru</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Skieruj aparat na kod kreskowy, aby automatycznie wyszukać produkt w bazie.</p>
+</div>
+<!-- Manual Entry Button -->
+<button class="h-tap-target px-6 bg-surface-container-low text-on-secondary-container font-label-md text-label-md rounded-full border border-outline-variant hover:bg-surface-container-high transition-colors duration-200 flex items-center gap-2 mt-4">
+<span class="material-symbols-outlined text-[18px]" data-icon="keyboard">keyboard</span>
+            Wpisz kod ręcznie
+        </button>
+<!-- Footer Note -->
+<div class="absolute bottom-stack-lg left-0 w-full text-center px-container-padding">
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary-container/30 rounded-lg">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="info">info</span>
+<p class="font-body-sm text-body-sm text-secondary">Funkcja skanowania zostanie dodana w kolejnej wersji</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 border-t border-outline-variant bg-surface dark:bg-on-background dark:border-on-surface-variant pb-safe h-20">
+<div class="flex justify-around items-center h-full w-full px-container-padding">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-on-secondary-container active:scale-95 transition-transform duration-100 rounded-lg group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-primary transition-colors" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-label-md">Towary</span>
+</a>
+<!-- Active Tab: Skaner -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-on-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed rounded-full px-6 py-2 active:scale-95 transition-transform duration-100" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="qr_code_scanner" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+<span class="font-label-md text-label-md">Skaner</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-on-secondary-container active:scale-95 transition-transform duration-100 rounded-lg group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Ustawienia</span>
+</a>
+</div>
+</nav>
+<!-- Decorative Sidebar for Web/Tablet -->
+<aside class="hidden md:flex flex-col w-64 fixed left-0 top-16 bottom-0 border-r border-outline-variant bg-surface-container-low p-container-padding gap-stack-md z-40">
+<div class="font-label-md text-label-md text-on-surface-variant mb-2 uppercase tracking-wider">Nawigacja Główne</div>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-body-md text-body-md font-medium">Katalog Towarów</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-secondary-container text-on-secondary-container font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+<span class="font-body-md text-body-md">Skaner Kodów</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors mt-auto" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md font-medium">Ustawienia Systemu</span>
+</a>
+</aside>
+<style>
+        @keyframes scan {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+    </style>
+</body></html>
