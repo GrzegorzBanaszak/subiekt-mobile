@@ -13,13 +13,16 @@ public static class DependencyInjection
     {
         var connectionString = configuration.GetConnectionString("SubiektGt");
 
-        Console.WriteLine(connectionString);
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                "Missing required connection string 'ConnectionStrings:SubiektGt'. Configure it with user-secrets, environment variables, or local configuration outside the repository.");
+        }
+
         services.AddDbContext<SubiektDbContext>(options =>
         {
             options.UseSqlServer(connectionString);
         });
-
-        // services.AddScoped<ITowaryReadService, TowaryReadService>();
 
         return services;
     }
