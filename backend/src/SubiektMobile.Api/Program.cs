@@ -1,3 +1,4 @@
+using SubiektMobile.Application;
 using SubiektMobile.Infrastructure;
 using SubiektMobile.Infrastructure.Persistence;
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddCors(options =>

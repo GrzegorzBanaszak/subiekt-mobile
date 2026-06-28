@@ -11,6 +11,13 @@ public class SubiektDbContext : DbContext
     }
 
     public DbSet<TwTowar> Towary => Set<TwTowar>();
+    public DbSet<TwCena> Ceny => Set<TwCena>();
+    public DbSet<TwParametr> ParametryTowarow => Set<TwParametr>();
+    public DbSet<TwStan> StanyTowarow => Set<TwStan>();
+    public DbSet<SlMagazyn> Magazyny => Set<SlMagazyn>();
+    public DbSet<TwKodKreskowy> KodyKreskowe => Set<TwKodKreskowy>();
+    public DbSet<TwZdjecieTw> ZdjeciaTowarow => Set<TwZdjecieTw>();
+    public DbSet<SlStawkaVat> StawkiVat => Set<SlStawkaVat>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SubiektMobile.Application.Products;
 using SubiektMobile.Infrastructure.Persistence;
+using SubiektMobile.Infrastructure.Products;
 
 namespace SubiektMobile.Infrastructure;
 
@@ -23,6 +25,8 @@ public static class DependencyInjection
         {
             options.UseSqlServer(connectionString);
         });
+
+        services.AddScoped<IProductReadRepository, ProductReadRepository>();
 
         return services;
     }

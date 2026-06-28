@@ -6,9 +6,9 @@ Projekt nie powinien zaczynać od skomplikowanych procesów zapisu i generowania
 
 ## Etap 0 — fundamenty
 
-- [ ] Uporządkować dokumentację projektu.
-- [ ] Dodać instrukcje dla Codex w `AGENTS.md`.
-- [ ] Opisać architekturę w `docs/architecture.md`.
+- [x] Uporządkować dokumentację projektu.
+- [x] Dodać instrukcje dla Codex w `AGENTS.md`.
+- [x] Opisać architekturę w `docs/architecture.md`.
 - [ ] Ustalić zasadę: brak bezpośredniego zapisu do bazy Subiekta GT bez decyzji architektonicznej.
 - [ ] Przygotować podstawowe testy architektoniczne.
 

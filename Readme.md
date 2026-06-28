@@ -192,6 +192,23 @@ Po uruchomieniu dostępny jest endpoint:
 GET /health
 ```
 
+## API towarów
+
+Etap 1 udostępnia wyłącznie odczyt danych towarowych z Subiekta GT:
+
+```text
+GET /api/products?search=&page=1&pageSize=20
+GET /api/products/{id}
+GET /api/products/{id}/image
+```
+
+Lista jest stronicowana i może być przeszukiwana po nazwie, symbolu, kodzie
+towaru oraz podstawowych i dodatkowych kodach kreskowych. Pokazuje stan
+magazynu głównego i cenę brutto pierwszego poziomu cenowego. Szczegóły zwracają
+stany wszystkich magazynów, stawkę VAT oraz dziesięć poziomów cen sprzedaży
+netto i brutto. Zdjęcia są pobierane osobnym endpointem, a kartoteki usunięte
+lub zablokowane nie są publikowane.
+
 ## Testy i sprawdzenie projektu
 
 Jeżeli środowisko ma właściwe SDK:
