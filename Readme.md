@@ -100,13 +100,13 @@ Ważne: domyślna zasada projektu to **brak bezpośredniego zapisu do bazy Subie
 
 ### Frontend
 
-Frontend jest planowany jako aplikacja webowa przystosowana do pracy na telefonie, tablecie i komputerze.
+Frontend jest aplikacją webową przystosowaną do pracy na telefonie, tablecie i komputerze.
 
-Planowany stos:
+Stos:
 
-- React / Vite / TypeScript albo Next.js,
+- React 19 / Vite / TypeScript,
 - Tailwind CSS,
-- klient API współdzielony dla wszystkich funkcji,
+- TanStack Query i wspólny klient generowany z OpenAPI,
 - struktura feature-based.
 
 ## Architektura
@@ -190,6 +190,23 @@ Po uruchomieniu dostępny jest endpoint:
 
 ```text
 GET /health
+```
+
+## Uruchomienie frontendu
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend jest dostępny pod `http://127.0.0.1:5173`. W trybie developerskim
+żądania `/api` są przekazywane do backendu pod `http://localhost:5118`.
+
+Typy klienta API można odświeżyć przy uruchomionym backendzie:
+
+```powershell
+npm run api:types
 ```
 
 ## API towarów

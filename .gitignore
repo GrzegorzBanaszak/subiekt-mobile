@@ -3,6 +3,8 @@ bin/
 obj/
 out/
 artifacts/
+node_modules/
+dist/
 
 # .NET user/local files
 *.user
