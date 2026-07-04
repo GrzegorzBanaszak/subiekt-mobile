@@ -237,11 +237,11 @@ Jedno zamówienie może zawierać wiele palet. Zamknięcie pojedynczej palety ni
 
 ## Kwestie UX do rozstrzygnięcia
 
-- czy kompletacja będzie wykonywana na poziomie całej pozycji, czy części ilości,
-- czy pozycje mogą być dzielone między palety,
-- czy wybór zamawiającego będzie listą z osobnego źródła, czy polem tekstowym,
-- jak długo rezerwacja pozycji pozostaje aktywna bez działania użytkownika,
-- czy aktualizacja współdzielonego widoku będzie działać w czasie rzeczywistym,
+- czy kompletacja będzie wykonywana na poziomie całej pozycji, czy części ilości,- ilości bo gdy zabraknie towaru można spakować to co jest w magazynie
+- czy pozycje mogą być dzielone między palety, - tak
+- czy wybór zamawiającego będzie listą z osobnego źródła, czy polem tekstowym,- polem tekstowym
+- jak długo rezerwacja pozycji pozostaje aktywna bez działania użytkownika,- brak limitu
+- czy aktualizacja współdzielonego widoku będzie działać w czasie rzeczywistym, - aplikacja dla osób kompletujących będzie na jednym komputerze
 - jaki format i rozmiar ma mieć etykieta,
-- czy aplikacja drukuje bezpośrednio, czy generuje plik do wydruku,
-- czy skanowanie kodów kreskowych będzie częścią pierwszej wersji.
+- czy aplikacja drukuje bezpośrednio, czy generuje plik do wydruku, - na początku generuje plik
+- czy skanowanie kodów kreskowych będzie częścią pierwszej wersji. - nie

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Utwórz Zamówienie - Subiekt Mobile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#ffffff",
+                      "surface-tint": "#4059aa",
+                      "outline": "#757682",
+                      "on-secondary-fixed": "#002114",
+                      "primary": "#00236f",
+                      "on-secondary-container": "#00714e",
+                      "error-container": "#ffdad6",
+                      "surface-container-highest": "#e1e3e4",
+                      "primary-fixed": "#dce1ff",
+                      "inverse-on-surface": "#f0f1f2",
+                      "on-primary-fixed-variant": "#264191",
+                      "surface-container-high": "#e7e8e9",
+                      "tertiary-container": "#653400",
+                      "surface-dim": "#d9dadb",
+                      "on-surface": "#191c1d",
+                      "on-error": "#ffffff",
+                      "on-surface-variant": "#444651",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed": "#85f8c4",
+                      "on-error-container": "#93000a",
+                      "background": "#f8f9fa",
+                      "secondary-fixed-dim": "#68dba9",
+                      "on-secondary": "#ffffff",
+                      "surface-variant": "#e1e3e4",
+                      "primary-container": "#1e3a8a",
+                      "surface-bright": "#f8f9fa",
+                      "on-secondary-fixed-variant": "#005137",
+                      "on-background": "#191c1d",
+                      "secondary": "#006c4a",
+                      "on-tertiary-fixed": "#2f1500",
+                      "on-tertiary-container": "#fc922b",
+                      "on-primary-fixed": "#00164e",
+                      "tertiary-fixed": "#ffdcc3",
+                      "inverse-primary": "#b6c4ff",
+                      "on-tertiary-fixed-variant": "#6e3900",
+                      "inverse-surface": "#2e3132",
+                      "on-primary-container": "#90a8ff",
+                      "secondary-container": "#82f5c1",
+                      "surface-container": "#edeeef",
+                      "on-tertiary": "#ffffff",
+                      "outline-variant": "#c5c5d3",
+                      "surface": "#f8f9fa",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "tertiary-fixed-dim": "#ffb77d",
+                      "surface-container-low": "#f3f4f5",
+                      "tertiary": "#442100",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xl": "32px",
+                      "sm": "12px",
+                      "xs": "8px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "base": "4px",
+                      "touch-target": "48px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Intent Context: Creation/Edit Screen. Navigation Shell (SideNav/BottomNav) suppressed to focus on task. -->
+<!-- Top App Bar (Task Focused) -->
+<header class="sticky top-0 z-40 w-full bg-surface-container-lowest border-b border-outline-variant px-md h-[64px] flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-sm">
+<button aria-label="Wróć" class="h-touch-target w-touch-target flex items-center justify-center rounded-full hover:bg-surface-container-low text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-on-surface">Nowe Zamówienie</h1>
+</div>
+<div class="flex items-center">
+<span class="font-label-sm text-label-sm px-sm py-xs bg-surface-container-high rounded-full text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">edit_document</span> Szkic
+            </span>
+</div>
+</header>
+<!-- Main Content Canvas (Bento-style layout on desktop, stacked on mobile) -->
+<main class="max-w-[1200px] mx-auto p-md lg:p-lg pb-[140px] lg:pb-[100px]">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-md lg:gap-lg">
+<!-- Section A: Basic Data -->
+<section class="lg:col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant p-md lg:p-lg flex flex-col gap-md">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-xs border-b border-surface-container-high pb-xs">
+<span class="material-symbols-outlined">person</span> A. Dane Podstawowe
+                </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md mt-xs">
+<!-- Customer Field -->
+<div class="flex flex-col gap-base">
+<label class="font-label-md text-label-md text-on-surface-variant" for="customer">Klient (NIP lub Nazwa)</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-touch-target pl-xl pr-sm bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface" id="customer" placeholder="Wyszukaj kontrahenta..." type="text" value="Hurtownia MAX-POL Sp. z o.o."/>
+</div>
+</div>
+<!-- Due Date Field -->
+<div class="flex flex-col gap-base">
+<label class="font-label-md text-label-md text-on-surface-variant" for="dueDate">Termin realizacji</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">calendar_today</span>
+<input class="w-full h-touch-target pl-xl pr-sm bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface" id="dueDate" type="date" value="2023-11-25"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Section C: Summary Overview (Bento top-right) -->
+<section class="lg:col-span-4 bg-surface-container-low rounded-xl border border-outline-variant p-md lg:p-lg flex flex-col gap-md relative overflow-hidden">
+<!-- Decorative subtle element for Bento feel -->
+<div class="absolute -right-10 -top-10 w-32 h-32 bg-primary-fixed/20 rounded-full blur-2xl"></div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-xs">
+<span class="material-symbols-outlined">summarize</span> Podsumowanie
+                </h2>
+<div class="flex flex-col gap-sm mt-xs z-10">
+<div class="flex justify-between items-center bg-surface-container-lowest p-sm rounded-lg border border-surface-container-high">
+<span class="font-body-md text-on-surface-variant">Ilość pozycji:</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">2</span>
+</div>
+<div class="flex justify-between items-center bg-surface-container-lowest p-sm rounded-lg border border-surface-container-high">
+<span class="font-body-md text-on-surface-variant">Łączna ilość (szt.):</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">510</span>
+</div>
+<div class="flex justify-between items-center bg-surface-container-lowest p-sm rounded-lg border border-surface-container-high">
+<span class="font-body-md text-on-surface-variant">Szacowana waga:</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">25.0 kg</span>
+</div>
+</div>
+<!-- Business Warning for Missing Weight -->
+<div class="mt-auto bg-error-container text-on-error-container p-sm rounded-lg flex items-start gap-sm border border-error/20 z-10">
+<span class="material-symbols-outlined text-[20px] shrink-0 mt-0.5 text-error">warning</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md">Brak danych wagowych</span>
+<span class="font-body-sm text-body-sm opacity-90">Brakuje wagi dla 1 pozycji. Może to wpłynąć na wyliczenia transportowe.</span>
+</div>
+</div>
+</section>
+<!-- Section B: Items Table -->
+<section class="lg:col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden flex flex-col mt-sm">
+<div class="p-md lg:p-lg border-b border-outline-variant flex flex-col md:flex-row md:items-center justify-between gap-md bg-surface/50">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-xs">
+<span class="material-symbols-outlined">inventory_2</span> B. Pozycje Zamówienia
+                    </h2>
+<button class="h-touch-target px-md bg-secondary text-on-secondary rounded-lg font-label-md text-label-md flex items-center justify-center gap-xs hover:bg-secondary/90 transition-colors">
+<span class="material-symbols-outlined text-[20px]">add</span> Dodaj pozycję
+                    </button>
+</div>
+<!-- Desktop Table / Mobile Cards -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[800px]">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="py-sm px-md font-label-md text-label-md text-on-surface-variant w-12 text-center">#</th>
+<th class="py-sm px-md font-label-md text-label-md text-on-surface-variant">Produkt</th>
+<th class="py-sm px-md font-label-md text-label-md text-on-surface-variant w-24">J.m.</th>
+<th class="py-sm px-md font-label-md text-label-md text-on-surface-variant w-32 text-right">Ilość</th>
+<th class="py-sm px-md font-label-md text-label-md text-on-surface-variant w-40 text-right">Waga J.m.</th>
+<th class="py-sm px-md font-label-md text-label-md text-on-surface-variant w-24 text-center">Akcje</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/50">
+<!-- Item 1: Complete Data -->
+<tr class="hover:bg-surface-container-lowest/80 transition-colors bg-surface-container-lowest">
+<td class="py-sm px-md font-body-sm text-on-surface-variant text-center">1</td>
+<td class="py-sm px-md">
+<div class="font-label-md text-label-md text-on-surface">Paleta EURO (EPAL)</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">SKU: PAL-001</div>
+</td>
+<td class="py-sm px-md font-body-md text-on-surface">szt.</td>
+<td class="py-sm px-md text-right">
+<input class="w-20 h-10 px-sm text-right bg-surface border border-outline-variant rounded focus:border-primary outline-none inline-block font-body-md" type="number" value="10"/>
+</td>
+<td class="py-sm px-md text-right font-body-md text-on-surface-variant">2.5 kg</td>
+<td class="py-sm px-md text-center">
+<button aria-label="Usuń" class="h-10 w-10 inline-flex items-center justify-center rounded-full text-on-surface-variant hover:bg-error-container hover:text-on-error-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 2: Missing Weight Warning -->
+<tr class="hover:bg-error-container/10 transition-colors bg-surface-container-lowest">
+<td class="py-sm px-md font-body-sm text-on-surface-variant text-center">2</td>
+<td class="py-sm px-md">
+<div class="font-label-md text-label-md text-on-surface">Karton klapowy 600x400x400</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">SKU: KRT-604040</div>
+</td>
+<td class="py-sm px-md font-body-md text-on-surface">szt.</td>
+<td class="py-sm px-md text-right">
+<input class="w-24 h-10 px-sm text-right bg-surface border border-outline-variant rounded focus:border-primary outline-none inline-block font-body-md" type="number" value="500"/>
+</td>
+<td class="py-sm px-md text-right">
+<!-- Warning State Cell -->
+<div class="inline-flex items-center gap-xs bg-error-container/50 text-on-error-container px-sm py-1 rounded border border-error/30">
+<span class="material-symbols-outlined text-[16px] text-error">warning</span>
+<span class="font-label-sm text-label-sm font-bold">Brak</span>
+</div>
+</td>
+<td class="py-sm px-md text-center">
+<button aria-label="Usuń" class="h-10 w-10 inline-flex items-center justify-center rounded-full text-on-surface-variant hover:bg-error-container hover:text-on-error-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<!-- Sticky Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant p-md z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.05)]">
+<div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<button class="w-full md:w-auto h-touch-target px-lg border border-outline text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-high transition-colors order-3 md:order-1">
+                Anuluj
+            </button>
+<div class="flex flex-col md:flex-row gap-md w-full md:w-auto order-1 md:order-2">
+<button class="w-full md:w-auto h-touch-target px-lg border-2 border-primary text-primary rounded-lg font-label-md text-label-md hover:bg-primary/5 transition-colors">
+                    Zapisz wersję roboczą
+                </button>
+<button class="w-full md:w-auto h-touch-target px-lg bg-primary text-on-primary rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-xs hover:bg-primary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">send</span> Udostępnij do kompletacji
+                </button>
+</div>
+</div>
+</div>
+</body></html>
