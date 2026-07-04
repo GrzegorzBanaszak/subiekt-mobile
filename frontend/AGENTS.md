@@ -24,17 +24,16 @@ frontend/
 
 ## Główne funkcje webowe
 
-Najpierw zaimplementuj widoki podglądu:
+Implementuj w następującej kolejności:
 
-1. Lista i szczegóły towarów.
-2. Lista i szczegóły zamówień od klientów.
-3. Lista i szczegóły przyjęć magazynowych.
+1. Lista i szczegóły towarów pobieranych z Subiekta.
+2. Logowanie oraz obsługa uprawnień zwracanych przez API.
+3. Lista, tworzenie i szczegóły zamówień należących do aplikacji.
+4. Współdzielony ekran kompletacji z rezerwacją pozycji.
+5. Tworzenie palety i podsumowanie masy.
+6. Podgląd oraz wydruk etykiety palety.
 
-Dopiero potem:
-
-1. Ekran kompletowania zamówienia.
-2. Raport kompletacji.
-3. Ekran tworzenia zamówienia do dostawcy i pobierania pliku EPP / EDI++.
+Szczegółowy punkt wyjścia dla widoków znajduje się w `docs/zarys-ekranow.md`.
 
 ## Zasady
 
@@ -47,6 +46,10 @@ Dopiero potem:
 - Nie dodawaj globalnego state management bez realnej potrzeby.
 - Dla list używaj paginacji, filtrowania i stanów ładowania.
 - Ekrany magazynowe projektuj pod obsługę mobilną i skaner kodów kreskowych.
+- Nie uznawaj rezerwacji pozycji ani przypisania do palety za zakończone przed potwierdzeniem przez API.
+- Obsługuj konflikty współbieżności czytelnym komunikatem i odświeżeniem aktualnego stanu.
+- Nie wyliczaj wiążącej masy palety wyłącznie po stronie klienta; prezentuj wynik zatwierdzony przez API.
+- Ukrywaj niedostępne akcje dla wygody użytkownika, ale nie traktuj frontendu jako granicy autoryzacji.
 
 ## Komendy sprawdzające
 

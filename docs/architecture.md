@@ -4,13 +4,14 @@
 
 Architektura ma oddzielić:
 
-- aplikacyjny model pracy magazynowej,
-- odczyt danych z Subiekta GT,
+- aplikacyjny model zamówień, kompletacji i palet,
+- odczyt katalogu towarów z Subiekta GT,
+- zapis danych należących do aplikacji,
 - API HTTP,
-- przyszły frontend,
-- generowanie plików EPP / EDI++.
+- frontend,
+- generowanie etykiet palet.
 
-Najważniejsze założenie: baza Subiekta GT nie jest modelem domenowym aplikacji. Tabele Subiekta są źródłem danych technicznych, które należy mapować na modele aplikacji.
+Najważniejsze założenie: baza Subiekta GT nie jest modelem domenowym ani magazynem danych roboczych aplikacji. Tabele Subiekta są technicznym źródłem danych o towarach, mapowanych na modele odczytowe aplikacji. Zamówienia, rezerwacje pozycji, palety i historia operacji są przechowywane poza bazą Subiekta.
 
 ## Backend
 
@@ -37,46 +38,57 @@ Warstwa domenowa zawiera pojęcia aplikacji, a nie nazwy tabel Subiekta.
 
 Przykładowe pojęcia domenowe:
 
-- `OrderPickingSession`,
-- `OrderPickingItem`,
-- `PickingReport`,
-- `SupplierOrderDraft`,
-- `EppExportFile`.
+- `Order`,
+- `OrderItem`,
+- `OrderItemAssignment`,
+- `Pallet`,
+- `PalletItem`,
+- `PalletLabelData`.
 
-Ta warstwa nie powinna zależeć od EF Core, ASP.NET Core, SQL Servera ani fizycznej struktury bazy Subiekta.
+Reguły domenowe obejmują między innymi:
+
+- dozwolone przejścia statusów zamówień i pozycji,
+- rezerwowanie i zwalnianie pozycji,
+- warunki uznania pozycji za spakowaną,
+- przypisanie spakowanej pozycji tylko do jednej palety,
+- obliczanie masy towarów i masy całkowitej palety,
+- warunki zamknięcia palety.
+
+Ta warstwa nie zależy od EF Core, ASP.NET Core, SQL Servera ani fizycznej struktury bazy Subiekta.
 
 ### Application
 
-Warstwa aplikacyjna zawiera przypadki użycia.
+Warstwa aplikacyjna zawiera przypadki użycia i koordynuje reguły domenowe.
 
 Przykładowe przypadki użycia:
 
-- pobranie listy towarów,
-- pobranie szczegółów towaru,
-- pobranie listy zamówień od klientów,
-- pobranie szczegółów zamówienia klienta,
-- pobranie listy przyjęć magazynowych,
-- utworzenie sesji kompletacji,
-- oznaczenie pozycji jako skompletowanej,
-- wygenerowanie raportu kompletacji,
-- przygotowanie zamówienia do dostawcy,
-- wygenerowanie pliku EPP / EDI++.
+- pobranie listy i szczegółów towaru,
+- utworzenie i edycja zamówienia,
+- udostępnienie zamówienia do kompletacji,
+- pobranie listy i szczegółów zamówienia,
+- zarezerwowanie lub zwolnienie pozycji,
+- oznaczenie pozycji jako spakowanej,
+- utworzenie palety,
+- przypisanie pozycji do palety,
+- zamknięcie palety,
+- przygotowanie danych etykiety,
+- zapis informacji o wydruku.
 
-Application definiuje kontrakty, które Infrastructure implementuje.
+Application definiuje kontrakty, które Infrastructure implementuje. Przypadki użycia otrzymują tożsamość użytkownika i weryfikują wymagane uprawnienia za pośrednictwem odpowiednich kontraktów lub polityk.
 
 ### Infrastructure
 
-Warstwa infrastruktury odpowiada za techniczne szczegóły.
+Warstwa infrastruktury odpowiada za techniczne szczegóły:
 
-Przykładowe elementy:
+- kontekst odczytowy i encje EF Core odwzorowujące wymagane tabele Subiekta,
+- implementacje projekcji towarów,
+- osobny kontekst lub adapter trwałości danych aplikacji,
+- transakcje i kontrolę współbieżności,
+- implementację audytu,
+- generator dokumentu etykiety,
+- przyszłą integrację z drukarką.
 
-- `SubiektDbContext`,
-- encje EF Core odwzorowujące tabele Subiekta,
-- konfiguracje EF Core,
-- implementacje zapytań odczytowych,
-- implementacja generatora EPP / EDI++.
-
-Infrastructure może znać nazwy tabel, kolumn i ograniczenia bazy Subiekta.
+Integracja odczytowa z Subiektem i trwałość danych aplikacji muszą mieć oddzielne kontrakty. Nie należy używać encji Subiekta jako encji zamówienia aplikacji.
 
 ### Api
 
@@ -84,76 +96,119 @@ Warstwa API odpowiada za HTTP.
 
 Endpointy powinny być cienkie:
 
-1. Przyjmują request.
-2. Wywołują przypadek użycia z Application.
-3. Zwracają response.
+1. Przyjmują i walidują kształt requestu.
+2. Przekazują tożsamość użytkownika do przypadku użycia z Application.
+3. Mapują wynik na odpowiedź HTTP.
 
-API nie powinno budować zapytań EF Core ani znać szczegółów tabel Subiekta.
+API nie powinno budować zapytań EF Core, znać szczegółów tabel Subiekta ani implementować reguł zmiany statusu.
 
-## Integracja z Subiektem GT
+## Magazyny danych
 
-### Odczyt
+### Baza Subiekta GT
 
-Dane z Subiekta GT są pobierane przez EF Core i mapowane na modele odczytowe aplikacji.
+- Jest używana wyłącznie do odczytu danych towarowych wymaganych przez aplikację.
+- Zapytania powinny być projekcjami bez śledzenia encji, jeśli nie ma technicznej potrzeby śledzenia.
+- Uprawnienia połączenia powinny być ograniczone do odczytu, o ile środowisko na to pozwala.
+- Connection string nie może być zapisany w repozytorium ani logowany.
 
-Priorytetem są:
+### Baza aplikacji — PostgreSQL
 
-1. Towary.
-2. Zamówienia od klientów.
-3. Przyjęcia magazynowe.
+Silnikiem bazy aplikacji jest PostgreSQL. Dostęp z backendu realizuje osobny `ApplicationDbContext` przez dostawcę Npgsql dla EF Core.
 
-### Zapis
+Przechowuje co najmniej:
 
-Domyślnie aplikacja nie zapisuje bezpośrednio do bazy Subiekta GT.
+- użytkowników lub ich identyfikatory z zewnętrznego systemu tożsamości,
+- zamówienia i pozycje zamówień,
+- migawki wymaganych danych towaru,
+- rezerwacje i statusy kompletacji,
+- palety oraz przypisane pozycje,
+- masy użyte do obliczeń,
+- historię operacji i wydruków.
 
-Zamówienia do dostawcy mają być przygotowywane przez wygenerowanie pliku EPP / EDI++ i importowane do Subiekta GT z poziomu Subiekta.
+Schemat będzie rozwijany migracjami EF Core wraz z zatwierdzaniem kolejnych części modelu domenowego. Dane aplikacji nie są zapisywane do tabel Subiekta.
 
-Bezpośredni zapis do bazy może zostać rozważony tylko po osobnej decyzji architektonicznej.
+## Współbieżność kompletacji
+
+Rezerwacja pozycji i przypisanie jej do palety są operacjami konkurencyjnymi. Każda z nich musi:
+
+1. Sprawdzić bieżący stan po stronie serwera.
+2. Zapisać zmianę atomowo.
+3. Wykryć konflikt współbieżności.
+4. Zwrócić wynik pozwalający frontendowi odświeżyć dane i wyświetlić jednoznaczny komunikat.
+
+Mechanizm może wykorzystywać znacznik wersji, warunkową aktualizację lub inną funkcję zapewnianą przez wybrany magazyn danych. Samo ukrycie przycisku we frontendzie nie zabezpiecza procesu.
+
+## Model masy
+
+Pozycja zamówienia zachowuje masę jednostkową używaną w procesie, niezależnie od późniejszych zmian danych źródłowych.
+
+```text
+masa pozycji na palecie = masa jednostkowa × ilość na palecie
+masa towarów = suma mas pozycji na palecie
+masa całkowita = masa towarów + masa pustej palety
+```
+
+Masa jednostkowa i masa pustej palety powinny używać typu dziesiętnego oraz jawnie określonej jednostki. Zaokrąglanie należy wykonywać według jednej reguły domenowej, a nie osobno w interfejsie i API.
 
 ## Planowane moduły aplikacyjne
 
-### Inventory Browse
+### Product Catalog
 
-Podgląd danych z Subiekta GT:
-
-- towary,
+- lista i wyszukiwanie towarów z Subiekta,
 - szczegóły towaru,
-- zamówienia od klientów,
-- przyjęcia magazynowe.
+- wybór towaru do zamówienia,
+- sygnalizowanie brakującej masy jednostkowej.
 
-To jest fundament dla kolejnych funkcji.
+### Order Management
 
-### Order Picking
+- tworzenie i edycja wersji roboczej,
+- walidacja zamawiającego, terminu, pozycji i ilości,
+- udostępnianie zamówienia do kompletacji,
+- lista, szczegóły i historia zamówienia.
 
-Kompletowanie zamówienia klienta:
+### Collaborative Picking
 
-1. Użytkownik wybiera zamówienie klienta pobrane z Subiekta.
-2. Aplikacja przetwarza dokument i pozycje na model kompletacji.
-3. Użytkownik odhacza pozycje.
-4. System zapisuje stan kompletacji w modelu aplikacji.
-5. System generuje raport kompletacji.
+- wspólny widok postępu,
+- atomowe rezerwowanie pozycji,
+- zwalnianie rezerwacji,
+- oznaczanie pozycji jako spakowanej,
+- zapis autora i czasu każdej operacji.
 
-### Supplier Orders
+### Palletization
 
-Tworzenie zamówienia do dostawcy:
+- tworzenie palet dla zamówienia,
+- wybór spakowanych pozycji,
+- obliczanie mas,
+- zamykanie palety,
+- przygotowanie i ponowny wydruk etykiety.
 
-1. Użytkownik przygotowuje projekt zamówienia.
-2. Aplikacja waliduje pozycje i ilości.
-3. System generuje plik EPP / EDI++.
-4. Użytkownik importuje plik do Subiekta GT.
+### Identity and Access
+
+- identyfikacja użytkownika,
+- uprawnienie do tworzenia zamówień,
+- uprawnienia do kompletacji i paletyzacji,
+- administracja rolami w zakresie wynikającym z wybranego systemu tożsamości.
 
 ## Granice bezpieczeństwa
 
-- Nie logować connection stringów.
+- Nie logować connection stringów ani danych uwierzytelniających.
 - Nie commitować sekretów.
 - Nie pokazywać w API wewnętrznych błędów SQL w środowisku produkcyjnym.
-- Endpointy diagnostyczne powinny być ograniczone do środowiska developerskiego albo zabezpieczone.
-- Dane handlowe traktować jako wrażliwe dane firmowe.
+- Endpointy diagnostyczne ograniczyć do środowiska developerskiego albo zabezpieczyć.
+- Dane handlowe i dane użytkowników traktować jako wrażliwe dane firmowe.
+- Każdą mutację chronić autoryzacją po stronie serwera.
+- Nie polegać na uprawnieniach ani walidacji wykonywanej wyłącznie we frontendzie.
 
-## Decyzje architektoniczne do podjęcia później
+## Decyzje architektoniczne do podjęcia
 
-- Czy sesje kompletacji będą zapisywane w osobnej bazie aplikacji, czy tymczasowo w pamięci.
-- Format i dokładna struktura pliku EPP / EDI++ dla zamówienia do dostawcy.
-- Mechanizm autoryzacji użytkowników.
-- Obsługa pracy offline.
-- Strategia skanowania kodów kreskowych.
+- sposób wdrażania i wykonywania kopii zapasowych PostgreSQL,
+- mechanizm uwierzytelniania i dokładna macierz uprawnień,
+- źródło zamawiających,
+- źródło i sposób korekty brakującej masy jednostkowej,
+- kompletacja częściowa i dzielenie ilości pozycji,
+- dzielenie pozycji pomiędzy palety,
+- strategia aktualizacji współdzielonego ekranu,
+- czas ważności rezerwacji oraz odzyskiwanie porzuconych pozycji,
+- format etykiety i integracja z drukarką,
+- zasady korekt po zamknięciu palety lub wydruku,
+- obsługa pracy offline i skanowania kodów kreskowych.

@@ -1,50 +1,55 @@
 # Subiekt Mobile
 
-Aplikacja API + web wspierająca mobilną pracę z danymi programu Subiekt GT.
+Aplikacja API + web wspierająca tworzenie i wieloosobowe kompletowanie zamówień na telefonie lub tablecie.
 
-Projekt ma umożliwić bezpieczny podgląd danych z Subiekta GT, a następnie obsługę procesów magazynowo-handlowych bez ryzykownego bezpośredniego zapisu do bazy Subiekta.
+Projekt odczytuje katalog towarów z bazy Subiekta GT. Zamówienia, stan kompletacji, palety i historia operacji należą do aplikacji i nie są zapisywane w tabelach Subiekta.
 
 ## Status projektu
 
-Aktualny status: **przygotowanie fundamentów MVP**.
+Aktualny status: **katalog towarów i przygotowanie fundamentów procesu zamówień**.
 
-Najbliższy cel nie polega jeszcze na implementacji kompletacji ani generowania dokumentów. Najpierw trzeba zbudować stabilny system podglądu:
+Najbliższa kolejność prac:
 
-1. towarów,
-2. zamówień od klientów,
-3. przyjęć magazynowych.
-
-Dopiero po tym etapie projekt powinien przejść do funkcji kompletowania zamówień i generowania plików EPP / EDI++.
+1. stabilny odczyt i wyszukiwanie towarów z Subiekta,
+2. użytkownicy oraz uprawnienia,
+3. zamówienia tworzone w aplikacji,
+4. wieloosobowa kompletacja,
+5. paletyzacja i etykiety.
 
 ## Główne funkcjonalności docelowe
 
-### 1. Kompletowanie zamówienia klienta
+### 1. Tworzenie zamówienia
 
-Aplikacja będzie pobierać zamówienie od klienta z Subiekta GT i przetwarzać je na modele aplikacji.
-
-Planowany proces:
-
-1. Użytkownik wybiera zamówienie klienta.
-2. Aplikacja pobiera pozycje zamówienia z Subiekta.
-3. System tworzy sesję kompletacji w modelu aplikacji.
-4. Użytkownik odhacza kolejne pozycje zamówienia.
-5. System zapisuje postęp kompletacji.
-6. Użytkownik może wygenerować raport kompletacji.
-
-Ważne: sesja kompletacji jest funkcją aplikacji, a nie bezpośrednią modyfikacją dokumentu w bazie Subiekta.
-
-### 2. Zamówienie do dostawcy przez EPP / EDI++
-
-Aplikacja będzie umożliwiać przygotowanie zamówienia do dostawcy, ale nie przez bezpośrednie dodanie dokumentu do bazy Subiekta.
+Uprawniony użytkownik tworzy zamówienie z towarów pobranych z katalogu Subiekta.
 
 Planowany proces:
 
-1. Użytkownik przygotowuje projekt zamówienia do dostawcy.
-2. Aplikacja waliduje pozycje, ilości i wymagane dane.
-3. System generuje plik EPP / EDI++.
-4. Plik jest importowany do Subiekta GT.
+1. Użytkownik wskazuje zamawiającego i termin realizacji.
+2. Dodaje towary oraz zamawiane ilości.
+3. Aplikacja zapisuje nazwę i masę jednostkową używaną w zamówieniu.
+4. Użytkownik zapisuje wersję roboczą, a po walidacji udostępnia ją do kompletacji.
 
-Ważne: domyślna zasada projektu to **brak bezpośredniego zapisu do bazy Subiekta GT**. Integracja zapisu ma odbywać się przez pliki importu, chyba że zostanie podjęta osobna decyzja architektoniczna.
+### 2. Kompletacja współdzielona
+
+Jedno zamówienie może być kompletowane równocześnie przez wiele osób.
+
+Planowany proces:
+
+1. Użytkownik wybiera dostępną pozycję i rezerwuje ją dla siebie.
+2. Serwer atomowo potwierdza rezerwację, aby zapobiec podwójnemu przypisaniu.
+3. Użytkownik oznacza pozycję jako spakowaną albo zwalnia ją do ponownego podjęcia.
+4. Pozostali użytkownicy widzą aktualny stan oraz osobę kompletującą.
+
+### 3. Paletyzacja i etykiety
+
+Planowany proces:
+
+1. Użytkownik tworzy paletę ze spakowanych pozycji.
+2. Wprowadza masę pustej palety.
+3. System sumuje masę pozycji jako `masa jednostkowa × ilość` i dodaje masę palety.
+4. Po zamknięciu palety użytkownik może zweryfikować i wydrukować etykietę z zamawiającym, pozycjami i masą całkowitą.
+
+Ważne: baza Subiekta jest w tym procesie wyłącznie źródłem danych towarowych w trybie odczytu.
 
 ## Zakres MVP
 
@@ -54,39 +59,37 @@ Ważne: domyślna zasada projektu to **brak bezpośredniego zapisu do bazy Subie
 - [ ] Wyszukiwanie towarów.
 - [ ] Szczegóły towaru.
 - [ ] Dane identyfikacyjne, kody, jednostki.
-- [ ] Dane magazynowe i cenowe, jeśli są dostępne w rozpoznanej strukturze bazy.
+- [ ] Masa jednostkowa albo jednoznaczna informacja o jej braku.
 
-### Etap 2 — podgląd zamówień od klientów
+### Etap 2 — użytkownicy i uprawnienia
 
-- [ ] Lista zamówień od klientów.
-- [ ] Filtrowanie po dacie, numerze dokumentu i kontrahencie.
-- [ ] Szczegóły zamówienia.
-- [ ] Pozycje zamówienia.
-- [ ] Ilości, jednostki, towary i status dokumentu.
+- [ ] Uwierzytelnianie użytkownika.
+- [ ] Uprawnienie do tworzenia zamówień.
+- [ ] Uprawnienie do kompletacji i paletyzacji.
+- [ ] Audyt użytkownika i czasu operacji.
 
-### Etap 3 — podgląd przyjęć magazynowych
+### Etap 3 — zamówienia aplikacji
 
-- [ ] Lista przyjęć magazynowych.
-- [ ] Szczegóły dokumentu.
-- [ ] Pozycje dokumentu.
-- [ ] Powiązane towary, daty i kontrahent / dostawca.
+- [ ] Lista i szczegóły zamówień.
+- [ ] Zamawiający i termin realizacji.
+- [ ] Dodawanie towarów i ilości.
+- [ ] Wersja robocza i udostępnienie do kompletacji.
 
-### Etap 4 — kompletowanie zamówienia
+### Etap 4 — kompletacja współdzielona
 
-- [ ] Utworzenie sesji kompletacji na podstawie zamówienia klienta.
-- [ ] Odhaczanie pozycji.
-- [ ] Obsługa kompletacji częściowej.
-- [ ] Status kompletacji.
-- [ ] Raport kompletacji.
+- [ ] Atomowe rezerwowanie pozycji.
+- [ ] Zwolnienie rezerwacji.
+- [ ] Oznaczanie pozycji jako spakowanej.
+- [ ] Wspólny widok postępu.
+- [ ] Obsługa konfliktów współbieżności.
 
-### Etap 5 — zamówienie do dostawcy jako EPP / EDI++
+### Etap 5 — palety i etykiety
 
-- [ ] Projekt zamówienia do dostawcy.
-- [ ] Dodawanie pozycji.
-- [ ] Walidacja danych.
-- [ ] Generowanie pliku EPP / EDI++.
-- [ ] Pobranie pliku przez użytkownika.
-- [ ] Instrukcja importu pliku do Subiekta GT.
+- [ ] Tworzenie palet ze spakowanych pozycji.
+- [ ] Masa pustej palety.
+- [ ] Masa towarów i masa całkowita.
+- [ ] Zamknięcie palety.
+- [ ] Podgląd i wydruk etykiety.
 
 ## Technologie
 
@@ -95,7 +98,8 @@ Ważne: domyślna zasada projektu to **brak bezpośredniego zapisu do bazy Subie
 - ASP.NET Core Web API,
 - .NET 10,
 - Entity Framework Core,
-- SQL Server,
+- SQL Server dla odczytu danych Subiekta,
+- PostgreSQL dla danych aplikacji,
 - Clean Architecture.
 
 ### Frontend
@@ -128,14 +132,16 @@ subiekt-mobile/
 │   └── AGENTS.md                          # zasady dla przyszłej aplikacji web
 ├── docs/
 │   ├── architecture.md
-│   └── roadmap.md
+│   ├── roadmap.md
+│   └── zarys-ekranow.md
 └── Readme.md
 ```
 
 Najważniejsza zasada architektoniczna:
 
 ```text
-Subiekt GT database -> Infrastructure -> Application -> Api / Frontend
+Subiekt GT database --read--> Infrastructure -> Application -> Api / Frontend
+Application database <------> Infrastructure
 ```
 
 Baza Subiekta GT jest technicznym źródłem danych. Modele domenowe aplikacji nie powinny być bezpośrednim odwzorowaniem tabel Subiekta.
@@ -153,7 +159,8 @@ W repozytorium znajdują się pliki `AGENTS.md`, które opisują zasady pracy dl
 Przed większą zmianą Codex powinien przeczytać także:
 
 - [`docs/architecture.md`](docs/architecture.md),
-- [`docs/roadmap.md`](docs/roadmap.md).
+- [`docs/roadmap.md`](docs/roadmap.md),
+- [`docs/zarys-ekranow.md`](docs/zarys-ekranow.md).
 
 ## Wymagania developerskie
 
@@ -162,20 +169,23 @@ Minimalnie potrzebne:
 - .NET SDK zgodny z projektem backendu,
 - SQL Server z bazą Subiekta GT,
 - dostęp odczytowy do bazy Subiekta GT,
+- PostgreSQL dla zamówień i pozostałych danych aplikacji,
 - Node.js po dodaniu frontendu.
 
 ## Konfiguracja
 
-Backend wymaga connection stringa o nazwie:
+Backend wymaga dwóch connection stringów:
 
 ```text
 ConnectionStrings:SubiektGt
+ConnectionStrings:ApplicationDb
 ```
 
-Przykład ustawienia lokalnego sekretu:
+Przykład ustawienia lokalnych sekretów:
 
 ```powershell
 dotnet user-secrets set "ConnectionStrings:SubiektGt" "Server=NAZWA_SERWERA;Database=NAZWA_BAZY;..." --project backend/src/SubiektMobile.Api
+dotnet user-secrets set "ConnectionStrings:ApplicationDb" "Host=localhost;Database=subiekt_mobile;Username=NAZWA_UZYTKOWNIKA;Password=HASLO" --project backend/src/SubiektMobile.Api
 ```
 
 Nie zapisuj prawdziwego connection stringa w repozytorium.
@@ -191,6 +201,14 @@ Po uruchomieniu dostępny jest endpoint:
 ```text
 GET /health
 ```
+
+W środowisku developerskim interfejs do testowania endpointów jest dostępny pod adresem:
+
+```text
+http://localhost:5118/swagger
+```
+
+Dokument OpenAPI jest dostępny pod `/openapi/v1.json`. Swagger i dokument OpenAPI nie są publikowane poza środowiskiem developerskim.
 
 ## Uruchomienie frontendu
 
@@ -256,10 +274,10 @@ Szczegółowa roadmapa znajduje się w [`docs/roadmap.md`](docs/roadmap.md).
 Najbliższa kolejność:
 
 1. Podgląd towarów.
-2. Podgląd zamówień od klientów.
-3. Podgląd przyjęć magazynowych.
-4. Kompletowanie zamówienia.
-5. Generowanie zamówienia do dostawcy jako EPP / EDI++.
+2. Użytkownicy i uprawnienia.
+3. Tworzenie zamówień.
+4. Kompletacja współdzielona.
+5. Paletyzacja i etykiety.
 
 ## Licencja
 

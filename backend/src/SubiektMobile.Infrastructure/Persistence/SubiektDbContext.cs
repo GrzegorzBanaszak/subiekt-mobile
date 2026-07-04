@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SubiektMobile.Infrastructure.Persistence.Configurations;
 using SubiektMobile.Infrastructure.Persistence.Entities;
 
 namespace SubiektMobile.Infrastructure.Persistence;
@@ -23,6 +24,8 @@ public class SubiektDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(SubiektDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(SubiektDbContext).Assembly,
+            type => type.Namespace == typeof(TwTowarConfiguration).Namespace);
     }
 }

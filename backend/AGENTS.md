@@ -6,6 +6,8 @@ Instrukcje dotyczą wszystkich zmian w katalogu `backend/`.
 
 Backend jest aplikacją ASP.NET Core opartą o Clean Architecture i integrację odczytową z bazą Subiekta GT.
 
+Z Subiekta pobierany jest katalog towarów. Zamówienia, rezerwacje pozycji, palety i audyt są danymi aplikacji i są przechowywane w osobnej bazie PostgreSQL.
+
 ## Warstwy
 
 ### `SubiektMobile.Api`
@@ -53,29 +55,29 @@ Odpowiada za:
 - encje odwzorowujące tabele Subiekta GT,
 - konfiguracje EF Core,
 - implementacje repozytoriów i portów,
-- generowanie plików technicznych, np. EPP / EDI++, jeśli dotyczy integracji zewnętrznej.
+- osobną trwałość danych należących do aplikacji,
+- kontrolę współbieżności operacji kompletacji,
+- generowanie etykiet palet i integracje techniczne związane z wydrukiem.
 
 ## Zasady integracji z Subiektem GT
 
 - Domyślnie baza Subiekta GT jest źródłem odczytu.
 - Nie zapisuj do tabel Subiekta bez zaakceptowanej decyzji architektonicznej.
-- Dla zamówień do dostawcy generuj plik EPP / EDI++ zamiast pisać bezpośrednio do bazy.
+- W aktualnym zakresie z Subiekta odczytuj wyłącznie dane towarowe wymagane przez aplikację.
+- Zamówienia i przebieg kompletacji zapisuj przez `ApplicationDbContext` w PostgreSQL.
 - Encje EF Core powinny odwzorowywać strukturę bazy, ale nie powinny być modelem domenowym aplikacji.
 - Nie zwracaj encji Subiekta bezpośrednio z API.
 
 ## Priorytet implementacji
 
-Najpierw należy dostarczyć podgląd:
+Implementuj w następującej kolejności:
 
-1. Towary — lista, szczegóły, podstawowe dane identyfikacyjne, kody, stany i ceny, jeśli są dostępne.
-2. Zamówienia od klientów — lista, szczegóły, pozycje, kontrahent, status i daty.
-3. Przyjęcia magazynowe — lista, szczegóły, pozycje i dokument powiązany.
-
-Dopiero potem implementuj:
-
-1. Kompletowanie zamówienia klienta.
-2. Raport kompletacji.
-3. Generowanie zamówienia do dostawcy jako EPP / EDI++.
+1. Towary — odczyt, wyszukiwanie, paginacja i masa jednostkowa.
+2. Użytkownicy oraz minimalne role i uprawnienia.
+3. Zamówienia tworzone w aplikacji — zamawiający, termin i pozycje.
+4. Wieloosobowa kompletacja z atomowym rezerwowaniem pozycji.
+5. Paletyzacja i obliczanie masy.
+6. Generowanie i wydruk etykiet palet.
 
 ## Kontrolery i endpointy
 
@@ -90,7 +92,7 @@ Kontroler lub endpoint nie powinien:
 - budować zapytań EF Core,
 - znać nazw tabel Subiekta,
 - zawierać reguł kompletacji,
-- generować EPP / EDI++ bezpośrednio.
+- obliczać mas palety ani generować etykiety bezpośrednio.
 
 ## EF Core
 
@@ -99,6 +101,9 @@ Kontroler lub endpoint nie powinien:
 - Dla API używaj projekcji do DTO lub modeli odczytowych.
 - Nie dodawaj `Include`, jeżeli wystarczy projekcja.
 - Nie publikuj connection stringów w logach.
+- Rozdziel kontekst odczytowy Subiekta od kontekstu zapisu danych aplikacji.
+- Dla rezerwacji pozycji i przypisywania do palet stosuj transakcje oraz jawne wykrywanie konfliktów współbieżności.
+- Każda mutacja procesu powinna zapisać identyfikator użytkownika i czas operacji.
 
 ## Komendy sprawdzające
 

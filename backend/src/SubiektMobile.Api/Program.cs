@@ -1,6 +1,7 @@
 using SubiektMobile.Application;
 using SubiektMobile.Infrastructure;
 using SubiektMobile.Infrastructure.Persistence;
+using SubiektMobile.Infrastructure.Persistence.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,13 +29,20 @@ builder.Services.AddOpenApi();
 
 builder.Services
     .AddHealthChecks()
-    .AddDbContextCheck<SubiektDbContext>("subiekt-db");
+    .AddDbContextCheck<SubiektDbContext>("subiekt-db")
+    .AddDbContextCheck<ApplicationDbContext>("application-db");
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "Subiekt Mobile API v1");
+        options.RoutePrefix = "swagger";
+        options.DocumentTitle = "Subiekt Mobile API";
+    });
 }
 
 app.UseHttpsRedirection();
