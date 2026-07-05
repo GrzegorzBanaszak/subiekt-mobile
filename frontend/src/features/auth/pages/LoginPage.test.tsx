@@ -1,25 +1,43 @@
-import { render, screen } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { I18nProvider } from '../../../app/i18n/I18nProvider'
 import { AuthApiError } from '../api/authApi'
 import { AuthContext, type AuthContextValue } from '../authContext'
 import { LoginPage } from './LoginPage'
+import * as authApi from '../api/authApi'
 
-function renderLogin(signIn: AuthContextValue['signIn'] = vi.fn()) {
+vi.mock('../api/authApi', async (importOriginal) => {
+  const original = await importOriginal<typeof authApi>()
+  return {
+    ...original,
+    getOrganizations: vi.fn(),
+    getEmployees: vi.fn(),
+  }
+})
+
+afterEach(cleanup)
+
+function renderLogin(
+  signIn: AuthContextValue['signIn'] = vi.fn(),
+  switchEmployee: AuthContextValue['switchEmployee'] = vi.fn(),
+) {
   render(
     <I18nProvider>
-      <AuthContext.Provider
-        value={{ actor: null, isLoading: false, signIn }}
-      >
-        <MemoryRouter initialEntries={['/login']}>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<h1>Panel</h1>} />
-          </Routes>
-        </MemoryRouter>
-      </AuthContext.Provider>
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <AuthContext.Provider
+          value={{ actor: null, isLoading: false, signIn, switchEmployee, signOut: vi.fn(), clearSession: vi.fn() }}
+        >
+          <MemoryRouter initialEntries={['/login']}>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/" element={<h1>Panel</h1>} />
+            </Routes>
+          </MemoryRouter>
+        </AuthContext.Provider>
+      </QueryClientProvider>
     </I18nProvider>,
   )
 }
@@ -27,6 +45,8 @@ function renderLogin(signIn: AuthContextValue['signIn'] = vi.fn()) {
 describe('LoginPage', () => {
   beforeEach(() => {
     localStorage.clear()
+    vi.mocked(authApi.getOrganizations).mockReset()
+    vi.mocked(authApi.getEmployees).mockReset()
   })
 
   it('changes the interface language to Spanish and persists the choice', async () => {
@@ -71,5 +91,36 @@ describe('LoginPage', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Nieprawidłowy użytkownik lub hasło.',
     )
+  })
+
+  it('lets an employee select an organization and sign in', async () => {
+    const user = userEvent.setup()
+    const switchEmployee = vi.fn().mockResolvedValue(undefined)
+    vi.mocked(authApi.getOrganizations).mockResolvedValue([
+      { id: 'organization-1', code: 'MAG', name: 'Magazyn Centralny' },
+    ])
+    vi.mocked(authApi.getEmployees).mockResolvedValue([
+      {
+        id: 'employee-1',
+        organizationId: 'organization-1',
+        code: 'A1',
+        displayName: 'Anna Nowak',
+      },
+    ])
+    renderLogin(undefined, switchEmployee)
+
+    await user.click(screen.getByRole('tab', { name: 'Pracownik' }))
+    await user.selectOptions(
+      await screen.findByRole('combobox', { name: 'Organizacja' }),
+      'organization-1',
+    )
+    await user.selectOptions(
+      await screen.findByRole('combobox', { name: 'Pracownik' }),
+      'employee-1',
+    )
+    await user.click(screen.getByRole('button', { name: 'Wejdź jako pracownik' }))
+
+    expect(switchEmployee).toHaveBeenCalledWith('organization-1', 'employee-1')
+    expect(await screen.findByRole('heading', { name: 'Panel' })).toBeInTheDocument()
   })
 })

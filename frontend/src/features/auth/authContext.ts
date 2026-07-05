@@ -5,6 +5,9 @@ export interface AuthContextValue {
   actor: CurrentActor | null
   isLoading: boolean
   signIn: (credentials: SignInCredentials) => Promise<void>
+  switchEmployee: (organizationId: string, employeeId: string) => Promise<void>
+  signOut: () => Promise<void>
+  clearSession: () => void
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)

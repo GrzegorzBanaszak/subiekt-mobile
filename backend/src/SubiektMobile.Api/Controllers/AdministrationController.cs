@@ -17,10 +17,12 @@ public sealed class AdministrationController : ControllerBase
     }
 
     [HttpGet("administrators")]
+    [Authorize(Policy = Permissions.AdministratorsManage)]
     public async Task<ActionResult<IReadOnlyList<AdministratorDto>>> GetAdministrators(CancellationToken cancellationToken) =>
         Ok(await _identityAccessService.ListAdministratorsAsync(cancellationToken));
 
     [HttpPost("administrators")]
+    [Authorize(Policy = Permissions.AdministratorsManage)]
     public async Task<ActionResult<AdministratorDto>> CreateAdministrator(
         CreateAdministratorRequest request,
         CancellationToken cancellationToken)
@@ -30,6 +32,7 @@ public sealed class AdministrationController : ControllerBase
     }
 
     [HttpPut("administrators/{id:guid}")]
+    [Authorize(Policy = Permissions.AdministratorsManage)]
     public async Task<ActionResult<AdministratorDto>> UpdateAdministrator(
         Guid id,
         UpdateAdministratorRequest request,
@@ -37,6 +40,7 @@ public sealed class AdministrationController : ControllerBase
         Ok(await _identityAccessService.UpdateAdministratorAsync(id, request, cancellationToken));
 
     [HttpPost("administrators/{id:guid}/reset-password")]
+    [Authorize(Policy = Permissions.AdministratorsManage)]
     public async Task<IActionResult> ResetAdministratorPassword(
         Guid id,
         ResetAdministratorPasswordRequest request,
@@ -47,6 +51,7 @@ public sealed class AdministrationController : ControllerBase
     }
 
     [HttpPut("administrators/{id:guid}/active")]
+    [Authorize(Policy = Permissions.AdministratorsManage)]
     public async Task<IActionResult> SetAdministratorActive(
         Guid id,
         SetActiveRequest request,

@@ -226,6 +226,10 @@ kontynuują uruchamianie po wykryciu istniejącego administratora. Podanie tylko
 konfiguracji zatrzymuje start aplikacji z błędem. Schemat bazy aplikacji musi być
 zmigrowany przed uruchomieniem backendu.
 
+Konto bootstrapowe jest stałym kontem root i jako jedyne ma uprawnienie
+`identity.administrators.manage`. Zwykli administratorzy zachowują `identity.manage`, które
+pozwala zarządzać organizacjami i ich pracownikami, ale nie kontami administratorów.
+
 Hasła nie należy umieszczać w obrazie kontenera, pliku Terraform ani repozytorium.
 W środowisku docelowym powinno zostać dostarczone jako sekret wdrożeniowy lub przez
 menedżer sekretów. Pozostawienie zmiennych po pierwszym uruchomieniu jest bezpieczne
@@ -341,6 +345,9 @@ Endpointy administracyjne znajdują się pod `/api/admin` i obejmują zarządzan
 administratorami, organizacjami oraz pracownikami. Zasoby są dezaktywowane zamiast
 fizycznie usuwane. Publiczny wybór pracownika bez hasła jest celowym uproszczeniem MVP,
 nie zabezpiecza jednak przed wybraniem cudzej tożsamości przez osobę mającą dostęp do aplikacji.
+
+Frontend udostępnia te operacje pod `/administration`. Zakładka administratorów jest widoczna
+wyłącznie dla konta root; organizacje i pracownicy są dostępni również zwykłym administratorom.
 
 Pierwszą migrację stosuje polecenie:
 

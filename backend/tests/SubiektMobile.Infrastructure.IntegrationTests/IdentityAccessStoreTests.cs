@@ -75,6 +75,7 @@ public sealed class IdentityAccessStoreTests
             target.Id,
             null,
             target.DisplayName,
+            Permissions.For(ActorKind.Administrator),
             TimeSpan.FromHours(8),
             null,
             ActorAudit(target, "AdministratorSignedIn"),
@@ -132,6 +133,7 @@ public sealed class IdentityAccessStoreTests
             administrator.Id,
             null,
             administrator.DisplayName,
+            Permissions.For(ActorKind.Administrator, administrator.IsBootstrapAdministrator),
             TimeSpan.FromHours(8),
             null,
             ActorAudit(administrator, "AdministratorSignedIn"),
@@ -146,6 +148,34 @@ public sealed class IdentityAccessStoreTests
 
         Assert.Equal(StoreMutationResult.Success, result);
         Assert.Null(await store.ResolveSessionAsync(session.Token, Now.AddMinutes(1), CancellationToken.None));
+    }
+
+    [PostgreSqlFact]
+    public async Task Resolving_sessions_rebuilds_root_and_regular_administrator_permissions()
+    {
+        var connectionString = GetTestConnectionString();
+        await ResetDatabaseAsync(connectionString);
+        await using var context = CreateContext(connectionString);
+        var store = new IdentityAccessStore(context);
+        var root = Administrator.Create("root", "Root", "hash", true, Now);
+        var regular = Administrator.Create("admin", "Admin", "hash", false, Now);
+        await store.CreateAdministratorAsync(root, SystemAudit(root.Id), CancellationToken.None);
+        await store.CreateAdministratorAsync(regular, SystemAudit(regular.Id), CancellationToken.None);
+
+        var rootSession = await store.CreateSessionAsync(
+            ActorKind.Administrator, root.Id, null, root.DisplayName,
+            Permissions.For(ActorKind.Administrator, true), TimeSpan.FromHours(8), null,
+            ActorAudit(root, "AdministratorSignedIn"), Now, CancellationToken.None);
+        var regularSession = await store.CreateSessionAsync(
+            ActorKind.Administrator, regular.Id, null, regular.DisplayName,
+            Permissions.For(ActorKind.Administrator), TimeSpan.FromHours(8), null,
+            ActorAudit(regular, "AdministratorSignedIn"), Now, CancellationToken.None);
+
+        var resolvedRoot = await store.ResolveSessionAsync(rootSession.Token, Now, CancellationToken.None);
+        var resolvedRegular = await store.ResolveSessionAsync(regularSession.Token, Now, CancellationToken.None);
+
+        Assert.Contains(Permissions.AdministratorsManage, resolvedRoot!.Permissions);
+        Assert.DoesNotContain(Permissions.AdministratorsManage, resolvedRegular!.Permissions);
     }
 
     private static string GetTestConnectionString()

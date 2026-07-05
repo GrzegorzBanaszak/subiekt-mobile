@@ -54,7 +54,9 @@ Zakres minimalny:
 
 Przyjęty model MVP:
 
-- administrator loguje się własnym loginem i hasłem oraz ma pełne uprawnienia,
+- pierwszy administrator bootstrapowy jest stałym kontem root i jako jedyny zarządza kontami administratorów,
+- zwykły administrator zarządza organizacjami i pracownikami, ale nie kontami administratorów,
+- administratorzy logują się własnym loginem i hasłem,
 - organizacja grupuje pracowników i nie jest wykonawcą operacji,
 - pracownik jest wybierany publicznie bez hasła na wspólnym stanowisku,
 - wybór pracownika tworzy odwoływalną sesję wskazującą konkretną osobę,

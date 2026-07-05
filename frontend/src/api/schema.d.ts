@@ -1141,17 +1141,9 @@ export interface components {
             id: number | string;
             name: null | string;
             symbol: null | string;
+            unit: null | string;
             imageUrl: null | string;
             stock: null | components["schemas"]["ProductStockDto"];
-            price: null | components["schemas"]["ProductListPriceDto"];
-        };
-        ProductListPriceDto: {
-            /** Format: int32 */
-            level: number | string;
-            name: string;
-            /** Format: double */
-            gross: number | string;
-            currency: null | string;
         };
         ProductPriceDto: {
             /** Format: int32 */

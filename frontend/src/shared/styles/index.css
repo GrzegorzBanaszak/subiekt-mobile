@@ -20,9 +20,35 @@ body {
   box-sizing: border-box;
 }
 
+.material-symbols-outlined.size-4 {
+  font-size: 1rem;
+}
+
+.material-symbols-outlined.size-5 {
+  font-size: 1.25rem;
+}
+
+.material-symbols-outlined.size-6 {
+  font-size: 1.5rem;
+}
+
+.material-symbols-outlined.size-8 {
+  font-size: 2rem;
+}
+
+.material-symbols-outlined.size-9 {
+  font-size: 2.25rem;
+}
+
 button,
 input,
 select,
 textarea {
   font: inherit;
+}
+
+@layer components {
+  .admin-action-button {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-800 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50;
+  }
 }

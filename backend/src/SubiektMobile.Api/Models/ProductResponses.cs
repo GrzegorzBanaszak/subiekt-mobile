@@ -26,9 +26,9 @@ public sealed record ProductListItemResponse(
     int Id,
     string? Name,
     string? Symbol,
+    string? Unit,
     string? ImageUrl,
-    ProductStockDto? Stock,
-    ProductListPriceDto? Price);
+    ProductStockDto? Stock);
 
 public sealed record ProductDetailsResponse(
     int Id,

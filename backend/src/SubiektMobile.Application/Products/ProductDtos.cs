@@ -11,15 +11,9 @@ public sealed record ProductListItemDto(
     int Id,
     string? Name,
     string? Symbol,
+    string? Unit,
     bool HasImage,
-    ProductStockDto? Stock,
-    ProductListPriceDto? Price);
-
-public sealed record ProductListPriceDto(
-    int Level,
-    string Name,
-    decimal Gross,
-    string? Currency);
+    ProductStockDto? Stock);
 
 public sealed record ProductStockDto(
     int WarehouseId,

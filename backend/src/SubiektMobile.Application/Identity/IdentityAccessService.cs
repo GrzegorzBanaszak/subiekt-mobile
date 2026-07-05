@@ -159,6 +159,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
             employee.Id,
             organization.Id,
             employee.DisplayName,
+            Permissions.For(ActorKind.Employee),
             _configuration.EmployeeSessionLifetime,
             replacedSessionToken,
             audit,
@@ -174,7 +175,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
 
     public async Task<IReadOnlyList<AdministratorDto>> ListAdministratorsAsync(CancellationToken cancellationToken)
     {
-        Require(Permissions.IdentityManage);
+        Require(Permissions.AdministratorsManage);
         return (await _store.ListAdministratorsAsync(cancellationToken)).Select(Map).ToList();
     }
 
@@ -182,7 +183,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
         CreateAdministratorRequest request,
         CancellationToken cancellationToken)
     {
-        var actor = Require(Permissions.IdentityManage);
+        var actor = Require(Permissions.AdministratorsManage);
         ValidatePassword(request.Password);
         var now = UtcNow();
         Administrator administrator;
@@ -209,7 +210,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
         UpdateAdministratorRequest request,
         CancellationToken cancellationToken)
     {
-        var actor = Require(Permissions.IdentityManage);
+        var actor = Require(Permissions.AdministratorsManage);
         var administrator = await GetAdministratorAsync(id, cancellationToken);
         var now = UtcNow();
         try
@@ -234,7 +235,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
         ResetAdministratorPasswordRequest request,
         CancellationToken cancellationToken)
     {
-        var actor = Require(Permissions.IdentityManage);
+        var actor = Require(Permissions.AdministratorsManage);
         ValidatePassword(request.Password);
         var administrator = await GetAdministratorAsync(id, cancellationToken);
         var now = UtcNow();
@@ -251,7 +252,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
         SetActiveRequest request,
         CancellationToken cancellationToken)
     {
-        var actor = Require(Permissions.IdentityManage);
+        var actor = Require(Permissions.AdministratorsManage);
         if (actor.Id == id && !request.IsActive)
         {
             throw new ResourceConflictException("An administrator cannot deactivate the current account.");
@@ -438,6 +439,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
             administrator.Id,
             null,
             administrator.DisplayName,
+            Permissions.For(ActorKind.Administrator, administrator.IsBootstrapAdministrator),
             _configuration.AdministratorSessionLifetime,
             replacedSessionToken,
             audit,

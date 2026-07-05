@@ -45,7 +45,7 @@ builder.Services
         _ => { });
 builder.Services.AddAuthorization(options =>
 {
-    foreach (var permission in Permissions.For(SubiektMobile.Domain.Identity.ActorKind.Administrator))
+    foreach (var permission in Permissions.All)
     {
         options.AddPolicy(permission, policy =>
             policy.RequireClaim(SessionAuthentication.PermissionClaim, permission));

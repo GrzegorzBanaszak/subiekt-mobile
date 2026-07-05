@@ -274,6 +274,7 @@ public sealed class IdentityAccessStore : IIdentityAccessStore
         Guid actorId,
         Guid? organizationId,
         string actorDisplayName,
+        IReadOnlyList<string> actorPermissions,
         TimeSpan lifetime,
         string? replacedToken,
         AuditEntry auditEntry,
@@ -314,7 +315,7 @@ public sealed class IdentityAccessStore : IIdentityAccessStore
             actorId,
             organizationId,
             actorDisplayName,
-            Permissions.For(actorKind),
+            actorPermissions,
             sessionId);
         return new SessionIssued(rawToken, expiresAt, actor);
     }
@@ -352,7 +353,7 @@ public sealed class IdentityAccessStore : IIdentityAccessStore
                     administrator.Id,
                     null,
                     administrator.DisplayName,
-                    Permissions.For(ActorKind.Administrator),
+                    Permissions.For(ActorKind.Administrator, administrator.IsBootstrapAdministrator),
                     session.Id);
         }
 

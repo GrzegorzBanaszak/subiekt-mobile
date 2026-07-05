@@ -7,7 +7,7 @@ const apiMocks = vi.hoisted(() => ({
 
 vi.mock('../../../api/client', () => ({ apiClient: apiMocks }))
 
-import { signInAdministrator } from './authApi'
+import { signInAdministrator, signOut } from './authApi'
 
 describe('authApi', () => {
   beforeEach(() => {
@@ -49,5 +49,21 @@ describe('authApi', () => {
         headers: { 'X-CSRF-TOKEN': 'csrf-token' },
       },
     )
+  })
+
+  it('signs out with CSRF protection', async () => {
+    apiMocks.GET.mockResolvedValue({
+      data: { token: 'csrf-token', headerName: 'X-CSRF-TOKEN' },
+      response: new Response(null, { status: 200 }),
+    })
+    apiMocks.POST.mockResolvedValue({
+      response: new Response(null, { status: 204 }),
+    })
+
+    await expect(signOut()).resolves.toBeUndefined()
+
+    expect(apiMocks.POST).toHaveBeenCalledWith('/api/auth/sign-out', {
+      headers: { 'X-CSRF-TOKEN': 'csrf-token' },
+    })
   })
 })

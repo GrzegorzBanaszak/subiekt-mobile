@@ -188,7 +188,7 @@ Masa jednostkowa i masa pustej palety powinny używać typu dziesiętnego oraz j
 - organizacje grupujące pracowników magazynu,
 - wybór pracownika bez hasła na współdzielonym stanowisku,
 - odwoływalne sesje przechowywane w PostgreSQL,
-- stałe polityki uprawnień dla administratora i pracownika,
+- stałe polityki uprawnień dla administratora root, zwykłego administratora i pracownika,
 - audyt wykonawcy i czasu każdej mutacji.
 
 Organizacja nie jest wykonawcą operacji. Sesja magazynowa zawsze wskazuje konkretnego
@@ -196,8 +196,10 @@ pracownika należącego do aktywnej organizacji. Publiczny wybór pracownika upr
 na wspólnym komputerze, ale nie stanowi silnego uwierzytelnienia i pozwala osobie mającej
 dostęp do aplikacji wybrać innego aktywnego pracownika.
 
-Administrator ma uprawnienia do zarządzania tożsamością, katalogiem, zamówieniami,
-kompletacją i paletami. Pracownik ma odczyt katalogu i udostępnionych zamówień oraz
+Administrator root zarządza kontami administratorów, organizacjami i pracownikami. Zwykły
+administrator zarządza organizacjami i pracownikami, ale nie może przeglądać ani zmieniać
+kont administratorów. Oba typy administratora mają dostęp do katalogu, zamówień, kompletacji
+i palet. Pracownik ma odczyt katalogu i udostępnionych zamówień oraz
 uprawnienia do kompletacji i paletyzacji. Autoryzacja jest wykonywana w API oraz ponownie
 w przypadkach użycia Application.
 
@@ -209,7 +211,9 @@ Pierwszy administrator może być utworzony ręcznie przez zabezpieczony endpoin
 albo idempotentnie podczas startu z sekretów wdrożeniowych. Automatyczny bootstrap nie
 aktualizuje istniejącego konta i opiera bezpieczeństwo współbieżnego startu instancji na
 unikalnym ograniczeniu w PostgreSQL. Migracje bazy są wykonywane przed startem aplikacji,
-a nie niejawnie przez mechanizm bootstrapu.
+a nie niejawnie przez mechanizm bootstrapu. Status root jest stały, nieprzenoszalny i wynika
+wyłącznie z flagi konta bootstrapowego. Uprawnienia są wyliczane ponownie przy rozwiązywaniu
+każdej sesji i nie są utrwalane w rekordzie sesji.
 
 ## Granice bezpieczeństwa
 

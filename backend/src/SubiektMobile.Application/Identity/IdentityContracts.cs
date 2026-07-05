@@ -5,23 +5,32 @@ namespace SubiektMobile.Application.Identity;
 public static class Permissions
 {
     public const string IdentityManage = "identity.manage";
+    public const string AdministratorsManage = "identity.administrators.manage";
     public const string CatalogRead = "catalog.read";
     public const string OrdersReadPublished = "orders.read-published";
     public const string OrdersManage = "orders.manage";
     public const string PickingExecute = "picking.execute";
     public const string PalletsManage = "pallets.manage";
 
-    public static IReadOnlyList<string> For(ActorKind actorKind) => actorKind switch
+    public static IReadOnlyList<string> All { get; } =
+    [
+        IdentityManage,
+        AdministratorsManage,
+        CatalogRead,
+        OrdersReadPublished,
+        OrdersManage,
+        PickingExecute,
+        PalletsManage
+    ];
+
+    public static IReadOnlyList<string> For(
+        ActorKind actorKind,
+        bool isBootstrapAdministrator = false) => actorKind switch
     {
         ActorKind.Administrator =>
-        [
-            IdentityManage,
-            CatalogRead,
-            OrdersReadPublished,
-            OrdersManage,
-            PickingExecute,
-            PalletsManage
-        ],
+            isBootstrapAdministrator
+                ? [IdentityManage, AdministratorsManage, CatalogRead, OrdersReadPublished, OrdersManage, PickingExecute, PalletsManage]
+                : [IdentityManage, CatalogRead, OrdersReadPublished, OrdersManage, PickingExecute, PalletsManage],
         ActorKind.Employee =>
         [
             CatalogRead,
@@ -202,6 +211,7 @@ public interface IIdentityAccessStore
         Guid actorId,
         Guid? organizationId,
         string actorDisplayName,
+        IReadOnlyList<string> actorPermissions,
         TimeSpan lifetime,
         string? replacedToken,
         AuditEntry auditEntry,

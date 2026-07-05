@@ -97,17 +97,6 @@ public sealed class ProductReadRepository : IProductReadRepository
                 .ToDictionaryAsync(stock => stock.ProductId, cancellationToken);
         }
 
-        var pricesByProduct = await _dbContext.Ceny
-            .AsNoTracking()
-            .Where(price => productIds.Contains(price.IdTowar))
-            .Select(price => new PriceLevelOneRow
-            {
-                ProductId = price.IdTowar,
-                Gross = price.CenaBrutto1,
-                Currency = price.IdWaluta1
-            })
-            .ToDictionaryAsync(price => price.ProductId, cancellationToken);
-
         var productsWithImages = await _dbContext.ZdjeciaTowarow
             .AsNoTracking()
             .Where(image =>
@@ -117,7 +106,6 @@ public sealed class ProductReadRepository : IProductReadRepository
             .Distinct()
             .ToHashSetAsync(cancellationToken);
 
-        var priceNames = await GetPriceNamesAsync(cancellationToken);
         var items = new List<ProductListItemDto>(pageRows.Count);
 
         foreach (var product in pageRows)
@@ -142,24 +130,13 @@ public sealed class ProductReadRepository : IProductReadRepository
                     product.Unit);
             }
 
-            ProductListPriceDto? price = null;
-            if (pricesByProduct.TryGetValue(product.Id, out var priceRow) &&
-                priceRow.Gross.HasValue)
-            {
-                price = new ProductListPriceDto(
-                    1,
-                    GetPriceName(priceNames?.Name1, 1),
-                    priceRow.Gross.Value,
-                    priceRow.Currency?.Trim());
-            }
-
             items.Add(new ProductListItemDto(
                 product.Id,
                 product.Name,
                 product.Symbol,
+                product.Unit,
                 productsWithImages.Contains(product.Id),
-                stock,
-                price));
+                stock));
         }
 
         return new PagedResult<ProductListItemDto>(
@@ -451,13 +428,6 @@ public sealed class ProductReadRepository : IProductReadRepository
         public decimal? Reserved { get; init; }
         public decimal? Minimum { get; init; }
         public decimal? Maximum { get; init; }
-    }
-
-    private sealed class PriceLevelOneRow
-    {
-        public int ProductId { get; init; }
-        public decimal? Gross { get; init; }
-        public string? Currency { get; init; }
     }
 
     private sealed class PriceNamesRow

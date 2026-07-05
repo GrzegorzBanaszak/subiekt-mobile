@@ -2,8 +2,10 @@ import { useState, type FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useI18n } from '../../../app/i18n/i18nContext'
 import { LanguageSwitcher } from '../../../shared/components/LanguageSwitcher'
+import { AppIcon, type AppIconName } from '../../../shared/components/AppIcon'
 import { AuthApiError } from '../api/authApi'
 import { useAuth } from '../authContext'
+import { OrganizationSignInForm } from '../components/OrganizationSignInForm'
 
 type LoginError = 'invalidCredentials' | 'tooManyAttempts' | 'unavailable'
 
@@ -16,29 +18,8 @@ function getLoginError(error: unknown): LoginError {
   return 'unavailable'
 }
 
-function Icon({ name }: { name: 'box' | 'user' | 'lock' | 'login' | 'error' }) {
-  const paths = {
-    box: <path d="M5 7.5h14v12H5zM4 4h16v3.5H4zm5 8h6" />,
-    user: <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0Z" />,
-    lock: <path d="M6 10h12v10H6zm3 0V7a3 3 0 0 1 6 0v3m-3 4v2" />,
-    login: <path d="M14 5h5v14h-5m-3-3 4-4-4-4m4 4H4" />,
-    error: <path d="M12 8v5m0 3.5v.1M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />,
-  }
-
-  return (
-    <svg
-      aria-hidden="true"
-      className="size-6 shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.8"
-    >
-      {paths[name]}
-    </svg>
-  )
+function Icon({ name }: { name: Extract<AppIconName, 'box' | 'user' | 'lock' | 'login' | 'error'> }) {
+  return <AppIcon name={name} />
 }
 
 export function LoginPage() {
@@ -48,6 +29,14 @@ export function LoginPage() {
   const location = useLocation()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loginError, setLoginError] = useState<LoginError | null>(null)
+  const [loginMode, setLoginMode] = useState<'administrator' | 'employee'>('administrator')
+
+  function navigateAfterSignIn() {
+    const requestedPath = (location.state as { from?: unknown } | null)?.from
+    navigate(typeof requestedPath === 'string' ? requestedPath : '/', {
+      replace: true,
+    })
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -62,10 +51,7 @@ export function LoginPage() {
         password: String(formData.get('password') ?? ''),
       })
 
-      const requestedPath = (location.state as { from?: unknown } | null)?.from
-      navigate(typeof requestedPath === 'string' ? requestedPath : '/', {
-        replace: true,
-      })
+      navigateAfterSignIn()
     } catch (error) {
       setLoginError(getLoginError(error))
     } finally {
@@ -92,7 +78,28 @@ export function LoginPage() {
           </p>
         </div>
 
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        <div className="mb-6 grid grid-cols-2 rounded-lg bg-slate-100 p-1" role="tablist" aria-label={t('login.mode')}>
+          <button
+            aria-selected={loginMode === 'administrator'}
+            className={`min-h-11 rounded-md px-3 font-semibold transition ${loginMode === 'administrator' ? 'bg-white text-blue-950 shadow-sm' : 'text-slate-600 hover:text-slate-950'}`}
+            onClick={() => setLoginMode('administrator')}
+            role="tab"
+            type="button"
+          >
+            {t('login.administratorTab')}
+          </button>
+          <button
+            aria-selected={loginMode === 'employee'}
+            className={`min-h-11 rounded-md px-3 font-semibold transition ${loginMode === 'employee' ? 'bg-white text-blue-950 shadow-sm' : 'text-slate-600 hover:text-slate-950'}`}
+            onClick={() => setLoginMode('employee')}
+            role="tab"
+            type="button"
+          >
+            {t('login.employeeTab')}
+          </button>
+        </div>
+
+        {loginMode === 'administrator' ? <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
           {loginError && (
             <div
               className="flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800"
@@ -110,6 +117,7 @@ export function LoginPage() {
                 <Icon name="user" />
               </span>
               <input
+                aria-label={t('login.username')}
                 autoComplete="username"
                 autoFocus
                 className="h-14 w-full rounded-md border border-slate-300 bg-slate-50 pl-13 pr-4 font-normal text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20"
@@ -129,6 +137,7 @@ export function LoginPage() {
                 <Icon name="lock" />
               </span>
               <input
+                aria-label={t('login.password')}
                 autoComplete="current-password"
                 className="h-14 w-full rounded-md border border-slate-300 bg-slate-50 pl-13 pr-4 font-normal text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20"
                 disabled={isSubmitting}
@@ -149,10 +158,11 @@ export function LoginPage() {
             {t(isSubmitting ? 'login.submitting' : 'login.submit')}
           </button>
 
-          <p className="mt-2 text-center text-sm text-blue-950">
-            {t('login.help')}
-          </p>
-        </form>
+        </form> : <OrganizationSignInForm onSuccess={navigateAfterSignIn} />}
+
+        <p className="mt-7 text-center text-sm text-blue-950">
+          {t('login.help')}
+        </p>
       </section>
     </main>
   )

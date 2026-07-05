@@ -35,9 +35,9 @@ public sealed class ProductsController : ControllerBase
                 product.Id,
                 product.Name,
                 product.Symbol,
+                product.Unit,
                 BuildImageUrl(product.Id, product.HasImage),
-                product.Stock,
-                product.Price))
+                product.Stock))
             .ToList();
 
         return Ok(new PagedResponse<ProductListItemResponse>(
