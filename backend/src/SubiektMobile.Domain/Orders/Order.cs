@@ -14,14 +14,24 @@ public enum OrderItemStatus
     AssignedToPallet
 }
 
+public enum PickingMode
+{
+    SingleAssignee,
+    SharedTeam
+}
+
+public sealed record OrderAssigneeCandidate(Guid EmployeeId, Guid OrganizationId, string EmployeeDisplayName);
+
 public sealed class Order
 {
     private readonly List<OrderItem> _items = [];
+    private readonly List<OrderAssignee> _assignees = [];
 
     private Order() { }
 
     private Order(Guid id, string number, string customerName, DateOnly dueDate,
-        Guid createdById, string createdByName, DateTimeOffset createdAtUtc)
+        Guid createdById, string createdByName, DateTimeOffset createdAtUtc,
+        PickingMode pickingMode, IReadOnlyCollection<OrderAssigneeCandidate> assignees)
     {
         Id = id;
         Number = RequireText(number, nameof(number), 40);
@@ -34,6 +44,7 @@ public sealed class Order
         UpdatedByName = CreatedByName;
         UpdatedAtUtc = createdAtUtc;
         Version = 1;
+        SetPickingConfiguration(pickingMode, assignees, createdById, CreatedByName, createdAtUtc);
     }
 
     public Guid Id { get; private set; }
@@ -50,12 +61,17 @@ public sealed class Order
     public DateTimeOffset? PublishedAtUtc { get; private set; }
     public long Version { get; private set; }
     public IReadOnlyCollection<OrderItem> Items => _items;
+    public PickingMode PickingMode { get; private set; }
+    public IReadOnlyCollection<OrderAssignee> Assignees => _assignees;
 
     public static Order Create(Guid id, string number, string customerName, DateOnly dueDate,
-        Guid actorId, string actorName, DateTimeOffset now)
+        Guid actorId, string actorName, DateTimeOffset now,
+        PickingMode pickingMode = PickingMode.SingleAssignee,
+        IReadOnlyCollection<OrderAssigneeCandidate>? assignees = null)
     {
         if (id == Guid.Empty || actorId == Guid.Empty) throw new ArgumentException("Identifiers are required.");
-        return new Order(id, number, customerName, dueDate, actorId, actorName, now);
+        return new Order(id, number, customerName, dueDate, actorId, actorName, now,
+            pickingMode, assignees ?? []);
     }
 
     public void UpdateHeader(string customerName, DateOnly dueDate, Guid actorId, string actorName, DateTimeOffset now)
@@ -90,9 +106,24 @@ public sealed class Order
         EnsureDraft();
         if (_items.Count == 0) throw new InvalidOperationException("Order must contain at least one item.");
         if (DueDate < today) throw new InvalidOperationException("Due date cannot be in the past.");
+        ValidateAssigneesForPublishing();
         Status = OrderStatus.ReadyForPicking;
         PublishedAtUtc = now;
         Touch(actorId, actorName, now);
+    }
+
+    public void ConfigurePicking(PickingMode mode, IReadOnlyCollection<OrderAssigneeCandidate> assignees,
+        Guid actorId, string actorName, DateTimeOffset now)
+    {
+        EnsureDraft();
+        SetPickingConfiguration(mode, assignees, actorId, actorName, now);
+        Touch(actorId, actorName, now);
+    }
+
+    public void EnsureCanDelete()
+    {
+        if (Status != OrderStatus.Draft)
+            throw new InvalidOperationException("Only a draft order can be deleted.");
     }
 
     private void SetHeader(string customerName, DateOnly dueDate)
@@ -105,6 +136,31 @@ public sealed class Order
     private void EnsureDraft()
     {
         if (Status != OrderStatus.Draft) throw new InvalidOperationException("Only a draft order can be modified.");
+    }
+
+    private void SetPickingConfiguration(PickingMode mode, IReadOnlyCollection<OrderAssigneeCandidate> assignees,
+        Guid actorId, string actorName, DateTimeOffset now)
+    {
+        if (!Enum.IsDefined(mode)) throw new ArgumentOutOfRangeException(nameof(mode));
+        var distinct = assignees.DistinctBy(x => x.EmployeeId).ToList();
+        if (distinct.Count != assignees.Count)
+            throw new ArgumentException("An employee can be assigned only once.", nameof(assignees));
+        if (mode == PickingMode.SingleAssignee && distinct.Count > 1)
+            throw new ArgumentException("Single-assignee mode accepts at most one employee.", nameof(assignees));
+
+        _assignees.Clear();
+        _assignees.AddRange(distinct.Select(x => OrderAssignee.Create(
+            Guid.NewGuid(), Id, x.EmployeeId, x.OrganizationId, x.EmployeeDisplayName,
+            actorId, actorName, now)));
+        PickingMode = mode;
+    }
+
+    private void ValidateAssigneesForPublishing()
+    {
+        if (PickingMode == PickingMode.SingleAssignee && _assignees.Count != 1)
+            throw new InvalidOperationException("Single-assignee order requires exactly one assigned employee.");
+        if (PickingMode == PickingMode.SharedTeam && _assignees.Count == 0)
+            throw new InvalidOperationException("Shared order requires at least one assigned employee.");
     }
 
     private void Touch(Guid actorId, string actorName, DateTimeOffset now)
@@ -123,6 +179,39 @@ public sealed class Order
             throw new ArgumentException($"Value must contain between 1 and {maximumLength} characters.", parameterName);
         return result;
     }
+}
+
+public sealed class OrderAssignee
+{
+    private OrderAssignee() { }
+
+    private OrderAssignee(Guid id, Guid orderId, Guid employeeId, Guid organizationId,
+        string employeeDisplayName, Guid assignedById, string assignedByName, DateTimeOffset assignedAtUtc)
+    {
+        if (employeeId == Guid.Empty || organizationId == Guid.Empty || assignedById == Guid.Empty)
+            throw new ArgumentException("Assignment identifiers are required.");
+        Id = id;
+        OrderId = orderId;
+        EmployeeId = employeeId;
+        OrganizationId = organizationId;
+        EmployeeDisplayName = Order.RequireText(employeeDisplayName, nameof(employeeDisplayName), 120);
+        AssignedById = assignedById;
+        AssignedByName = Order.RequireText(assignedByName, nameof(assignedByName), 120);
+        AssignedAtUtc = assignedAtUtc;
+    }
+
+    public Guid Id { get; private set; }
+    public Guid OrderId { get; private set; }
+    public Guid EmployeeId { get; private set; }
+    public Guid OrganizationId { get; private set; }
+    public string EmployeeDisplayName { get; private set; } = string.Empty;
+    public Guid AssignedById { get; private set; }
+    public string AssignedByName { get; private set; } = string.Empty;
+    public DateTimeOffset AssignedAtUtc { get; private set; }
+
+    internal static OrderAssignee Create(Guid id, Guid orderId, Guid employeeId, Guid organizationId,
+        string employeeDisplayName, Guid assignedById, string assignedByName, DateTimeOffset assignedAtUtc) =>
+        new(id, orderId, employeeId, organizationId, employeeDisplayName, assignedById, assignedByName, assignedAtUtc);
 }
 
 public sealed class OrderItem

@@ -39,6 +39,32 @@ public sealed class OrderTests
     }
 
     [Fact]
+    public void Single_assignee_order_requires_exactly_one_employee_when_published()
+    {
+        var order = Order.Create(Guid.NewGuid(), "ZAM-2", "Customer",
+            new DateOnly(2026, 7, 6), ActorId, "Admin", Now);
+        order.AddItem(7, "Name", null, 1, "szt.", null, ActorId, "Admin", Now);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now));
+    }
+
+    [Fact]
+    public void Shared_order_accepts_multiple_distinct_employees()
+    {
+        var order = Order.Create(Guid.NewGuid(), "ZAM-3", "Customer",
+            new DateOnly(2026, 7, 6), ActorId, "Admin", Now, PickingMode.SharedTeam,
+            [Candidate("22222222-2222-2222-2222-222222222222", "Employee One"),
+             Candidate("44444444-4444-4444-4444-444444444444", "Employee Two")]);
+        order.AddItem(7, "Name", null, 1, "szt.", null, ActorId, "Admin", Now);
+
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+
+        Assert.Equal(OrderStatus.ReadyForPicking, order.Status);
+        Assert.Equal(2, order.Assignees.Count);
+    }
+
+    [Fact]
     public void Published_order_cannot_be_modified()
     {
         var order = Create();
@@ -48,6 +74,16 @@ public sealed class OrderTests
         Assert.Equal(OrderStatus.ReadyForPicking, order.Status);
         Assert.Throws<InvalidOperationException>(() =>
             order.UpdateHeader("Other", new DateOnly(2026, 7, 7), ActorId, "Admin", Now));
+    }
+
+    [Fact]
+    public void Published_order_cannot_be_deleted()
+    {
+        var order = Create();
+        order.AddItem(7, "Name", null, 1, "szt.", null, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+
+        Assert.Throws<InvalidOperationException>(order.EnsureCanDelete);
     }
 
     [Theory]
@@ -61,5 +97,9 @@ public sealed class OrderTests
     }
 
     private static Order Create() => Order.Create(Guid.NewGuid(), "ZAM-1", "Customer",
-        new DateOnly(2026, 7, 6), ActorId, "Admin", Now);
+        new DateOnly(2026, 7, 6), ActorId, "Admin", Now, PickingMode.SingleAssignee,
+        [Candidate("22222222-2222-2222-2222-222222222222", "Employee")]);
+
+    private static OrderAssigneeCandidate Candidate(string employeeId, string name) =>
+        new(Guid.Parse(employeeId), Guid.Parse("33333333-3333-3333-3333-333333333333"), name);
 }

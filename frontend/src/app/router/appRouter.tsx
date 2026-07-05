@@ -19,6 +19,9 @@ import {
   identityManagePermission,
 } from '../../features/administration/permissions'
 import { AppShell } from '../../shared/components/AppShell'
+import { OrdersPage } from '../../features/orders/pages/OrdersPage'
+import { NewOrderPage } from '../../features/orders/pages/NewOrderPage'
+import { OrderDetailsPage } from '../../features/orders/pages/OrderDetailsPage'
 
 export const appRouter = createBrowserRouter([
   {
@@ -47,6 +50,18 @@ export const appRouter = createBrowserRouter([
           {
             path: '/products',
             element: <ProductsPage />,
+          },
+          {
+            path: '/orders',
+            element: <AdministrationGuard permission="orders.manage"><OrdersPage /></AdministrationGuard>,
+          },
+          {
+            path: '/orders/new',
+            element: <AdministrationGuard permission="orders.manage"><NewOrderPage /></AdministrationGuard>,
+          },
+          {
+            path: '/orders/:orderId',
+            element: <AdministrationGuard permission="orders.manage"><OrderDetailsPage /></AdministrationGuard>,
           },
           {
             path: '/administration',

@@ -27,6 +27,7 @@ public sealed record ProductListItemResponse(
     string? Name,
     string? Symbol,
     string? Unit,
+    decimal? UnitWeightKg,
     string? ImageUrl,
     ProductStockDto? Stock);
 
@@ -36,6 +37,7 @@ public sealed record ProductDetailsResponse(
     string? Symbol,
     string? Description,
     string? Unit,
+    decimal? UnitWeightKg,
     string? PrimaryBarcode,
     IReadOnlyList<string> AdditionalBarcodes,
     ProductVatDto? Vat,

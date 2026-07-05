@@ -24,7 +24,7 @@ public sealed class OrderStore(ApplicationDbContext dbContext) : IOrderStore
 
     public Task<Order?> FindAsync(Guid id, bool tracking, CancellationToken ct)
     {
-        IQueryable<Order> query = dbContext.Orders.Include(x => x.Items);
+        IQueryable<Order> query = dbContext.Orders.Include(x => x.Items).Include(x => x.Assignees);
         if (!tracking) query = query.AsNoTracking();
         return query.SingleOrDefaultAsync(x => x.Id == id, ct);
     }
@@ -40,7 +40,27 @@ public sealed class OrderStore(ApplicationDbContext dbContext) : IOrderStore
 
     public async Task<OrderStoreResult> SaveAsync(Order order, long expectedVersion, AuditEntry audit, CancellationToken ct)
     {
+        foreach (var item in order.Items)
+        {
+            if (dbContext.Entry(item).State == EntityState.Detached)
+                dbContext.OrderItems.Add(item);
+        }
+        foreach (var assignee in order.Assignees)
+        {
+            if (dbContext.Entry(assignee).State == EntityState.Detached)
+                dbContext.OrderAssignees.Add(assignee);
+        }
+
         dbContext.Entry(order).Property(x => x.Version).OriginalValue = expectedVersion;
+        dbContext.AuditEntries.Add(audit);
+        try { await dbContext.SaveChangesAsync(ct); return OrderStoreResult.Success; }
+        catch (DbUpdateConcurrencyException) { return OrderStoreResult.Conflict; }
+    }
+
+    public async Task<OrderStoreResult> DeleteAsync(Order order, long expectedVersion, AuditEntry audit, CancellationToken ct)
+    {
+        dbContext.Entry(order).Property(x => x.Version).OriginalValue = expectedVersion;
+        dbContext.Orders.Remove(order);
         dbContext.AuditEntries.Add(audit);
         try { await dbContext.SaveChangesAsync(ct); return OrderStoreResult.Success; }
         catch (DbUpdateConcurrencyException) { return OrderStoreResult.Conflict; }

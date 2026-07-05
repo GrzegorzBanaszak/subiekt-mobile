@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SubiektMobile.Application.Identity;
 using SubiektMobile.Application.Orders;
 using SubiektMobile.Application.Products;
+using SubiektMobile.Domain.Orders;
 
 namespace SubiektMobile.Api.Controllers;
 
@@ -26,7 +27,8 @@ public sealed class OrdersController(ISender sender) : ControllerBase
     [ProducesResponseType(typeof(OrderDto), StatusCodes.Status201Created)]
     public async Task<ActionResult<OrderDto>> Create(CreateOrderRequest request, CancellationToken ct)
     {
-        var order = await sender.Send(new CreateOrderCommand(request.CustomerName, request.DueDate), ct);
+        var order = await sender.Send(new CreateOrderCommand(request.CustomerName, request.DueDate,
+            request.PickingMode, request.EmployeeIds), ct);
         return CreatedAtAction(nameof(Get), new { id = order.Id }, order);
     }
 
@@ -45,9 +47,29 @@ public sealed class OrdersController(ISender sender) : ControllerBase
     [HttpPost("{id:guid}/publish")]
     public Task<OrderDto> Publish(Guid id, VersionRequest request, CancellationToken ct) =>
         sender.Send(new PublishOrderCommand(id, request.Version), ct);
+
+    [HttpGet("available-assignees")]
+    public Task<IReadOnlyList<AvailableOrderAssigneeDto>> ListAvailableAssignees(CancellationToken ct) =>
+        sender.Send(new ListAvailableOrderAssigneesQuery(), ct);
+
+    [HttpPut("{id:guid}/picking-configuration")]
+    public Task<OrderDto> ConfigurePicking(Guid id, ConfigureOrderPickingRequest request, CancellationToken ct) =>
+        sender.Send(new ConfigureOrderPickingCommand(id, request.PickingMode, request.EmployeeIds,
+            request.Version), ct);
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Delete(Guid id, [FromQuery] long version, CancellationToken ct)
+    {
+        await sender.Send(new DeleteOrderCommand(id, version), ct);
+        return NoContent();
+    }
 }
 
-public sealed record CreateOrderRequest(string CustomerName, DateOnly DueDate);
+public sealed record CreateOrderRequest(string CustomerName, DateOnly DueDate,
+    PickingMode PickingMode, IReadOnlyCollection<Guid> EmployeeIds);
 public sealed record UpdateOrderRequest(string CustomerName, DateOnly DueDate, long Version);
 public sealed record AddOrderItemRequest(int ProductId, decimal Quantity, long Version);
 public sealed record VersionRequest(long Version);
+public sealed record ConfigureOrderPickingRequest(PickingMode PickingMode,
+    IReadOnlyCollection<Guid> EmployeeIds, long Version);

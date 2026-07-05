@@ -34,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IProductReadRepository, ProductReadRepository>();
         services.AddScoped<IIdentityAccessStore, IdentityAccessStore>();
         services.AddScoped<IOrderStore, OrderStore>();
+        services.AddScoped<IOrderWorkforceDirectory, OrderWorkforceDirectory>();
         services.AddSingleton<IPasswordService, IdentityPasswordService>();
         services.AddSingleton<ITemporaryPasswordGenerator, TemporaryPasswordGenerator>();
         services.AddSingleton<IIdentityConfiguration, IdentityConfiguration>();

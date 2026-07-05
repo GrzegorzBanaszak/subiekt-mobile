@@ -17,9 +17,29 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(x => x.CreatedByName).HasMaxLength(120).IsRequired();
         builder.Property(x => x.UpdatedByName).HasMaxLength(120).IsRequired();
         builder.Property(x => x.Version).IsConcurrencyToken();
+        builder.Property(x => x.PickingMode).HasConversion<string>().HasMaxLength(32).IsRequired();
         builder.HasMany(x => x.Items).WithOne().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Cascade);
         builder.Navigation(x => x.Items).UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.HasMany(x => x.Assignees).WithOne().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.Navigation(x => x.Assignees).UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.HasIndex(x => new { x.Status, x.UpdatedAtUtc });
+    }
+}
+
+public sealed class OrderAssigneeConfiguration : IEntityTypeConfiguration<OrderAssignee>
+{
+    public void Configure(EntityTypeBuilder<OrderAssignee> builder)
+    {
+        builder.ToTable("order_assignees");
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.EmployeeDisplayName).HasMaxLength(120).IsRequired();
+        builder.Property(x => x.AssignedByName).HasMaxLength(120).IsRequired();
+        builder.HasIndex(x => new { x.OrderId, x.EmployeeId }).IsUnique();
+        builder.HasIndex(x => x.EmployeeId);
+        builder.HasOne<SubiektMobile.Domain.Identity.Employee>().WithMany()
+            .HasForeignKey(x => x.EmployeeId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<SubiektMobile.Domain.Identity.Organization>().WithMany()
+            .HasForeignKey(x => x.OrganizationId).OnDelete(DeleteBehavior.Restrict);
     }
 }
 

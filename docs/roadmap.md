@@ -31,7 +31,7 @@ Zakres minimalny:
 - [x] Paginacja.
 - [x] Szczegóły towaru.
 - [x] Jednostka miary.
-- [ ] Masa jednostkowa lub informacja o jej braku.
+- [x] Masa jednostkowa brutto z Subiekta lub informacja o jej braku.
 
 Warunki techniczne:
 
@@ -72,10 +72,11 @@ Zakres minimalny:
 - [x] Zamawiający.
 - [x] Termin realizacji.
 - [x] Dodawanie i usuwanie pozycji.
-- [ ] Ilość, jednostka i masa jednostkowa pozycji — ilość i jednostka są gotowe; źródło masy wymaga decyzji.
+- [x] Ilość, jednostka i masa jednostkowa pozycji.
 - [x] Migawka nazwy towaru.
 - [x] Zapis wersji roboczej.
 - [x] Walidacja i udostępnienie zamówienia do kompletacji.
+- [x] Wybór trybu kompletacji jednoosobowej albo współdzielonej i przypisanie pracowników przed udostępnieniem.
 
 ## Etap 4 — kompletacja współdzielona
 

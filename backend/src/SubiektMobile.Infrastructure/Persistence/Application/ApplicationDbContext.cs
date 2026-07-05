@@ -19,6 +19,7 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<OrderAssignee> OrderAssignees => Set<OrderAssignee>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

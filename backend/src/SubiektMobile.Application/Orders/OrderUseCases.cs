@@ -7,11 +7,16 @@ namespace SubiektMobile.Application.Orders;
 
 public sealed record ListOrdersQuery(int Page, int PageSize) : IRequest<PagedResult<OrderListItemDto>>;
 public sealed record GetOrderQuery(Guid Id) : IRequest<OrderDto>;
-public sealed record CreateOrderCommand(string CustomerName, DateOnly DueDate) : IRequest<OrderDto>;
+public sealed record ListAvailableOrderAssigneesQuery : IRequest<IReadOnlyList<AvailableOrderAssigneeDto>>;
+public sealed record CreateOrderCommand(string CustomerName, DateOnly DueDate, PickingMode PickingMode,
+    IReadOnlyCollection<Guid> EmployeeIds) : IRequest<OrderDto>;
 public sealed record UpdateOrderCommand(Guid Id, string CustomerName, DateOnly DueDate, long Version) : IRequest<OrderDto>;
 public sealed record AddOrderItemCommand(Guid OrderId, int ProductId, decimal Quantity, long Version) : IRequest<OrderDto>;
 public sealed record RemoveOrderItemCommand(Guid OrderId, Guid ItemId, long Version) : IRequest<OrderDto>;
 public sealed record PublishOrderCommand(Guid OrderId, long Version) : IRequest<OrderDto>;
+public sealed record DeleteOrderCommand(Guid OrderId, long Version) : IRequest;
+public sealed record ConfigureOrderPickingCommand(Guid OrderId, PickingMode PickingMode,
+    IReadOnlyCollection<Guid> EmployeeIds, long Version) : IRequest<OrderDto>;
 
 public sealed class ListOrdersHandler(IOrderStore store, IApplicationAuthorizationService authorization)
     : IRequestHandler<ListOrdersQuery, PagedResult<OrderListItemDto>>
@@ -44,12 +49,27 @@ public sealed class GetOrderHandler(IOrderStore store, IApplicationAuthorization
 
     internal static OrderDto Map(Order order) => new(order.Id, order.Number, order.CustomerName, order.DueDate,
         order.Status, order.CreatedById, order.CreatedByName, order.CreatedAtUtc, order.UpdatedById,
-        order.UpdatedByName, order.UpdatedAtUtc, order.PublishedAtUtc, order.Version,
+        order.UpdatedByName, order.UpdatedAtUtc, order.PublishedAtUtc, order.Version, order.PickingMode,
+        order.Assignees.OrderBy(x => x.EmployeeDisplayName).Select(x => new OrderAssigneeDto(
+            x.EmployeeId, x.OrganizationId, x.EmployeeDisplayName, x.AssignedById,
+            x.AssignedByName, x.AssignedAtUtc)).ToList(),
         order.Items.OrderBy(x => x.ProductName).Select(x => new OrderItemDto(x.Id, x.ProductId,
             x.ProductName, x.ProductSymbol, x.Quantity, x.Unit, x.UnitWeightKg, x.Status)).ToList());
 }
 
-public sealed class CreateOrderHandler(IOrderStore store, IOrderNumberGenerator numbers,
+public sealed class ListAvailableOrderAssigneesHandler(IOrderWorkforceDirectory workforce,
+    IApplicationAuthorizationService authorization)
+    : IRequestHandler<ListAvailableOrderAssigneesQuery, IReadOnlyList<AvailableOrderAssigneeDto>>
+{
+    public Task<IReadOnlyList<AvailableOrderAssigneeDto>> Handle(
+        ListAvailableOrderAssigneesQuery request, CancellationToken ct)
+    {
+        authorization.Require(Permissions.OrdersManage);
+        return workforce.ListAvailableAsync(ct);
+    }
+}
+
+public sealed class CreateOrderHandler(IOrderStore store, IOrderNumberGenerator numbers, IOrderWorkforceDirectory workforce,
     IApplicationAuthorizationService authorization, IAuditEntryFactory audits, TimeProvider time)
     : IRequestHandler<CreateOrderCommand, OrderDto>
 {
@@ -58,15 +78,40 @@ public sealed class CreateOrderHandler(IOrderStore store, IOrderNumberGenerator 
         var actor = authorization.Require(Permissions.OrdersManage);
         var now = time.GetUtcNow();
         var id = Guid.NewGuid();
+        var assignees = await workforce.ResolveActiveAsync(request.EmployeeIds, ct);
+        if (assignees.Count != request.EmployeeIds.Distinct().Count())
+            throw new RequestValidationException("Every assigned employee must be active and belong to an active organization.");
         try
         {
             var order = Order.Create(id, numbers.Generate(id, now), request.CustomerName, request.DueDate,
-                actor.Id, actor.DisplayName, now);
+                actor.Id, actor.DisplayName, now, request.PickingMode, assignees);
             var result = await store.AddAsync(order, audits.Create(actor, "OrderCreated", "Order", id, now), ct);
             if (result != OrderStoreResult.Success) throw new ResourceConflictException("Order could not be created.");
             return GetOrderHandler.Map(order);
         }
         catch (ArgumentException ex) { throw new RequestValidationException(ex.Message); }
+    }
+}
+
+public sealed class ConfigureOrderPickingHandler(IOrderStore store, IOrderWorkforceDirectory workforce,
+    IApplicationAuthorizationService authorization, IAuditEntryFactory audits, TimeProvider time)
+    : IRequestHandler<ConfigureOrderPickingCommand, OrderDto>
+{
+    public async Task<OrderDto> Handle(ConfigureOrderPickingCommand request, CancellationToken ct)
+    {
+        var actor = authorization.Require(Permissions.OrdersManage);
+        var order = await GetOrderHandler.Find(request.OrderId, store, true, ct);
+        UpdateOrderHandler.EnsureVersion(order, request.Version);
+        var assignees = await workforce.ResolveActiveAsync(request.EmployeeIds, ct);
+        if (assignees.Count != request.EmployeeIds.Distinct().Count())
+            throw new RequestValidationException("Every assigned employee must be active and belong to an active organization.");
+        var now = time.GetUtcNow();
+        try { order.ConfigurePicking(request.PickingMode, assignees, actor.Id, actor.DisplayName, now); }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        { throw new RequestValidationException(ex.Message); }
+        await UpdateOrderHandler.Save(store, order, request.Version,
+            audits.Create(actor, "OrderPickingConfigured", "Order", order.Id, now), ct);
+        return GetOrderHandler.Map(order);
     }
 }
 
@@ -152,6 +197,26 @@ public sealed class PublishOrderHandler(IOrderStore store, IApplicationAuthoriza
         await UpdateOrderHandler.Save(store, order, request.Version,
             audits.Create(actor, "OrderPublished", "Order", order.Id, now), ct);
         return GetOrderHandler.Map(order);
+    }
+}
+
+public sealed class DeleteOrderHandler(IOrderStore store, IApplicationAuthorizationService authorization,
+    IAuditEntryFactory audits, TimeProvider time) : IRequestHandler<DeleteOrderCommand>
+{
+    public async Task Handle(DeleteOrderCommand request, CancellationToken ct)
+    {
+        var actor = authorization.Require(Permissions.OrdersManage);
+        var order = await GetOrderHandler.Find(request.OrderId, store, true, ct);
+        UpdateOrderHandler.EnsureVersion(order, request.Version);
+        try { order.EnsureCanDelete(); }
+        catch (InvalidOperationException ex) { throw new RequestValidationException(ex.Message); }
+
+        var result = await store.DeleteAsync(order, request.Version,
+            audits.Create(actor, "OrderDeleted", "Order", order.Id, time.GetUtcNow()), ct);
+        if (result == OrderStoreResult.Conflict)
+            throw new ResourceConflictException("Order was modified by another request.");
+        if (result == OrderStoreResult.NotFound)
+            throw new ResourceNotFoundException("Order was not found.");
     }
 }
 
