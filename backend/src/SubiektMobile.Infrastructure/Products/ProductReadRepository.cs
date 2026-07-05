@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SubiektMobile.Application.Products;
+using SubiektMobile.Application.Orders;
 using SubiektMobile.Infrastructure.Persistence;
 
 namespace SubiektMobile.Infrastructure.Products;
@@ -12,6 +13,13 @@ public sealed class ProductReadRepository : IProductReadRepository
     {
         _dbContext = dbContext;
     }
+
+    public Task<ProductOrderSnapshot?> GetProductOrderSnapshotAsync(int id, CancellationToken cancellationToken) =>
+        _dbContext.Towary.AsNoTracking()
+            .Where(x => x.Id == id && x.Usuniety != true && x.Zablokowany != true &&
+                x.Nazwa != null && x.Nazwa != "" && x.JednMiary != null && x.JednMiary != "")
+            .Select(x => new ProductOrderSnapshot(x.Id, x.Nazwa!, x.Symbol, x.JednMiary!, null))
+            .SingleOrDefaultAsync(cancellationToken);
 
     public async Task<PagedResult<ProductListItemDto>> GetProductsAsync(
         string? search,

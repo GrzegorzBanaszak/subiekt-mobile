@@ -6,7 +6,7 @@ Projekt odczytuje katalog towarów z bazy Subiekta GT. Zamówienia, stan komplet
 
 ## Status projektu
 
-Aktualny status: **katalog towarów i przygotowanie fundamentów procesu zamówień**.
+Aktualny status: **katalog towarów, użytkownicy i tworzenie zamówień**.
 
 Najbliższa kolejność prac:
 
@@ -70,10 +70,10 @@ Ważne: baza Subiekta jest w tym procesie wyłącznie źródłem danych towarowy
 
 ### Etap 3 — zamówienia aplikacji
 
-- [ ] Lista i szczegóły zamówień.
-- [ ] Zamawiający i termin realizacji.
-- [ ] Dodawanie towarów i ilości.
-- [ ] Wersja robocza i udostępnienie do kompletacji.
+- [x] Lista i szczegóły zamówień.
+- [x] Zamawiający i termin realizacji.
+- [x] Dodawanie towarów i ilości.
+- [x] Wersja robocza i udostępnienie do kompletacji.
 
 ### Etap 4 — kompletacja współdzielona
 
@@ -322,6 +322,25 @@ magazynu głównego i cenę brutto pierwszego poziomu cenowego. Szczegóły zwra
 stany wszystkich magazynów, stawkę VAT oraz dziesięć poziomów cen sprzedaży
 netto i brutto. Zdjęcia są pobierane osobnym endpointem, a kartoteki usunięte
 lub zablokowane nie są publikowane.
+
+## API zamówień
+
+Endpointy Etapu 3 wymagają uprawnienia `orders.manage`:
+
+```text
+GET    /api/orders?page=1&pageSize=20
+GET    /api/orders/{id}
+POST   /api/orders
+PUT    /api/orders/{id}
+POST   /api/orders/{id}/items
+DELETE /api/orders/{id}/items/{itemId}?version={version}
+POST   /api/orders/{id}/publish
+```
+
+Każda mutacja wersji roboczej przyjmuje bieżące pole `version`. Nieaktualna wersja
+zwraca `409 Conflict`, co chroni przed nadpisaniem równoległej zmiany. Nazwa, symbol,
+jednostka i masa towaru są przechowywane jako migawka pozycji. Masa pozostaje `null`,
+dopóki nie zostanie zatwierdzone jej źródło i zasada korekty.
 
 ## API użytkowników i organizacji
 

@@ -68,14 +68,14 @@ Cel: uprawniony użytkownik tworzy zamówienie z towarów odczytanych z Subiekta
 
 Zakres minimalny:
 
-- [ ] Lista i szczegóły zamówień.
-- [ ] Zamawiający.
-- [ ] Termin realizacji.
-- [ ] Dodawanie i usuwanie pozycji.
-- [ ] Ilość, jednostka i masa jednostkowa pozycji.
-- [ ] Migawka nazwy towaru.
-- [ ] Zapis wersji roboczej.
-- [ ] Walidacja i udostępnienie zamówienia do kompletacji.
+- [x] Lista i szczegóły zamówień.
+- [x] Zamawiający.
+- [x] Termin realizacji.
+- [x] Dodawanie i usuwanie pozycji.
+- [ ] Ilość, jednostka i masa jednostkowa pozycji — ilość i jednostka są gotowe; źródło masy wymaga decyzji.
+- [x] Migawka nazwy towaru.
+- [x] Zapis wersji roboczej.
+- [x] Walidacja i udostępnienie zamówienia do kompletacji.
 
 ## Etap 4 — kompletacja współdzielona
 

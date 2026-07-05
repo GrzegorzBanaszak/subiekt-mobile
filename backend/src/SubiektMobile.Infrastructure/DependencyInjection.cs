@@ -7,6 +7,8 @@ using SubiektMobile.Infrastructure.Identity;
 using SubiektMobile.Infrastructure.Persistence;
 using SubiektMobile.Infrastructure.Persistence.Application;
 using SubiektMobile.Infrastructure.Products;
+using SubiektMobile.Application.Orders;
+using SubiektMobile.Infrastructure.Orders;
 
 namespace SubiektMobile.Infrastructure;
 
@@ -31,6 +33,7 @@ public static class DependencyInjection
 
         services.AddScoped<IProductReadRepository, ProductReadRepository>();
         services.AddScoped<IIdentityAccessStore, IdentityAccessStore>();
+        services.AddScoped<IOrderStore, OrderStore>();
         services.AddSingleton<IPasswordService, IdentityPasswordService>();
         services.AddSingleton<ITemporaryPasswordGenerator, TemporaryPasswordGenerator>();
         services.AddSingleton<IIdentityConfiguration, IdentityConfiguration>();
