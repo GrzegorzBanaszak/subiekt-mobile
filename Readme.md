@@ -192,6 +192,45 @@ dotnet user-secrets set "Identity:BootstrapToken" "LOSOWY_SEKRET_MINIMUM_32_ZNAK
 Nie zapisuj prawdziwego connection stringa w repozytorium.
 Token bootstrapu również jest sekretem i nie powinien trafiać do `appsettings.json` ani repozytorium.
 
+### Automatyczne utworzenie pierwszego administratora
+
+Backend może opcjonalnie utworzyć konto bootstrapowe podczas startu. Mechanizm jest
+przeznaczony do wdrożeń automatyzowanych, na przykład przez Docker lub Terraform.
+Wymaga jednoczesnego ustawienia trzech wartości konfiguracyjnych:
+
+```text
+Identity:BootstrapAdministrator:Username
+Identity:BootstrapAdministrator:DisplayName
+Identity:BootstrapAdministrator:Password
+```
+
+Odpowiadające im zmienne środowiskowe platformy .NET:
+
+```text
+Identity__BootstrapAdministrator__Username
+Identity__BootstrapAdministrator__DisplayName
+Identity__BootstrapAdministrator__Password
+```
+
+Przykład lokalny z `user-secrets`:
+
+```powershell
+dotnet user-secrets set "Identity:BootstrapAdministrator:Username" "admin" --project backend/src/SubiektMobile.Api
+dotnet user-secrets set "Identity:BootstrapAdministrator:DisplayName" "Administrator" --project backend/src/SubiektMobile.Api
+dotnet user-secrets set "Identity:BootstrapAdministrator:Password" "SILNE_HASLO_MINIMUM_12_ZNAKOW" --project backend/src/SubiektMobile.Api
+```
+
+Jeżeli konto bootstrapowe już istnieje, aplikacja nie zmienia jego loginu, nazwy ani
+hasła. Przy równoczesnym starcie wielu instancji dokładnie jedna tworzy konto, a pozostałe
+kontynuują uruchamianie po wykryciu istniejącego administratora. Podanie tylko części
+konfiguracji zatrzymuje start aplikacji z błędem. Schemat bazy aplikacji musi być
+zmigrowany przed uruchomieniem backendu.
+
+Hasła nie należy umieszczać w obrazie kontenera, pliku Terraform ani repozytorium.
+W środowisku docelowym powinno zostać dostarczone jako sekret wdrożeniowy lub przez
+menedżer sekretów. Pozostawienie zmiennych po pierwszym uruchomieniu jest bezpieczne
+funkcjonalnie, ale ich usunięcie ogranicza czas ekspozycji danych uwierzytelniających.
+
 Domyślna ważność sesji administratora wynosi 8 godzin, a pracownika 12 godzin. Można ją
 zmienić ustawieniami `Identity:AdministratorSessionHours` i `Identity:EmployeeSessionHours`.
 Przy wdrożeniu kontenerowym lub wielu instancjach należy ustawić `DataProtection:KeyPath`
@@ -250,6 +289,10 @@ npm run dev
 
 Frontend jest dostępny pod `http://127.0.0.1:5173`. W trybie developerskim
 żądania `/api` są przekazywane do backendu pod `http://localhost:5118`.
+
+Trasa `/login` obsługuje logowanie administratora przez sesję zapisywaną w cookie
+`HttpOnly`. Interfejs jest dostępny po polsku i hiszpańsku, a wybór języka jest
+zapamiętywany lokalnie w przeglądarce.
 
 Typy klienta API można odświeżyć przy uruchomionym backendzie:
 

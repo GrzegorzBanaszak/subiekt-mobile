@@ -20,6 +20,11 @@ public sealed class IdentityAccessStore : IIdentityAccessStore
         _dbContext = dbContext;
     }
 
+    public Task<bool> BootstrapAdministratorExistsAsync(CancellationToken cancellationToken) =>
+        _dbContext.Administrators
+            .AsNoTracking()
+            .AnyAsync(x => x.IsBootstrapAdministrator, cancellationToken);
+
     public Task<Administrator?> FindAdministratorByUsernameAsync(
         string normalizedUsername,
         CancellationToken cancellationToken) =>

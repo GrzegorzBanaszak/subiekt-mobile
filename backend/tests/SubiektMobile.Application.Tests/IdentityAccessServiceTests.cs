@@ -56,6 +56,51 @@ public sealed class IdentityAccessServiceTests
             service.ListAdministratorsAsync(CancellationToken.None));
     }
 
+    [Fact]
+    public async Task Startup_provisioning_creates_an_audited_bootstrap_administrator()
+    {
+        var store = new BootstrapProvisioningStore(StoreMutationResult.Success, false);
+        var service = CreateService(store, actor: null);
+
+        var result = await service.EnsureBootstrapAdministratorAsync(
+            new BootstrapAdministratorRequest("admin", "Administrator", "secure-password"),
+            CancellationToken.None);
+
+        Assert.Equal(BootstrapAdministratorProvisioningResult.Created, result);
+        Assert.NotNull(store.CreatedAdministrator);
+        Assert.True(store.CreatedAdministrator.IsBootstrapAdministrator);
+        Assert.Equal("hash", store.CreatedAdministrator.PasswordHash);
+        Assert.Equal("AdministratorBootstrapped", store.AuditEntry?.Action);
+        Assert.Equal(Now, store.AuditEntry?.OccurredAtUtc);
+    }
+
+    [Fact]
+    public async Task Startup_provisioning_does_not_modify_an_existing_bootstrap_administrator()
+    {
+        var store = new BootstrapProvisioningStore(StoreMutationResult.Success, true);
+        var service = CreateService(store, actor: null);
+
+        var result = await service.EnsureBootstrapAdministratorAsync(
+            new BootstrapAdministratorRequest("ignored", "Ignored", "short"),
+            CancellationToken.None);
+
+        Assert.Equal(BootstrapAdministratorProvisioningResult.AlreadyExists, result);
+        Assert.Null(store.CreatedAdministrator);
+    }
+
+    [Fact]
+    public async Task Concurrent_startup_accepts_a_bootstrap_administrator_created_by_another_instance()
+    {
+        var store = new BootstrapProvisioningStore(StoreMutationResult.Conflict, false, true);
+        var service = CreateService(store, actor: null);
+
+        var result = await service.EnsureBootstrapAdministratorAsync(
+            new BootstrapAdministratorRequest("admin", "Administrator", "secure-password"),
+            CancellationToken.None);
+
+        Assert.Equal(BootstrapAdministratorProvisioningResult.AlreadyExists, result);
+    }
+
     private static IdentityAccessService CreateService(IIdentityAccessStore store, CurrentActor? actor) =>
         new(
             store,
@@ -104,10 +149,41 @@ public sealed class IdentityAccessServiceTests
         }
     }
 
+    private sealed class BootstrapProvisioningStore : IdentityAccessStoreStub
+    {
+        private readonly Queue<bool> _existenceResults;
+        private readonly StoreMutationResult _createResult;
+
+        public BootstrapProvisioningStore(
+            StoreMutationResult createResult,
+            params bool[] existenceResults)
+        {
+            _createResult = createResult;
+            _existenceResults = new Queue<bool>(existenceResults);
+        }
+
+        public Administrator? CreatedAdministrator { get; private set; }
+        public AuditEntry? AuditEntry { get; private set; }
+
+        public override Task<bool> BootstrapAdministratorExistsAsync(CancellationToken cancellationToken) =>
+            Task.FromResult(_existenceResults.Dequeue());
+
+        public override Task<StoreMutationResult> CreateAdministratorAsync(
+            Administrator administrator,
+            AuditEntry auditEntry,
+            CancellationToken cancellationToken)
+        {
+            CreatedAdministrator = administrator;
+            AuditEntry = auditEntry;
+            return Task.FromResult(_createResult);
+        }
+    }
+
     private class IdentityAccessStoreStub : IIdentityAccessStore
     {
         protected static Task<T> NotImplemented<T>() => Task.FromException<T>(new NotImplementedException());
 
+        public virtual Task<bool> BootstrapAdministratorExistsAsync(CancellationToken cancellationToken) => NotImplemented<bool>();
         public virtual Task<Administrator?> FindAdministratorByUsernameAsync(string normalizedUsername, CancellationToken cancellationToken) => NotImplemented<Administrator?>();
         public virtual Task<Administrator?> FindAdministratorAsync(Guid id, CancellationToken cancellationToken) => NotImplemented<Administrator?>();
         public virtual Task<IReadOnlyList<Administrator>> ListAdministratorsAsync(CancellationToken cancellationToken) => NotImplemented<IReadOnlyList<Administrator>>();

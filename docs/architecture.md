@@ -205,6 +205,12 @@ Token sesji jest losową wartością zapisywaną wyłącznie w cookie `HttpOnly`
 przechowuje tylko jego skrót, czas wygaśnięcia i informację o unieważnieniu. Dezaktywacja
 administratora, pracownika lub organizacji natychmiast odcina powiązane sesje.
 
+Pierwszy administrator może być utworzony ręcznie przez zabezpieczony endpoint bootstrapu
+albo idempotentnie podczas startu z sekretów wdrożeniowych. Automatyczny bootstrap nie
+aktualizuje istniejącego konta i opiera bezpieczeństwo współbieżnego startu instancji na
+unikalnym ograniczeniu w PostgreSQL. Migracje bazy są wykonywane przed startem aplikacji,
+a nie niejawnie przez mechanizm bootstrapu.
+
 ## Granice bezpieczeństwa
 
 - Nie logować connection stringów ani danych uwierzytelniających.

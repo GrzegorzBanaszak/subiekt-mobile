@@ -27,6 +27,37 @@ public sealed class IdentityAccessService : IIdentityAccessService
         _timeProvider = timeProvider;
     }
 
+    public async Task<BootstrapAdministratorProvisioningResult> EnsureBootstrapAdministratorAsync(
+        BootstrapAdministratorRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (await _store.BootstrapAdministratorExistsAsync(cancellationToken))
+        {
+            return BootstrapAdministratorProvisioningResult.AlreadyExists;
+        }
+
+        var now = UtcNow();
+        var administrator = CreateBootstrapAdministrator(request, now);
+        var result = await _store.CreateAdministratorAsync(
+            administrator,
+            SystemAudit("AdministratorBootstrapped", "Administrator", administrator.Id, now),
+            cancellationToken);
+
+        if (result == StoreMutationResult.Success)
+        {
+            return BootstrapAdministratorProvisioningResult.Created;
+        }
+
+        if (result == StoreMutationResult.Conflict
+            && await _store.BootstrapAdministratorExistsAsync(cancellationToken))
+        {
+            return BootstrapAdministratorProvisioningResult.AlreadyExists;
+        }
+
+        EnsureMutation(result, "Administrator");
+        throw new InvalidOperationException("Unreachable provisioning result.");
+    }
+
     public async Task<SessionIssued> BootstrapAdministratorAsync(
         BootstrapAdministratorRequest request,
         string setupToken,
@@ -38,23 +69,8 @@ public sealed class IdentityAccessService : IIdentityAccessService
             throw new AccessDeniedException("Invalid setup token.");
         }
 
-        ValidatePassword(request.Password);
         var now = UtcNow();
-        Administrator administrator;
-        try
-        {
-            administrator = Administrator.Create(
-                request.Username,
-                request.DisplayName,
-                "pending",
-                isBootstrapAdministrator: true,
-                now);
-            administrator.SetPasswordHash(_passwordService.Hash(administrator, request.Password), now);
-        }
-        catch (ArgumentException exception)
-        {
-            throw Validation(exception);
-        }
+        var administrator = CreateBootstrapAdministrator(request, now);
 
         var audit = SystemAudit("AdministratorBootstrapped", "Administrator", administrator.Id, now);
         var result = await _store.CreateAdministratorAsync(administrator, audit, cancellationToken);
@@ -466,6 +482,30 @@ public sealed class IdentityAccessService : IIdentityAccessService
         try
         {
             IdentityRules.ValidatePassword(password);
+        }
+        catch (ArgumentException exception)
+        {
+            throw Validation(exception);
+        }
+    }
+
+    private Administrator CreateBootstrapAdministrator(
+        BootstrapAdministratorRequest request,
+        DateTimeOffset? timestamp = null)
+    {
+        ValidatePassword(request.Password);
+        var now = timestamp ?? UtcNow();
+
+        try
+        {
+            var administrator = Administrator.Create(
+                request.Username,
+                request.DisplayName,
+                "pending",
+                isBootstrapAdministrator: true,
+                now);
+            administrator.SetPasswordHash(_passwordService.Hash(administrator, request.Password), now);
+            return administrator;
         }
         catch (ArgumentException exception)
         {

@@ -128,8 +128,15 @@ public enum StoreMutationResult
     LastActiveAdministrator
 }
 
+public enum BootstrapAdministratorProvisioningResult
+{
+    Created,
+    AlreadyExists
+}
+
 public interface IIdentityAccessStore
 {
+    Task<bool> BootstrapAdministratorExistsAsync(CancellationToken cancellationToken);
     Task<Administrator?> FindAdministratorByUsernameAsync(string normalizedUsername, CancellationToken cancellationToken);
     Task<Administrator?> FindAdministratorAsync(Guid id, CancellationToken cancellationToken);
     Task<IReadOnlyList<Administrator>> ListAdministratorsAsync(CancellationToken cancellationToken);
@@ -206,6 +213,9 @@ public interface IIdentityAccessStore
 
 public interface IIdentityAccessService
 {
+    Task<BootstrapAdministratorProvisioningResult> EnsureBootstrapAdministratorAsync(
+        BootstrapAdministratorRequest request,
+        CancellationToken cancellationToken);
     Task<SessionIssued> BootstrapAdministratorAsync(
         BootstrapAdministratorRequest request,
         string setupToken,

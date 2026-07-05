@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.RateLimiting;
 using SubiektMobile.Api.Middleware;
 using SubiektMobile.Api.Security;
+using SubiektMobile.Api.Startup;
 using SubiektMobile.Application;
 using SubiektMobile.Application.Identity;
 using SubiektMobile.Infrastructure;
@@ -23,6 +24,7 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddHostedService<BootstrapAdministratorHostedService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AntiforgeryValidationFilter>();
