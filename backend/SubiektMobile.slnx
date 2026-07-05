@@ -5,4 +5,9 @@
     <Project Path="src/SubiektMobile.Domain/SubiektMobile.Domain.csproj" />
     <Project Path="src/SubiektMobile.Infrastructure/SubiektMobile.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SubiektMobile.Application.Tests/SubiektMobile.Application.Tests.csproj" />
+    <Project Path="tests/SubiektMobile.Domain.Tests/SubiektMobile.Domain.Tests.csproj" />
+    <Project Path="tests/SubiektMobile.Infrastructure.IntegrationTests/SubiektMobile.Infrastructure.IntegrationTests.csproj" />
+  </Folder>
 </Solution>

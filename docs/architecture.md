@@ -184,10 +184,26 @@ Masa jednostkowa i masa pustej palety powinny używać typu dziesiętnego oraz j
 
 ### Identity and Access
 
-- identyfikacja użytkownika,
-- uprawnienie do tworzenia zamówień,
-- uprawnienia do kompletacji i paletyzacji,
-- administracja rolami w zakresie wynikającym z wybranego systemu tożsamości.
+- administratorzy z indywidualnym loginem i hasłem,
+- organizacje grupujące pracowników magazynu,
+- wybór pracownika bez hasła na współdzielonym stanowisku,
+- odwoływalne sesje przechowywane w PostgreSQL,
+- stałe polityki uprawnień dla administratora i pracownika,
+- audyt wykonawcy i czasu każdej mutacji.
+
+Organizacja nie jest wykonawcą operacji. Sesja magazynowa zawsze wskazuje konkretnego
+pracownika należącego do aktywnej organizacji. Publiczny wybór pracownika upraszcza pracę
+na wspólnym komputerze, ale nie stanowi silnego uwierzytelnienia i pozwala osobie mającej
+dostęp do aplikacji wybrać innego aktywnego pracownika.
+
+Administrator ma uprawnienia do zarządzania tożsamością, katalogiem, zamówieniami,
+kompletacją i paletami. Pracownik ma odczyt katalogu i udostępnionych zamówień oraz
+uprawnienia do kompletacji i paletyzacji. Autoryzacja jest wykonywana w API oraz ponownie
+w przypadkach użycia Application.
+
+Token sesji jest losową wartością zapisywaną wyłącznie w cookie `HttpOnly`. PostgreSQL
+przechowuje tylko jego skrót, czas wygaśnięcia i informację o unieważnieniu. Dezaktywacja
+administratora, pracownika lub organizacji natychmiast odcina powiązane sesje.
 
 ## Granice bezpieczeństwa
 
@@ -202,7 +218,6 @@ Masa jednostkowa i masa pustej palety powinny używać typu dziesiętnego oraz j
 ## Decyzje architektoniczne do podjęcia
 
 - sposób wdrażania i wykonywania kopii zapasowych PostgreSQL,
-- mechanizm uwierzytelniania i dokładna macierz uprawnień,
 - źródło zamawiających,
 - źródło i sposób korekty brakującej masy jednostkowej,
 - kompletacja częściowa i dzielenie ilości pozycji,

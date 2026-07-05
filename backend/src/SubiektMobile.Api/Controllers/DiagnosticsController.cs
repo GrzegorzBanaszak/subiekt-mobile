@@ -1,26 +1,39 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SubiektMobile.Infrastructure.Persistence;
+using SubiektMobile.Application.Identity;
 
 namespace SubiektMobile.Api.Controllers;
 
 [ApiController]
+[Authorize(Policy = Permissions.IdentityManage)]
 [Route("api/[controller]")]
 public class DiagnosticsController : ControllerBase
 {
     private readonly SubiektDbContext _dbContext;
     private readonly IConfiguration _configuration;
+    private readonly IWebHostEnvironment _environment;
 
-    public DiagnosticsController(SubiektDbContext dbContext, IConfiguration configuration)
+    public DiagnosticsController(
+        SubiektDbContext dbContext,
+        IConfiguration configuration,
+        IWebHostEnvironment environment)
     {
         _dbContext = dbContext;
         _configuration = configuration;
+        _environment = environment;
     }
 
     [HttpGet("db-debug")]
     public async Task<IActionResult> CheckDatabaseDebug(CancellationToken cancellationToken)
     {
+        if (!_environment.IsDevelopment())
+        {
+            return NotFound();
+        }
+
         var connectionString = _configuration.GetConnectionString("SubiektGt");
 
         try

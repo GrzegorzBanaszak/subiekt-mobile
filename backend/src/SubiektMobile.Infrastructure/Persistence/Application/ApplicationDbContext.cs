@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using SubiektMobile.Domain.Identity;
+using SubiektMobile.Infrastructure.Persistence.Application.Entities;
 
 namespace SubiektMobile.Infrastructure.Persistence.Application;
 
@@ -8,6 +10,12 @@ public sealed class ApplicationDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<Administrator> Administrators => Set<Administrator>();
+    public DbSet<Organization> Organizations => Set<Organization>();
+    public DbSet<Employee> Employees => Set<Employee>();
+    public DbSet<AuthenticationSession> AuthenticationSessions => Set<AuthenticationSession>();
+    public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -63,10 +63,10 @@ Ważne: baza Subiekta jest w tym procesie wyłącznie źródłem danych towarowy
 
 ### Etap 2 — użytkownicy i uprawnienia
 
-- [ ] Uwierzytelnianie użytkownika.
-- [ ] Uprawnienie do tworzenia zamówień.
-- [ ] Uprawnienie do kompletacji i paletyzacji.
-- [ ] Audyt użytkownika i czasu operacji.
+- [x] Logowanie administratora i wybór pracownika organizacji.
+- [x] Uprawnienie do tworzenia zamówień.
+- [x] Uprawnienie do kompletacji i paletyzacji.
+- [x] Audyt użytkownika i czasu operacji.
 
 ### Etap 3 — zamówienia aplikacji
 
@@ -186,9 +186,39 @@ Przykład ustawienia lokalnych sekretów:
 ```powershell
 dotnet user-secrets set "ConnectionStrings:SubiektGt" "Server=NAZWA_SERWERA;Database=NAZWA_BAZY;..." --project backend/src/SubiektMobile.Api
 dotnet user-secrets set "ConnectionStrings:ApplicationDb" "Host=localhost;Database=subiekt_mobile;Username=NAZWA_UZYTKOWNIKA;Password=HASLO" --project backend/src/SubiektMobile.Api
+dotnet user-secrets set "Identity:BootstrapToken" "LOSOWY_SEKRET_MINIMUM_32_ZNAKI" --project backend/src/SubiektMobile.Api
 ```
 
 Nie zapisuj prawdziwego connection stringa w repozytorium.
+Token bootstrapu również jest sekretem i nie powinien trafiać do `appsettings.json` ani repozytorium.
+
+Domyślna ważność sesji administratora wynosi 8 godzin, a pracownika 12 godzin. Można ją
+zmienić ustawieniami `Identity:AdministratorSessionHours` i `Identity:EmployeeSessionHours`.
+Przy wdrożeniu kontenerowym lub wielu instancjach należy ustawić `DataProtection:KeyPath`
+na trwały, współdzielony katalog kluczy używanych do ochrony tokenów CSRF.
+
+### Lokalny PostgreSQL w Dockerze
+
+Skopiuj przykładową konfigurację i ustaw lokalne hasło w pliku `.env`:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Następnie uruchom bazę aplikacji:
+
+```powershell
+docker compose up -d application-db
+```
+
+Domyślny connection string odpowiadający konfiguracji z `.env.example`:
+
+```text
+Host=localhost;Port=5432;Database=subiekt_mobile;Username=subiekt_mobile;Password=USTAWIONE_HASLO
+```
+
+Stan kontenera można sprawdzić poleceniem `docker compose ps`. Dane są zachowywane
+w wolumenie `application-db-data` po zatrzymaniu kontenera.
 
 ## Uruchomienie backendu
 
@@ -237,12 +267,45 @@ GET /api/products/{id}
 GET /api/products/{id}/image
 ```
 
+Endpointy katalogu wymagają aktywnej sesji administratora albo pracownika.
+
 Lista jest stronicowana i może być przeszukiwana po nazwie, symbolu, kodzie
 towaru oraz podstawowych i dodatkowych kodach kreskowych. Pokazuje stan
 magazynu głównego i cenę brutto pierwszego poziomu cenowego. Szczegóły zwracają
 stany wszystkich magazynów, stawkę VAT oraz dziesięć poziomów cen sprzedaży
 netto i brutto. Zdjęcia są pobierane osobnym endpointem, a kartoteki usunięte
 lub zablokowane nie są publikowane.
+
+## API użytkowników i organizacji
+
+Przed każdym żądaniem `POST` lub `PUT` klient pobiera token przez
+`GET /api/auth/csrf-token` i przesyła go w nagłówku `X-CSRF-TOKEN`. Przeglądarka musi
+również wysyłać cookies.
+
+Publiczny proces wejścia:
+
+```text
+POST /api/auth/bootstrap-administrator       # jednorazowo, z X-Setup-Token
+POST /api/auth/administrator/sign-in
+GET  /api/auth/organizations
+GET  /api/auth/organizations/{id}/employees
+POST /api/auth/employee/select
+GET  /api/auth/me
+POST /api/auth/sign-out
+```
+
+Endpointy administracyjne znajdują się pod `/api/admin` i obejmują zarządzanie
+administratorami, organizacjami oraz pracownikami. Zasoby są dezaktywowane zamiast
+fizycznie usuwane. Publiczny wybór pracownika bez hasła jest celowym uproszczeniem MVP,
+nie zabezpiecza jednak przed wybraniem cudzej tożsamości przez osobę mającą dostęp do aplikacji.
+
+Pierwszą migrację stosuje polecenie:
+
+```powershell
+dotnet ef database update --context ApplicationDbContext `
+  --project backend/src/SubiektMobile.Infrastructure `
+  --startup-project backend/src/SubiektMobile.Api
+```
 
 ## Testy i sprawdzenie projektu
 
@@ -257,6 +320,10 @@ Po dodaniu testów:
 ```powershell
 dotnet test backend/SubiektMobile.slnx
 ```
+
+Testy integracyjne PostgreSQL uruchamiają się po ustawieniu `SUBIEKT_MOBILE_TEST_DB`.
+Ze względów bezpieczeństwa connection string musi wskazywać dedykowaną bazę, której nazwa
+kończy się `_tests`; testy usuwają i odtwarzają tę bazę.
 
 ## Bezpieczeństwo
 

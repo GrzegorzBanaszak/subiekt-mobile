@@ -1,11 +1,14 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SubiektMobile.Api.Models;
+using SubiektMobile.Application.Identity;
 using SubiektMobile.Application.Products;
 
 namespace SubiektMobile.Api.Controllers;
 
 [ApiController]
+[Authorize(Policy = Permissions.CatalogRead)]
 [Route("api/products")]
 public sealed class ProductsController : ControllerBase
 {
