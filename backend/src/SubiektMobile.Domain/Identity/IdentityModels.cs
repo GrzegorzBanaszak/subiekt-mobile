@@ -21,6 +21,7 @@ public sealed class Administrator
         string displayName,
         string passwordHash,
         bool isBootstrapAdministrator,
+        bool requiresPasswordChange,
         DateTimeOffset createdAtUtc)
     {
         Id = id;
@@ -28,6 +29,7 @@ public sealed class Administrator
         SetDisplayName(displayName);
         SetPasswordHash(passwordHash);
         IsBootstrapAdministrator = isBootstrapAdministrator;
+        RequiresPasswordChange = requiresPasswordChange;
         IsActive = true;
         CreatedAtUtc = createdAtUtc;
         UpdatedAtUtc = createdAtUtc;
@@ -40,6 +42,7 @@ public sealed class Administrator
     public string PasswordHash { get; private set; } = string.Empty;
     public bool IsActive { get; private set; }
     public bool IsBootstrapAdministrator { get; private set; }
+    public bool RequiresPasswordChange { get; private set; }
     public DateTimeOffset CreatedAtUtc { get; private set; }
     public DateTimeOffset UpdatedAtUtc { get; private set; }
 
@@ -48,8 +51,9 @@ public sealed class Administrator
         string displayName,
         string passwordHash,
         bool isBootstrapAdministrator,
-        DateTimeOffset createdAtUtc) =>
-        new(Guid.NewGuid(), username, displayName, passwordHash, isBootstrapAdministrator, createdAtUtc);
+        DateTimeOffset createdAtUtc,
+        bool requiresPasswordChange = false) =>
+        new(Guid.NewGuid(), username, displayName, passwordHash, isBootstrapAdministrator, requiresPasswordChange, createdAtUtc);
 
     public void Update(string username, string displayName, DateTimeOffset now)
     {
@@ -61,6 +65,19 @@ public sealed class Administrator
     public void SetPasswordHash(string passwordHash, DateTimeOffset now)
     {
         SetPasswordHash(passwordHash);
+        UpdatedAtUtc = now;
+    }
+
+    public void RequirePasswordChange(DateTimeOffset now)
+    {
+        RequiresPasswordChange = true;
+        UpdatedAtUtc = now;
+    }
+
+    public void ChangePassword(string passwordHash, DateTimeOffset now)
+    {
+        SetPasswordHash(passwordHash);
+        RequiresPasswordChange = false;
         UpdatedAtUtc = now;
     }
 

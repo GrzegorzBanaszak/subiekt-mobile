@@ -7,7 +7,7 @@ const apiMocks = vi.hoisted(() => ({
 
 vi.mock('../../../api/client', () => ({ apiClient: apiMocks }))
 
-import { signInAdministrator, signOut } from './authApi'
+import { changeOwnPassword, signInAdministrator, signOut } from './authApi'
 
 describe('authApi', () => {
   beforeEach(() => {
@@ -23,6 +23,7 @@ describe('authApi', () => {
       displayName: 'Administrator',
       permissions: ['identity.manage'],
       sessionId: '37e6300c-7011-4539-a062-4bb3a8650970',
+      requiresPasswordChange: false,
     }
 
     apiMocks.GET.mockResolvedValue({
@@ -65,5 +66,31 @@ describe('authApi', () => {
     expect(apiMocks.POST).toHaveBeenCalledWith('/api/auth/sign-out', {
       headers: { 'X-CSRF-TOKEN': 'csrf-token' },
     })
+  })
+
+  it('changes the current administrator password with CSRF protection', async () => {
+    apiMocks.GET.mockResolvedValue({
+      data: { token: 'csrf-token', headerName: 'X-CSRF-TOKEN' },
+      response: new Response(null, { status: 200 }),
+    })
+    apiMocks.POST.mockResolvedValue({
+      response: new Response(null, { status: 204 }),
+    })
+
+    await expect(changeOwnPassword({
+      currentPassword: 'temporary-password',
+      newPassword: 'new-secure-password',
+    })).resolves.toBeUndefined()
+
+    expect(apiMocks.POST).toHaveBeenCalledWith(
+      '/api/auth/administrator/change-password',
+      {
+        body: {
+          currentPassword: 'temporary-password',
+          newPassword: 'new-secure-password',
+        },
+        headers: { 'X-CSRF-TOKEN': 'csrf-token' },
+      },
+    )
   })
 })

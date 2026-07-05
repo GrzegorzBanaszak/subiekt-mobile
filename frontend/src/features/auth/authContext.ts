@@ -1,10 +1,12 @@
 import { createContext, useContext } from 'react'
-import type { CurrentActor, SignInCredentials } from './api/authApi'
+import type { ChangePasswordRequest, CurrentActor, SignInCredentials } from './api/authApi'
 
 export interface AuthContextValue {
   actor: CurrentActor | null
+  passwordForRequiredChange?: string | null
   isLoading: boolean
   signIn: (credentials: SignInCredentials) => Promise<void>
+  changePassword: (request: ChangePasswordRequest) => Promise<void>
   switchEmployee: (organizationId: string, employeeId: string) => Promise<void>
   signOut: () => Promise<void>
   clearSession: () => void

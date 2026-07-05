@@ -23,7 +23,7 @@ public sealed class AdministrationController : ControllerBase
 
     [HttpPost("administrators")]
     [Authorize(Policy = Permissions.AdministratorsManage)]
-    public async Task<ActionResult<AdministratorDto>> CreateAdministrator(
+    public async Task<ActionResult<CreatedAdministratorDto>> CreateAdministrator(
         CreateAdministratorRequest request,
         CancellationToken cancellationToken)
     {

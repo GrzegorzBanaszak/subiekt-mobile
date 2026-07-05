@@ -203,6 +203,12 @@ i palet. Pracownik ma odczyt katalogu i udostępnionych zamówień oraz
 uprawnienia do kompletacji i paletyzacji. Autoryzacja jest wykonywana w API oraz ponownie
 w przypadkach użycia Application.
 
+Konto administratora utworzone przez root otrzymuje kryptograficznie wygenerowane hasło
+tymczasowe, zwracane tylko w odpowiedzi na utworzenie konta. Konto, któremu root zresetował
+hasło, również otrzymuje hasło tymczasowe. Po zalogowaniu taka sesja nie otrzymuje uprawnień aplikacyjnych do czasu
+zmiany hasła przez właściciela konta. Zmiana wymaga podania bieżącego hasła, jest audytowana
+i unieważnia pozostałe sesje administratora. Konto bootstrapowe root nie ma tego wymagania.
+
 Token sesji jest losową wartością zapisywaną wyłącznie w cookie `HttpOnly`. PostgreSQL
 przechowuje tylko jego skrót, czas wygaśnięcia i informację o unieważnieniu. Dezaktywacja
 administratora, pracownika lub organizacji natychmiast odcina powiązane sesje.

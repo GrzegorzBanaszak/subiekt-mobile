@@ -18,6 +18,7 @@ describe('SignOutButton', () => {
           actor: null,
           isLoading: false,
           signIn: vi.fn(),
+          changePassword: vi.fn(),
           switchEmployee: vi.fn(),
           signOut,
           clearSession: vi.fn(),

@@ -11,10 +11,14 @@ public sealed class ApplicationAuthorizationService : IApplicationAuthorizationS
         _currentActorAccessor = currentActorAccessor;
     }
 
+    public CurrentActor RequireAuthenticated() =>
+        _currentActorAccessor.Actor
+        ?? throw new AccessDeniedException("Authentication is required.");
+
     public CurrentActor Require(string permission)
     {
-        var actor = _currentActorAccessor.Actor;
-        if (actor is null || !actor.Permissions.Contains(permission, StringComparer.Ordinal))
+        var actor = RequireAuthenticated();
+        if (!actor.Permissions.Contains(permission, StringComparer.Ordinal))
         {
             throw new AccessDeniedException("The current actor does not have the required permission.");
         }

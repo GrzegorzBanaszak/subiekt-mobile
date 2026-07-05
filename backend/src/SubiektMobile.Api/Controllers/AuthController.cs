@@ -99,6 +99,17 @@ public sealed class AuthController : ControllerBase
     [HttpGet("me")]
     public ActionResult<CurrentActor> GetCurrentActor() => Ok(_currentActorAccessor.Actor!);
 
+    [Authorize]
+    [HttpPost("administrator/change-password")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> ChangeAdministratorPassword(
+        ChangeOwnPasswordRequest request,
+        CancellationToken cancellationToken)
+    {
+        await _identityAccessService.ChangeOwnPasswordAsync(request, cancellationToken);
+        return NoContent();
+    }
+
     [AllowAnonymous]
     [HttpPost("sign-out")]
     public async Task<IActionResult> SignOut(CancellationToken cancellationToken)

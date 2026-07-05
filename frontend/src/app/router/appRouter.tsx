@@ -4,6 +4,7 @@ import {
   ProtectedRoute,
 } from '../../features/auth/components/AuthRoute'
 import { LoginPage } from '../../features/auth/pages/LoginPage'
+import { ChangePasswordPage } from '../../features/auth/pages/ChangePasswordPage'
 import { ProductsPage } from '../../features/products/pages/ProductsPage'
 import { AdministratorsPage } from '../../features/administration/pages/AdministratorsPage'
 import { OrganizationsPage } from '../../features/administration/pages/OrganizationsPage'
@@ -32,6 +33,10 @@ export const appRouter = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
+      {
+        path: '/change-password',
+        element: <ChangePasswordPage />,
+      },
       {
         element: <AppShell />,
         children: [

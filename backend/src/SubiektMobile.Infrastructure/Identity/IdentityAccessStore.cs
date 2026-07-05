@@ -73,6 +73,26 @@ public sealed class IdentityAccessStore : IIdentityAccessStore
         return StoreMutationResult.Success;
     }
 
+    public async Task<StoreMutationResult> ChangeAdministratorPasswordAsync(
+        Administrator administrator,
+        Guid currentSessionId,
+        AuditEntry auditEntry,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+        _dbContext.AuditEntries.Add(auditEntry);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.AuthenticationSessions
+            .Where(x => x.AdministratorId == administrator.Id
+                && x.Id != currentSessionId
+                && x.RevokedAtUtc == null)
+            .ExecuteUpdateAsync(
+                setters => setters.SetProperty(x => x.RevokedAtUtc, auditEntry.OccurredAtUtc),
+                cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return StoreMutationResult.Success;
+    }
+
     public async Task<StoreMutationResult> SetAdministratorActiveAsync(
         Guid administratorId,
         bool isActive,
@@ -316,7 +336,8 @@ public sealed class IdentityAccessStore : IIdentityAccessStore
             organizationId,
             actorDisplayName,
             actorPermissions,
-            sessionId);
+            sessionId,
+            actorKind == ActorKind.Administrator && actorPermissions.Count == 0);
         return new SessionIssued(rawToken, expiresAt, actor);
     }
 
@@ -353,8 +374,11 @@ public sealed class IdentityAccessStore : IIdentityAccessStore
                     administrator.Id,
                     null,
                     administrator.DisplayName,
-                    Permissions.For(ActorKind.Administrator, administrator.IsBootstrapAdministrator),
-                    session.Id);
+                    administrator.RequiresPasswordChange
+                        ? []
+                        : Permissions.For(ActorKind.Administrator, administrator.IsBootstrapAdministrator),
+                    session.Id,
+                    administrator.RequiresPasswordChange);
         }
 
         if (session.ActorKind == ActorKind.Employee

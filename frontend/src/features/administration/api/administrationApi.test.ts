@@ -19,13 +19,14 @@ describe('administrationApi', () => {
   it('sends CSRF token while creating an administrator', async () => {
     const administrator = {
       id: 'admin-1', username: 'admin2', displayName: 'Admin 2', isActive: true,
-      isBootstrapAdministrator: false, createdAtUtc: '2026-07-05T12:00:00Z', updatedAtUtc: '2026-07-05T12:00:00Z',
+      isBootstrapAdministrator: false, requiresPasswordChange: true, createdAtUtc: '2026-07-05T12:00:00Z', updatedAtUtc: '2026-07-05T12:00:00Z',
     }
-    apiMocks.POST.mockResolvedValue({ data: administrator, response: new Response(null, { status: 201 }) })
+    const result = { administrator, temporaryPassword: 'Generated-Password-42!' }
+    apiMocks.POST.mockResolvedValue({ data: result, response: new Response(null, { status: 201 }) })
 
-    await expect(createAdministrator({ username: 'admin2', displayName: 'Admin 2', password: 'secure-password' })).resolves.toEqual(administrator)
+    await expect(createAdministrator({ username: 'admin2', displayName: 'Admin 2' })).resolves.toEqual(result)
     expect(apiMocks.POST).toHaveBeenCalledWith('/api/admin/administrators', {
-      body: { username: 'admin2', displayName: 'Admin 2', password: 'secure-password' },
+      body: { username: 'admin2', displayName: 'Admin 2' },
       headers: { 'X-CSRF-TOKEN': 'csrf-token' },
     })
   })

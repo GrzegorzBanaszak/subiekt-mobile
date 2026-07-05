@@ -4,6 +4,7 @@ import { getCsrfHeader } from '../../../api/csrf'
 
 export type CurrentActor = components['schemas']['CurrentActor']
 export type SignInCredentials = components['schemas']['AdministratorSignInRequest']
+export type ChangePasswordRequest = components['schemas']['ChangeOwnPasswordRequest']
 export type PublicOrganization = components['schemas']['PublicOrganizationDto']
 export type PublicEmployee = components['schemas']['PublicEmployeeDto']
 
@@ -42,6 +43,18 @@ export async function getCurrentActor(): Promise<CurrentActor | null> {
   }
 
   return data
+}
+
+export async function changeOwnPassword(request: ChangePasswordRequest): Promise<void> {
+  const csrfHeader = await getCsrfHeader()
+  const { response } = await apiClient.POST('/api/auth/administrator/change-password', {
+    body: request,
+    headers: csrfHeader,
+  })
+
+  if (!response.ok) {
+    throw new AuthApiError(response.status)
+  }
 }
 
 export async function signOut(): Promise<void> {

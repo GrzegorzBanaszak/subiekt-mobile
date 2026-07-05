@@ -28,7 +28,7 @@ function renderLogin(
     <I18nProvider>
       <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
         <AuthContext.Provider
-          value={{ actor: null, isLoading: false, signIn, switchEmployee, signOut: vi.fn(), clearSession: vi.fn() }}
+          value={{ actor: null, isLoading: false, signIn, changePassword: vi.fn(), switchEmployee, signOut: vi.fn(), clearSession: vi.fn() }}
         >
           <MemoryRouter initialEntries={['/login']}>
             <Routes>

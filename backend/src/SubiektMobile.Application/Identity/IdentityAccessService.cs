@@ -6,6 +6,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
 {
     private readonly IIdentityAccessStore _store;
     private readonly IPasswordService _passwordService;
+    private readonly ITemporaryPasswordGenerator _temporaryPasswordGenerator;
     private readonly IIdentityConfiguration _configuration;
     private readonly IApplicationAuthorizationService _authorizationService;
     private readonly IAuditEntryFactory _auditEntryFactory;
@@ -14,6 +15,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
     public IdentityAccessService(
         IIdentityAccessStore store,
         IPasswordService passwordService,
+        ITemporaryPasswordGenerator temporaryPasswordGenerator,
         IIdentityConfiguration configuration,
         IApplicationAuthorizationService authorizationService,
         IAuditEntryFactory auditEntryFactory,
@@ -21,6 +23,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
     {
         _store = store;
         _passwordService = passwordService;
+        _temporaryPasswordGenerator = temporaryPasswordGenerator;
         _configuration = configuration;
         _authorizationService = authorizationService;
         _auditEntryFactory = auditEntryFactory;
@@ -173,24 +176,58 @@ public sealed class IdentityAccessService : IIdentityAccessService
     public Task SignOutAsync(string token, CancellationToken cancellationToken) =>
         _store.RevokeSessionAsync(token, UtcNow(), cancellationToken);
 
+    public async Task ChangeOwnPasswordAsync(
+        ChangeOwnPasswordRequest request,
+        CancellationToken cancellationToken)
+    {
+        var actor = _authorizationService.RequireAuthenticated();
+        if (actor.Kind != ActorKind.Administrator)
+        {
+            throw new AccessDeniedException("Only an administrator can change an administrator password.");
+        }
+
+        ValidatePassword(request.NewPassword);
+        var administrator = await GetAdministratorAsync(actor.Id, cancellationToken);
+        if (!_passwordService.Verify(administrator, request.CurrentPassword))
+        {
+            throw new SignInFailedException();
+        }
+
+        if (_passwordService.Verify(administrator, request.NewPassword))
+        {
+            throw new RequestValidationException("The new password must be different from the current password.");
+        }
+
+        var now = UtcNow();
+        administrator.ChangePassword(_passwordService.Hash(administrator, request.NewPassword), now);
+        var result = await _store.ChangeAdministratorPasswordAsync(
+            administrator,
+            actor.SessionId,
+            Audit(actor, "AdministratorPasswordChanged", "Administrator", administrator.Id, now),
+            cancellationToken);
+        EnsureMutation(result, "Administrator");
+    }
+
     public async Task<IReadOnlyList<AdministratorDto>> ListAdministratorsAsync(CancellationToken cancellationToken)
     {
         Require(Permissions.AdministratorsManage);
         return (await _store.ListAdministratorsAsync(cancellationToken)).Select(Map).ToList();
     }
 
-    public async Task<AdministratorDto> CreateAdministratorAsync(
+    public async Task<CreatedAdministratorDto> CreateAdministratorAsync(
         CreateAdministratorRequest request,
         CancellationToken cancellationToken)
     {
         var actor = Require(Permissions.AdministratorsManage);
-        ValidatePassword(request.Password);
+        var temporaryPassword = _temporaryPasswordGenerator.Generate();
+        ValidatePassword(temporaryPassword);
         var now = UtcNow();
         Administrator administrator;
         try
         {
             administrator = Administrator.Create(request.Username, request.DisplayName, "pending", false, now);
-            administrator.SetPasswordHash(_passwordService.Hash(administrator, request.Password), now);
+            administrator.SetPasswordHash(_passwordService.Hash(administrator, temporaryPassword), now);
+            administrator.RequirePasswordChange(now);
         }
         catch (ArgumentException exception)
         {
@@ -202,7 +239,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
             Audit(actor, "AdministratorCreated", "Administrator", administrator.Id, now),
             cancellationToken);
         EnsureMutation(result, "Administrator");
-        return Map(administrator);
+        return new CreatedAdministratorDto(Map(administrator), temporaryPassword);
     }
 
     public async Task<AdministratorDto> UpdateAdministratorAsync(
@@ -240,6 +277,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
         var administrator = await GetAdministratorAsync(id, cancellationToken);
         var now = UtcNow();
         administrator.SetPasswordHash(_passwordService.Hash(administrator, request.Password), now);
+        administrator.RequirePasswordChange(now);
         var result = await _store.ResetAdministratorPasswordAsync(
             administrator,
             Audit(actor, "AdministratorPasswordReset", "Administrator", administrator.Id, now),
@@ -439,7 +477,9 @@ public sealed class IdentityAccessService : IIdentityAccessService
             administrator.Id,
             null,
             administrator.DisplayName,
-            Permissions.For(ActorKind.Administrator, administrator.IsBootstrapAdministrator),
+            administrator.RequiresPasswordChange
+                ? []
+                : Permissions.For(ActorKind.Administrator, administrator.IsBootstrapAdministrator),
             _configuration.AdministratorSessionLifetime,
             replacedSessionToken,
             audit,
@@ -543,7 +583,7 @@ public sealed class IdentityAccessService : IIdentityAccessService
         AuditEntry.Create(ActorKind.System, null, null, "System", action, targetType, targetId, now);
 
     private static AdministratorDto Map(Administrator value) =>
-        new(value.Id, value.Username, value.DisplayName, value.IsActive, value.IsBootstrapAdministrator, value.CreatedAtUtc, value.UpdatedAtUtc);
+        new(value.Id, value.Username, value.DisplayName, value.IsActive, value.IsBootstrapAdministrator, value.RequiresPasswordChange, value.CreatedAtUtc, value.UpdatedAtUtc);
 
     private static OrganizationDto Map(Organization value) =>
         new(value.Id, value.Code, value.Name, value.IsActive, value.CreatedAtUtc, value.UpdatedAtUtc);

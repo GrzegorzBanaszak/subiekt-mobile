@@ -15,6 +15,7 @@ public static class SessionAuthentication
     public const string OrganizationIdClaim = "organization_id";
     public const string PermissionClaim = "permission";
     public const string SessionIdClaim = "session_id";
+    public const string RequiresPasswordChangeClaim = "requires_password_change";
 }
 
 public sealed class SessionAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
@@ -51,6 +52,11 @@ public sealed class SessionAuthenticationHandler : AuthenticationHandler<Authent
             new(SessionAuthentication.ActorKindClaim, actor.Kind.ToString()),
             new(SessionAuthentication.SessionIdClaim, actor.SessionId.ToString())
         };
+
+        if (actor.RequiresPasswordChange)
+        {
+            claims.Add(new Claim(SessionAuthentication.RequiresPasswordChangeClaim, bool.TrueString));
+        }
 
         if (actor.OrganizationId is Guid organizationId)
         {
@@ -114,7 +120,8 @@ public sealed class HttpCurrentActorAccessor : ICurrentActorAccessor
                 organizationId,
                 principal.Identity.Name ?? string.Empty,
                 principal.FindAll(SessionAuthentication.PermissionClaim).Select(x => x.Value).ToList(),
-                sessionId);
+                sessionId,
+                principal.HasClaim(SessionAuthentication.RequiresPasswordChangeClaim, bool.TrueString));
         }
     }
 }

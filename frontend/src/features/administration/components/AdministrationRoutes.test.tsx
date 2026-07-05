@@ -11,8 +11,8 @@ afterEach(cleanup)
 function renderGuard(permissions: string[]) {
   render(
     <AuthContext.Provider value={{
-      actor: { kind: 1, id: 'admin-1', organizationId: null, displayName: 'Admin', permissions, sessionId: 'session-1' },
-      isLoading: false, signIn: vi.fn(), switchEmployee: vi.fn(), signOut: vi.fn(), clearSession: vi.fn(),
+      actor: { kind: 1, id: 'admin-1', organizationId: null, displayName: 'Admin', permissions, sessionId: 'session-1', requiresPasswordChange: false },
+      isLoading: false, signIn: vi.fn(), changePassword: vi.fn(), switchEmployee: vi.fn(), signOut: vi.fn(), clearSession: vi.fn(),
     }}>
       <MemoryRouter initialEntries={['/administration/administrators']}>
         <Routes>
@@ -44,8 +44,8 @@ function renderLayout(permissions: string[]) {
   render(
     <I18nProvider>
       <AuthContext.Provider value={{
-        actor: { kind: 1, id: 'admin-1', organizationId: null, displayName: 'Admin', permissions, sessionId: 'session-1' },
-        isLoading: false, signIn: vi.fn(), switchEmployee: vi.fn(), signOut: vi.fn(), clearSession: vi.fn(),
+        actor: { kind: 1, id: 'admin-1', organizationId: null, displayName: 'Admin', permissions, sessionId: 'session-1', requiresPasswordChange: false },
+        isLoading: false, signIn: vi.fn(), changePassword: vi.fn(), switchEmployee: vi.fn(), signOut: vi.fn(), clearSession: vi.fn(),
       }}>
         <MemoryRouter initialEntries={['/administration/organizations']}>
           <Routes>

@@ -12,6 +12,7 @@ import {
   setAdministratorActive,
   updateAdministrator,
   type Administrator,
+  type CreatedAdministrator,
 } from '../api/administrationApi'
 import { AdministrationDialog } from '../components/AdministrationDialog'
 import { AdministrationForm, FormField } from '../components/AdministrationForm'
@@ -22,6 +23,7 @@ type DialogState =
   | { type: 'create' }
   | { type: 'edit'; administrator: Administrator }
   | { type: 'password'; administrator: Administrator }
+  | { type: 'created'; result: CreatedAdministrator }
   | null
 
 export function AdministratorsPage() {
@@ -32,6 +34,7 @@ export function AdministratorsPage() {
   const [dialog, setDialog] = useState<DialogState>(null)
   const [formError, setFormError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [passwordCopied, setPasswordCopied] = useState(false)
 
   const administratorsQuery = useQuery({
     queryKey: administrationKeys.administrators,
@@ -41,6 +44,7 @@ export function AdministratorsPage() {
   function closeDialog() {
     setDialog(null)
     setFormError(null)
+    setPasswordCopied(false)
   }
 
   function mutationError(error: unknown) {
@@ -49,9 +53,9 @@ export function AdministratorsPage() {
 
   const createMutation = useMutation({
     mutationFn: createAdministrator,
-    onSuccess: async () => {
+    onSuccess: async (result) => {
       await queryClient.invalidateQueries({ queryKey: administrationKeys.administrators })
-      closeDialog()
+      setDialog({ type: 'created', result })
     },
     onError: mutationError,
   })
@@ -94,13 +98,7 @@ export function AdministratorsPage() {
       return
     }
 
-    const password = String(data.get('password') ?? '')
-    const confirmation = String(data.get('passwordConfirmation') ?? '')
-    if (password !== confirmation) {
-      setFormError(t('administration.error.passwordMismatch'))
-      return
-    }
-    createMutation.mutate({ username, displayName, password })
+    createMutation.mutate({ username, displayName })
   }
 
   function submitPassword(form: HTMLFormElement, administrator: Administrator) {
@@ -192,13 +190,40 @@ export function AdministratorsPage() {
           <AdministrationForm cancelLabel={t('administration.cancel')} error={formError} isPending={pending} onCancel={closeDialog} onSubmit={submitAdministrator} pendingLabel={t('administration.saving')} submitLabel={t('administration.save')}>
             <FormField autoComplete="username" defaultValue={dialog.type === 'edit' ? dialog.administrator.username : ''} label={t('administration.username')} maxLength={64} minLength={3} name="username" pattern="[\p{L}\p{N}._@-]+" />
             <FormField defaultValue={dialog.type === 'edit' ? dialog.administrator.displayName : ''} label={t('administration.displayName')} maxLength={120} minLength={2} name="displayName" />
-            {dialog.type === 'create' && (
-              <>
-                <FormField autoComplete="new-password" label={t('administration.password')} maxLength={128} minLength={12} name="password" type="password" />
-                <FormField autoComplete="new-password" label={t('administration.passwordConfirmation')} maxLength={128} minLength={12} name="passwordConfirmation" type="password" />
-              </>
-            )}
           </AdministrationForm>
+        </AdministrationDialog>
+      )}
+
+      {dialog?.type === 'created' && (
+        <AdministrationDialog closeLabel={t('administration.close')} onClose={closeDialog} title={t('administration.administratorCreated')}>
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-slate-700">{t('administration.temporaryPasswordDescription')}</p>
+            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-800">
+              {t('administration.temporaryPassword')}
+              <input
+                className="h-12 rounded-lg border border-slate-300 bg-slate-50 px-4 font-mono"
+                onFocus={(event) => event.currentTarget.select()}
+                readOnly
+                value={dialog.result.temporaryPassword}
+              />
+            </label>
+            <button
+              className="min-h-12 rounded-lg border border-slate-300 px-5 font-semibold hover:bg-slate-100"
+              onClick={async () => {
+                await navigator.clipboard.writeText(dialog.result.temporaryPassword)
+                setPasswordCopied(true)
+              }}
+              type="button"
+            >
+              {t(passwordCopied ? 'administration.passwordCopied' : 'administration.copyPassword')}
+            </button>
+            <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+              {t('administration.temporaryPasswordWarning')}
+            </p>
+            <button className="min-h-12 rounded-lg bg-blue-950 px-5 font-semibold text-white hover:bg-blue-900" onClick={closeDialog} type="button">
+              {t('administration.close')}
+            </button>
+          </div>
         </AdministrationDialog>
       )}
 

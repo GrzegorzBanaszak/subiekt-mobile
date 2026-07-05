@@ -19,6 +19,41 @@ public sealed class IdentityPasswordService : IPasswordService
         is not PasswordVerificationResult.Failed;
 }
 
+public sealed class TemporaryPasswordGenerator : ITemporaryPasswordGenerator
+{
+    private const string Uppercase = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    private const string Lowercase = "abcdefghijkmnopqrstuvwxyz";
+    private const string Digits = "23456789";
+    private const string Symbols = "!@#$%*-_.";
+    private const int PasswordLength = 20;
+
+    public string Generate()
+    {
+        var characters = new char[PasswordLength];
+        characters[0] = Pick(Uppercase);
+        characters[1] = Pick(Lowercase);
+        characters[2] = Pick(Digits);
+        characters[3] = Pick(Symbols);
+
+        var allCharacters = Uppercase + Lowercase + Digits + Symbols;
+        for (var index = 4; index < characters.Length; index++)
+        {
+            characters[index] = Pick(allCharacters);
+        }
+
+        for (var index = characters.Length - 1; index > 0; index--)
+        {
+            var swapIndex = RandomNumberGenerator.GetInt32(index + 1);
+            (characters[index], characters[swapIndex]) = (characters[swapIndex], characters[index]);
+        }
+
+        return new string(characters);
+    }
+
+    private static char Pick(string characters) =>
+        characters[RandomNumberGenerator.GetInt32(characters.Length)];
+}
+
 public sealed class IdentityConfiguration : IIdentityConfiguration
 {
     private readonly string _bootstrapToken;

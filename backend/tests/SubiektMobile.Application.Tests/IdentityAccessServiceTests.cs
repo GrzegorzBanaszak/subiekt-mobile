@@ -85,7 +85,7 @@ public sealed class IdentityAccessServiceTests
             service.ListAdministratorsAsync(CancellationToken.None));
         await Assert.ThrowsAsync<AccessDeniedException>(() =>
             service.CreateAdministratorAsync(
-                new CreateAdministratorRequest("next-admin", "Next Admin", "secure-password"),
+                new CreateAdministratorRequest("next-admin", "Next Admin"),
                 CancellationToken.None));
         await Assert.ThrowsAsync<AccessDeniedException>(() =>
             service.UpdateAdministratorAsync(
@@ -164,6 +164,62 @@ public sealed class IdentityAccessServiceTests
     }
 
     [Fact]
+    public async Task Root_created_administrator_must_change_password_and_receives_no_permissions_on_first_sign_in()
+    {
+        var rootActor = new CurrentActor(
+            ActorKind.Administrator,
+            Guid.NewGuid(),
+            null,
+            "Root",
+            Permissions.For(ActorKind.Administrator, true),
+            Guid.NewGuid());
+        var store = new CreatingAdministratorStore();
+        var service = CreateService(store, rootActor);
+
+        var created = await service.CreateAdministratorAsync(
+            new CreateAdministratorRequest("new-admin", "New Admin"),
+            CancellationToken.None);
+
+        Assert.True(created.Administrator.RequiresPasswordChange);
+        Assert.Equal("temporary-password", created.TemporaryPassword);
+        Assert.True(store.CreatedAdministrator!.RequiresPasswordChange);
+
+        var signInService = CreateService(new SigningInStore(store.CreatedAdministrator), actor: null);
+        var session = await signInService.SignInAdministratorAsync(
+            new AdministratorSignInRequest("new-admin", "temporary-password"),
+            null,
+            CancellationToken.None);
+
+        Assert.True(session.Actor.RequiresPasswordChange);
+        Assert.Empty(session.Actor.Permissions);
+    }
+
+    [Fact]
+    public async Task Administrator_can_replace_temporary_password_and_clear_requirement()
+    {
+        var administrator = Administrator.Create("admin", "Admin", "old-hash", false, Now, requiresPasswordChange: true);
+        var actor = new CurrentActor(
+            ActorKind.Administrator,
+            administrator.Id,
+            null,
+            administrator.DisplayName,
+            [],
+            Guid.NewGuid(),
+            RequiresPasswordChange: true);
+        var store = new ChangingPasswordStore(administrator);
+        var service = CreateService(store, actor, new ComparingPasswordService());
+
+        await service.ChangeOwnPasswordAsync(
+            new ChangeOwnPasswordRequest("temporary-password", "new-secure-password"),
+            CancellationToken.None);
+
+        Assert.False(administrator.RequiresPasswordChange);
+        Assert.Equal("new-hash", administrator.PasswordHash);
+        Assert.Equal(actor.SessionId, store.CurrentSessionId);
+        Assert.Equal("AdministratorPasswordChanged", store.AuditEntry?.Action);
+    }
+
+    [Fact]
     public async Task Concurrent_startup_accepts_a_bootstrap_administrator_created_by_another_instance()
     {
         var store = new BootstrapProvisioningStore(StoreMutationResult.Conflict, false, true);
@@ -176,10 +232,14 @@ public sealed class IdentityAccessServiceTests
         Assert.Equal(BootstrapAdministratorProvisioningResult.AlreadyExists, result);
     }
 
-    private static IdentityAccessService CreateService(IIdentityAccessStore store, CurrentActor? actor) =>
+    private static IdentityAccessService CreateService(
+        IIdentityAccessStore store,
+        CurrentActor? actor,
+        IPasswordService? passwordService = null) =>
         new(
             store,
-            new PasswordServiceStub(),
+            passwordService ?? new PasswordServiceStub(),
+            new TemporaryPasswordGeneratorStub(),
             new IdentityConfigurationStub(),
             new ApplicationAuthorizationService(new CurrentActorAccessorStub(actor)),
             new AuditEntryFactory(),
@@ -233,6 +293,40 @@ public sealed class IdentityAccessServiceTests
             Task.FromResult<IReadOnlyList<Organization>>([]);
     }
 
+    private sealed class CreatingAdministratorStore : IdentityAccessStoreStub
+    {
+        public Administrator? CreatedAdministrator { get; private set; }
+
+        public override Task<StoreMutationResult> CreateAdministratorAsync(
+            Administrator administrator,
+            AuditEntry auditEntry,
+            CancellationToken cancellationToken)
+        {
+            CreatedAdministrator = administrator;
+            return Task.FromResult(StoreMutationResult.Success);
+        }
+    }
+
+    private sealed class ChangingPasswordStore(Administrator administrator) : IdentityAccessStoreStub
+    {
+        public Guid? CurrentSessionId { get; private set; }
+        public AuditEntry? AuditEntry { get; private set; }
+
+        public override Task<Administrator?> FindAdministratorAsync(Guid id, CancellationToken cancellationToken) =>
+            Task.FromResult<Administrator?>(id == administrator.Id ? administrator : null);
+
+        public override Task<StoreMutationResult> ChangeAdministratorPasswordAsync(
+            Administrator changedAdministrator,
+            Guid currentSessionId,
+            AuditEntry auditEntry,
+            CancellationToken cancellationToken)
+        {
+            CurrentSessionId = currentSessionId;
+            AuditEntry = auditEntry;
+            return Task.FromResult(StoreMutationResult.Success);
+        }
+    }
+
     private sealed class SigningInStore : IdentityAccessStoreStub
     {
         private readonly Administrator _administrator;
@@ -265,7 +359,8 @@ public sealed class IdentityAccessServiceTests
                 organizationId,
                 actorDisplayName,
                 actorPermissions,
-                Guid.NewGuid());
+                Guid.NewGuid(),
+                _administrator.RequiresPasswordChange);
             return Task.FromResult(new SessionIssued("token", now.Add(lifetime), actor));
         }
     }
@@ -311,6 +406,7 @@ public sealed class IdentityAccessServiceTests
         public virtual Task<StoreMutationResult> CreateAdministratorAsync(Administrator administrator, AuditEntry auditEntry, CancellationToken cancellationToken) => NotImplemented<StoreMutationResult>();
         public virtual Task<StoreMutationResult> UpdateAdministratorAsync(Administrator administrator, AuditEntry auditEntry, CancellationToken cancellationToken) => NotImplemented<StoreMutationResult>();
         public virtual Task<StoreMutationResult> ResetAdministratorPasswordAsync(Administrator administrator, AuditEntry auditEntry, CancellationToken cancellationToken) => NotImplemented<StoreMutationResult>();
+        public virtual Task<StoreMutationResult> ChangeAdministratorPasswordAsync(Administrator administrator, Guid currentSessionId, AuditEntry auditEntry, CancellationToken cancellationToken) => NotImplemented<StoreMutationResult>();
         public virtual Task<StoreMutationResult> SetAdministratorActiveAsync(Guid administratorId, bool isActive, AuditEntry auditEntry, DateTimeOffset now, CancellationToken cancellationToken) => NotImplemented<StoreMutationResult>();
         public virtual Task<IReadOnlyList<Organization>> ListOrganizationsAsync(bool activeOnly, CancellationToken cancellationToken) => NotImplemented<IReadOnlyList<Organization>>();
         public virtual Task<Organization?> FindOrganizationAsync(Guid id, CancellationToken cancellationToken) => NotImplemented<Organization?>();
@@ -331,6 +427,17 @@ public sealed class IdentityAccessServiceTests
     {
         public string Hash(Administrator administrator, string password) => "hash";
         public bool Verify(Administrator administrator, string password) => true;
+    }
+
+    private sealed class ComparingPasswordService : IPasswordService
+    {
+        public string Hash(Administrator administrator, string password) => "new-hash";
+        public bool Verify(Administrator administrator, string password) => password == "temporary-password";
+    }
+
+    private sealed class TemporaryPasswordGeneratorStub : ITemporaryPasswordGenerator
+    {
+        public string Generate() => "temporary-password";
     }
 
     private sealed class IdentityConfigurationStub : IIdentityConfiguration

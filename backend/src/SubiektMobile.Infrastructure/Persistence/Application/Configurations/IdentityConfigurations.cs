@@ -15,6 +15,7 @@ public sealed class AdministratorConfiguration : IEntityTypeConfiguration<Admini
         builder.Property(x => x.NormalizedUsername).HasMaxLength(64).IsRequired();
         builder.Property(x => x.DisplayName).HasMaxLength(120).IsRequired();
         builder.Property(x => x.PasswordHash).HasMaxLength(512).IsRequired();
+        builder.Property(x => x.RequiresPasswordChange).IsRequired();
         builder.HasIndex(x => x.NormalizedUsername).IsUnique();
         builder.HasIndex(x => x.IsBootstrapAdministrator)
             .IsUnique()

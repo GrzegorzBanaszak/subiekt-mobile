@@ -48,7 +48,8 @@ public sealed record CurrentActor(
     Guid? OrganizationId,
     string DisplayName,
     IReadOnlyList<string> Permissions,
-    Guid SessionId);
+    Guid SessionId,
+    bool RequiresPasswordChange = false);
 
 public sealed record SessionIssued(
     string Token,
@@ -61,8 +62,13 @@ public sealed record AdministratorDto(
     string DisplayName,
     bool IsActive,
     bool IsBootstrapAdministrator,
+    bool RequiresPasswordChange,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc);
+
+public sealed record CreatedAdministratorDto(
+    AdministratorDto Administrator,
+    string TemporaryPassword);
 
 public sealed record OrganizationDto(
     Guid Id,
@@ -86,8 +92,9 @@ public sealed record PublicEmployeeDto(Guid Id, Guid OrganizationId, string Code
 
 public sealed record BootstrapAdministratorRequest(string Username, string DisplayName, string Password);
 public sealed record AdministratorSignInRequest(string Username, string Password);
+public sealed record ChangeOwnPasswordRequest(string CurrentPassword, string NewPassword);
 public sealed record SelectEmployeeRequest(Guid OrganizationId, Guid EmployeeId);
-public sealed record CreateAdministratorRequest(string Username, string DisplayName, string Password);
+public sealed record CreateAdministratorRequest(string Username, string DisplayName);
 public sealed record UpdateAdministratorRequest(string Username, string DisplayName);
 public sealed record ResetAdministratorPasswordRequest(string Password);
 public sealed record SetActiveRequest(bool IsActive);
@@ -103,6 +110,7 @@ public interface ICurrentActorAccessor
 
 public interface IApplicationAuthorizationService
 {
+    CurrentActor RequireAuthenticated();
     CurrentActor Require(string permission);
 }
 
@@ -120,6 +128,11 @@ public interface IPasswordService
 {
     string Hash(Administrator administrator, string password);
     bool Verify(Administrator administrator, string password);
+}
+
+public interface ITemporaryPasswordGenerator
+{
+    string Generate();
 }
 
 public interface IIdentityConfiguration
@@ -159,6 +172,11 @@ public interface IIdentityAccessStore
         CancellationToken cancellationToken);
     Task<StoreMutationResult> ResetAdministratorPasswordAsync(
         Administrator administrator,
+        AuditEntry auditEntry,
+        CancellationToken cancellationToken);
+    Task<StoreMutationResult> ChangeAdministratorPasswordAsync(
+        Administrator administrator,
+        Guid currentSessionId,
         AuditEntry auditEntry,
         CancellationToken cancellationToken);
     Task<StoreMutationResult> SetAdministratorActiveAsync(
@@ -243,9 +261,10 @@ public interface IIdentityAccessService
         CancellationToken cancellationToken);
     Task<CurrentActor?> ResolveSessionAsync(string token, CancellationToken cancellationToken);
     Task SignOutAsync(string token, CancellationToken cancellationToken);
+    Task ChangeOwnPasswordAsync(ChangeOwnPasswordRequest request, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<AdministratorDto>> ListAdministratorsAsync(CancellationToken cancellationToken);
-    Task<AdministratorDto> CreateAdministratorAsync(CreateAdministratorRequest request, CancellationToken cancellationToken);
+    Task<CreatedAdministratorDto> CreateAdministratorAsync(CreateAdministratorRequest request, CancellationToken cancellationToken);
     Task<AdministratorDto> UpdateAdministratorAsync(Guid id, UpdateAdministratorRequest request, CancellationToken cancellationToken);
     Task ResetAdministratorPasswordAsync(Guid id, ResetAdministratorPasswordRequest request, CancellationToken cancellationToken);
     Task SetAdministratorActiveAsync(Guid id, SetActiveRequest request, CancellationToken cancellationToken);

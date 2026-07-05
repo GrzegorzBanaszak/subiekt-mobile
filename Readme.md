@@ -334,6 +334,7 @@ Publiczny proces wejścia:
 ```text
 POST /api/auth/bootstrap-administrator       # jednorazowo, z X-Setup-Token
 POST /api/auth/administrator/sign-in
+POST /api/auth/administrator/change-password # zmiana własnego hasła administratora
 GET  /api/auth/organizations
 GET  /api/auth/organizations/{id}/employees
 POST /api/auth/employee/select
@@ -348,6 +349,9 @@ nie zabezpiecza jednak przed wybraniem cudzej tożsamości przez osobę mającą
 
 Frontend udostępnia te operacje pod `/administration`. Zakładka administratorów jest widoczna
 wyłącznie dla konta root; organizacje i pracownicy są dostępni również zwykłym administratorom.
+Przy tworzeniu administratora root podaje tylko login i nazwę wyświetlaną. Backend generuje
+hasło tymczasowe, które jest zwracane i wyświetlane tylko w odpowiedzi na utworzenie konta.
+Nowy administrator musi zmienić je podczas pierwszego logowania.
 
 Pierwszą migrację stosuje polecenie:
 

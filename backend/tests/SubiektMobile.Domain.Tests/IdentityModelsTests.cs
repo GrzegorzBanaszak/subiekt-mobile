@@ -31,6 +31,24 @@ public sealed class IdentityModelsTests
     }
 
     [Fact]
+    public void Changing_temporary_password_clears_requirement()
+    {
+        var administrator = Administrator.Create(
+            "admin",
+            "Administrator",
+            "temporary-hash",
+            false,
+            Now,
+            requiresPasswordChange: true);
+
+        administrator.ChangePassword("new-hash", Now.AddMinutes(1));
+
+        Assert.False(administrator.RequiresPasswordChange);
+        Assert.Equal("new-hash", administrator.PasswordHash);
+        Assert.Equal(Now.AddMinutes(1), administrator.UpdatedAtUtc);
+    }
+
+    [Fact]
     public void Employee_requires_organization_and_normalizes_code()
     {
         var organizationId = Guid.NewGuid();

@@ -55,9 +55,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["AdministratorDto"];
-                        "application/json": components["schemas"]["AdministratorDto"];
-                        "text/json": components["schemas"]["AdministratorDto"];
+                        "text/plain": components["schemas"]["CreatedAdministratorDto"];
+                        "application/json": components["schemas"]["CreatedAdministratorDto"];
+                        "text/json": components["schemas"]["CreatedAdministratorDto"];
                     };
                 };
             };
@@ -626,6 +626,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/administrator/change-password": {
+        parameters: { query?: never; header?: never; path?: never; cookie?: never; };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: { query?: never; header?: never; path?: never; cookie?: never; };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ChangeOwnPasswordRequest"];
+                    "text/json": components["schemas"]["ChangeOwnPasswordRequest"];
+                    "application/*+json": components["schemas"]["ChangeOwnPasswordRequest"];
+                };
+            };
+            responses: { 204: { headers: { [name: string]: unknown; }; content?: never; }; };
+        };
+        delete?: never; options?: never; head?: never; patch?: never; trace?: never;
+    };
     "/api/auth/organizations": {
         parameters: {
             query?: never;
@@ -1018,6 +1035,7 @@ export interface components {
             displayName: string;
             isActive: boolean;
             isBootstrapAdministrator: boolean;
+            requiresPasswordChange: boolean;
             /** Format: date-time */
             createdAtUtc: string;
             /** Format: date-time */
@@ -1032,10 +1050,17 @@ export interface components {
             displayName: string;
             password: string;
         };
+        ChangeOwnPasswordRequest: {
+            currentPassword: string;
+            newPassword: string;
+        };
         CreateAdministratorRequest: {
             username: string;
             displayName: string;
-            password: string;
+        };
+        CreatedAdministratorDto: {
+            administrator: components["schemas"]["AdministratorDto"];
+            temporaryPassword: string;
         };
         CreateEmployeeRequest: {
             code: string;
@@ -1059,6 +1084,7 @@ export interface components {
             permissions: string[];
             /** Format: uuid */
             sessionId: string;
+            requiresPasswordChange: boolean;
         };
         CurrentSessionResponse: {
             /** Format: date-time */
