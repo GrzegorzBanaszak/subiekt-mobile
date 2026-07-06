@@ -18,7 +18,6 @@
   "repository": "GrzegorzBanaszak/subiekt-mobile",
   "links": {
     "github": "https://github.com/GrzegorzBanaszak/subiekt-mobile",
-    "demo": "subiekt-demo",
     "docs": ""
   },
   "problem": "Potrzebny był wygodniejszy sposób podglądu i obsługi danych z systemu Subiekt GT bez bezpośredniej pracy na bazie danych.",
