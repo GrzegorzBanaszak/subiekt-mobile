@@ -12,6 +12,7 @@ public sealed record ProductListItemDto(
     string? Name,
     string? Symbol,
     string? Unit,
+    decimal? UnitWeightKg,
     bool HasImage,
     ProductStockDto? Stock);
 
@@ -46,6 +47,7 @@ public sealed record ProductDetailsDto(
     string? Symbol,
     string? Description,
     string? Unit,
+    decimal? UnitWeightKg,
     string? PrimaryBarcode,
     IReadOnlyList<string> AdditionalBarcodes,
     ProductVatDto? Vat,

@@ -142,6 +142,10 @@ Mechanizm może wykorzystywać znacznik wersji, warunkową aktualizację lub inn
 
 Pozycja zamówienia zachowuje masę jednostkową używaną w procesie, niezależnie od późniejszych zmian danych źródłowych.
 
+Źródłem masy jednostkowej jest masa brutto towaru w kilogramach z Subiekta GT,
+mapowana wyłącznie w Infrastructure. Wartość większa od zera jest kopiowana do
+pozycji zamówienia jako migawka; brak wartości albo zero oznacza brak danych o masie.
+
 ```text
 masa pozycji na palecie = masa jednostkowa × ilość na palecie
 masa towarów = suma mas pozycji na palecie
@@ -165,6 +169,8 @@ Masa jednostkowa i masa pustej palety powinny używać typu dziesiętnego oraz j
 - walidacja zamawiającego, terminu, pozycji i ilości,
 - udostępnianie zamówienia do kompletacji,
 - lista, szczegóły i historia zamówienia.
+- usuwanie wyłącznie wersji roboczej z kontrolą wersji i wpisem audytowym.
+- wybór trybu kompletacji jednoosobowej albo współdzielonej oraz przypisanie aktywnych pracowników przed publikacją.
 
 ### Collaborative Picking
 

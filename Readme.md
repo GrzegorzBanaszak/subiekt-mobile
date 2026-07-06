@@ -6,7 +6,7 @@ Projekt odczytuje katalog towarów z bazy Subiekta GT. Zamówienia, stan komplet
 
 ## Status projektu
 
-Aktualny status: **katalog towarów i przygotowanie fundamentów procesu zamówień**.
+Aktualny status: **katalog towarów, użytkownicy i tworzenie zamówień**.
 
 Najbliższa kolejność prac:
 
@@ -70,10 +70,10 @@ Ważne: baza Subiekta jest w tym procesie wyłącznie źródłem danych towarowy
 
 ### Etap 3 — zamówienia aplikacji
 
-- [ ] Lista i szczegóły zamówień.
-- [ ] Zamawiający i termin realizacji.
-- [ ] Dodawanie towarów i ilości.
-- [ ] Wersja robocza i udostępnienie do kompletacji.
+- [x] Lista i szczegóły zamówień.
+- [x] Zamawiający i termin realizacji.
+- [x] Dodawanie towarów i ilości.
+- [x] Wersja robocza i udostępnienie do kompletacji.
 
 ### Etap 4 — kompletacja współdzielona
 
@@ -254,6 +254,9 @@ Następnie uruchom bazę aplikacji:
 docker compose up -d application-db
 ```
 
+Pełne wdrożenie produkcyjne (API, frontend, PostgreSQL i Cloudflare Tunnel) opisuje
+[`docs/deployment.md`](docs/deployment.md).
+
 Domyślny connection string odpowiadający konfiguracji z `.env.example`:
 
 ```text
@@ -298,6 +301,10 @@ Trasa `/login` obsługuje logowanie administratora przez sesję zapisywaną w co
 `HttpOnly`. Interfejs jest dostępny po polsku i hiszpańsku, a wybór języka jest
 zapamiętywany lokalnie w przeglądarce.
 
+Widoki zarządzania zamówieniami są dostępne dla użytkowników z uprawnieniem
+`orders.manage` pod `/orders`, `/orders/new` oraz `/orders/{id}`. Obejmują listę,
+utworzenie wersji roboczej lub jej publikację oraz podgląd szczegółów zamówienia.
+
 Typy klienta API można odświeżyć przy uruchomionym backendzie:
 
 ```powershell
@@ -322,6 +329,37 @@ magazynu głównego i cenę brutto pierwszego poziomu cenowego. Szczegóły zwra
 stany wszystkich magazynów, stawkę VAT oraz dziesięć poziomów cen sprzedaży
 netto i brutto. Zdjęcia są pobierane osobnym endpointem, a kartoteki usunięte
 lub zablokowane nie są publikowane.
+
+Masa jednostkowa towaru jest odczytywana z masy brutto w Subiekcie GT i prezentowana
+w kilogramach. Wartość jest kopiowana do pozycji zamówienia jako migawka.
+
+## API zamówień
+
+Endpointy Etapu 3 wymagają uprawnienia `orders.manage`:
+
+```text
+GET    /api/orders?page=1&pageSize=20
+GET    /api/orders/{id}
+POST   /api/orders
+PUT    /api/orders/{id}
+DELETE /api/orders/{id}?version={version}
+POST   /api/orders/{id}/items
+DELETE /api/orders/{id}/items/{itemId}?version={version}
+POST   /api/orders/{id}/publish
+```
+
+Każda mutacja wersji roboczej przyjmuje bieżące pole `version`. Nieaktualna wersja
+zwraca `409 Conflict`, co chroni przed nadpisaniem równoległej zmiany. Nazwa, symbol,
+jednostka i masa towaru są przechowywane jako migawka pozycji. Masa pozostaje `null`,
+jeżeli Subiekt nie zawiera dodatniej masy brutto dla danego towaru.
+
+Usunąć można wyłącznie zamówienie w wersji roboczej. Zamówienie udostępnione do
+kompletacji nie może zostać fizycznie usunięte.
+
+Przed udostępnieniem zamówienia administrator wybiera tryb kompletacji. Tryb
+jednoosobowy wymaga dokładnie jednego przypisanego pracownika, a tryb współdzielony
+co najmniej jednego. Przypisania można zmieniać tylko w wersji roboczej; każda zmiana
+zapisuje wykonawcę i czas.
 
 ## API użytkowników i organizacji
 

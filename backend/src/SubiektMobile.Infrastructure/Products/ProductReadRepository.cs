@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SubiektMobile.Application.Products;
+using SubiektMobile.Application.Orders;
 using SubiektMobile.Infrastructure.Persistence;
 
 namespace SubiektMobile.Infrastructure.Products;
@@ -12,6 +13,18 @@ public sealed class ProductReadRepository : IProductReadRepository
     {
         _dbContext = dbContext;
     }
+
+    public Task<ProductOrderSnapshot?> GetProductOrderSnapshotAsync(int id, CancellationToken cancellationToken) =>
+        _dbContext.Towary.AsNoTracking()
+            .Where(x => x.Id == id && x.Usuniety != true && x.Zablokowany != true &&
+                x.Nazwa != null && x.Nazwa != "" && x.JednMiary != null && x.JednMiary != "")
+            .Select(x => new ProductOrderSnapshot(
+                x.Id,
+                x.Nazwa!,
+                x.Symbol,
+                x.JednMiary!,
+                x.Masa > 0 ? x.Masa : null))
+            .SingleOrDefaultAsync(cancellationToken);
 
     public async Task<PagedResult<ProductListItemDto>> GetProductsAsync(
         string? search,
@@ -59,7 +72,8 @@ public sealed class ProductReadRepository : IProductReadRepository
                 Id = product.Id,
                 Name = product.Nazwa,
                 Symbol = product.Symbol,
-                Unit = product.JednMiary
+                Unit = product.JednMiary,
+                UnitWeightKg = product.Masa > 0 ? product.Masa : null
             })
             .ToListAsync(cancellationToken);
 
@@ -135,6 +149,7 @@ public sealed class ProductReadRepository : IProductReadRepository
                 product.Name,
                 product.Symbol,
                 product.Unit,
+                product.UnitWeightKg,
                 productsWithImages.Contains(product.Id),
                 stock));
         }
@@ -164,6 +179,7 @@ public sealed class ProductReadRepository : IProductReadRepository
                 Symbol = item.Symbol,
                 Description = item.Opis,
                 Unit = item.JednMiary,
+                UnitWeightKg = item.Masa > 0 ? item.Masa : null,
                 PrimaryBarcode = item.PodstKodKresk,
                 VatId = item.IdVatSp
             })
@@ -273,6 +289,7 @@ public sealed class ProductReadRepository : IProductReadRepository
             product.Symbol,
             product.Description,
             product.Unit,
+            product.UnitWeightKg,
             product.PrimaryBarcode,
             additionalBarcodes,
             vat,
@@ -404,6 +421,7 @@ public sealed class ProductReadRepository : IProductReadRepository
         public string? Name { get; init; }
         public string? Symbol { get; init; }
         public string? Unit { get; init; }
+        public decimal? UnitWeightKg { get; init; }
     }
 
     private sealed class ProductDetailsRow : ProductPageRow

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SubiektMobile.Domain.Identity;
+using SubiektMobile.Domain.Orders;
 using SubiektMobile.Infrastructure.Persistence.Application.Entities;
 
 namespace SubiektMobile.Infrastructure.Persistence.Application;
@@ -16,6 +17,9 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<AuthenticationSession> AuthenticationSessions => Set<AuthenticationSession>();
     public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<OrderAssignee> OrderAssignees => Set<OrderAssignee>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

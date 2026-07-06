@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SubiektMobile.Infrastructure.Persistence.Application;
@@ -11,9 +12,11 @@ using SubiektMobile.Infrastructure.Persistence.Application;
 namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260705184553_AddOrderManagement")]
+    partial class AddOrderManagement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,11 +235,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)");
 
-                    b.Property<string>("PickingMode")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
                     b.Property<DateTimeOffset?>("PublishedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -268,49 +266,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                     b.HasIndex("Status", "UpdatedAtUtc");
 
                     b.ToTable("orders", "app");
-                });
-
-            modelBuilder.Entity("SubiektMobile.Domain.Orders.OrderAssignee", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("AssignedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("AssignedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("AssignedByName")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
-
-                    b.Property<string>("EmployeeDisplayName")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OrganizationId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.HasIndex("OrderId", "EmployeeId")
-                        .IsUnique();
-
-                    b.ToTable("order_assignees", "app");
                 });
 
             modelBuilder.Entity("SubiektMobile.Domain.Orders.OrderItem", b =>
@@ -417,27 +372,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SubiektMobile.Domain.Orders.OrderAssignee", b =>
-                {
-                    b.HasOne("SubiektMobile.Domain.Identity.Employee", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SubiektMobile.Domain.Orders.Order", null)
-                        .WithMany("Assignees")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SubiektMobile.Domain.Identity.Organization", null)
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SubiektMobile.Domain.Orders.OrderItem", b =>
                 {
                     b.HasOne("SubiektMobile.Domain.Orders.Order", null)
@@ -467,8 +401,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
 
             modelBuilder.Entity("SubiektMobile.Domain.Orders.Order", b =>
                 {
-                    b.Navigation("Assignees");
-
                     b.Navigation("Items");
                 });
 #pragma warning restore 612, 618

@@ -36,6 +36,7 @@ public sealed class ProductsController : ControllerBase
                 product.Name,
                 product.Symbol,
                 product.Unit,
+                product.UnitWeightKg,
                 BuildImageUrl(product.Id, product.HasImage),
                 product.Stock))
             .ToList();
@@ -70,6 +71,7 @@ public sealed class ProductsController : ControllerBase
             product.Symbol,
             product.Description,
             product.Unit,
+            product.UnitWeightKg,
             product.PrimaryBarcode,
             product.AdditionalBarcodes,
             product.Vat,

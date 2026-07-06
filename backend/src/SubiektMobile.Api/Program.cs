@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using SubiektMobile.Api.Middleware;
 using SubiektMobile.Api.Security;
 using SubiektMobile.Api.Startup;
@@ -95,6 +96,14 @@ builder.Services
     .AddDbContextCheck<ApplicationDbContext>("application-db");
 
 var app = builder.Build();
+
+if (args.Contains("--migrate", StringComparer.OrdinalIgnoreCase))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var applicationDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await applicationDb.Database.MigrateAsync();
+    return;
+}
 
 if (app.Environment.IsDevelopment())
 {

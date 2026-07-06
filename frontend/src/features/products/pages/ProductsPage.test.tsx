@@ -40,6 +40,7 @@ describe('ProductsPage', () => {
           name: 'Wkręt konstrukcyjny',
           symbol: 'WK-100',
           unit: 'szt.',
+          unitWeightKg: 0.2,
           imageUrl: null,
           stock: {
             warehouseId: 1,

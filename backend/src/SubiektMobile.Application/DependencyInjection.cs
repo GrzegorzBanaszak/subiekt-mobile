@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SubiektMobile.Application.Identity;
+using SubiektMobile.Application.Orders;
 
 namespace SubiektMobile.Application;
 
@@ -13,6 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IIdentityAccessService, IdentityAccessService>();
         services.AddScoped<IApplicationAuthorizationService, ApplicationAuthorizationService>();
         services.AddSingleton<IAuditEntryFactory, AuditEntryFactory>();
+        services.AddSingleton<IOrderNumberGenerator, OrderNumberGenerator>();
         services.AddSingleton(TimeProvider.System);
 
         return services;

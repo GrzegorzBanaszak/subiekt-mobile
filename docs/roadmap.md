@@ -31,7 +31,7 @@ Zakres minimalny:
 - [x] Paginacja.
 - [x] Szczegóły towaru.
 - [x] Jednostka miary.
-- [ ] Masa jednostkowa lub informacja o jej braku.
+- [x] Masa jednostkowa brutto z Subiekta lub informacja o jej braku.
 
 Warunki techniczne:
 
@@ -68,14 +68,15 @@ Cel: uprawniony użytkownik tworzy zamówienie z towarów odczytanych z Subiekta
 
 Zakres minimalny:
 
-- [ ] Lista i szczegóły zamówień.
-- [ ] Zamawiający.
-- [ ] Termin realizacji.
-- [ ] Dodawanie i usuwanie pozycji.
-- [ ] Ilość, jednostka i masa jednostkowa pozycji.
-- [ ] Migawka nazwy towaru.
-- [ ] Zapis wersji roboczej.
-- [ ] Walidacja i udostępnienie zamówienia do kompletacji.
+- [x] Lista i szczegóły zamówień.
+- [x] Zamawiający.
+- [x] Termin realizacji.
+- [x] Dodawanie i usuwanie pozycji.
+- [x] Ilość, jednostka i masa jednostkowa pozycji.
+- [x] Migawka nazwy towaru.
+- [x] Zapis wersji roboczej.
+- [x] Walidacja i udostępnienie zamówienia do kompletacji.
+- [x] Wybór trybu kompletacji jednoosobowej albo współdzielonej i przypisanie pracowników przed udostępnieniem.
 
 ## Etap 4 — kompletacja współdzielona
 
