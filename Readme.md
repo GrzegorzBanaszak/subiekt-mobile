@@ -254,6 +254,9 @@ Następnie uruchom bazę aplikacji:
 docker compose up -d application-db
 ```
 
+Pełne wdrożenie produkcyjne (API, frontend, PostgreSQL i Cloudflare Tunnel) opisuje
+[`docs/deployment.md`](docs/deployment.md).
+
 Domyślny connection string odpowiadający konfiguracji z `.env.example`:
 
 ```text

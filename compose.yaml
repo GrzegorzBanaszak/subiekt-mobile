@@ -1,3 +1,16 @@
+name: subiekt-mobile
+
+x-api-environment: &api-environment
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_HTTP_PORTS: 8080
+  ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+  ConnectionStrings__ApplicationDb: Host=application-db;Port=5432;Database=${APPLICATION_DB_NAME:-subiekt_mobile};Username=${APPLICATION_DB_USER:-subiekt_mobile};Password=${APPLICATION_DB_PASSWORD:?Set APPLICATION_DB_PASSWORD in .env}
+  ConnectionStrings__SubiektGt: ${SUBIEKT_GT_CONNECTION_STRING:?Set SUBIEKT_GT_CONNECTION_STRING in .env}
+  DataProtection__KeyPath: /var/lib/subiekt-mobile/data-protection
+  Identity__BootstrapAdministrator__Username: ${BOOTSTRAP_ADMIN_USERNAME:-}
+  Identity__BootstrapAdministrator__DisplayName: ${BOOTSTRAP_ADMIN_DISPLAY_NAME:-}
+  Identity__BootstrapAdministrator__Password: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+
 services:
   application-db:
     image: postgres:17-alpine
@@ -6,18 +19,86 @@ services:
       POSTGRES_DB: ${APPLICATION_DB_NAME:-subiekt_mobile}
       POSTGRES_USER: ${APPLICATION_DB_USER:-subiekt_mobile}
       POSTGRES_PASSWORD: ${APPLICATION_DB_PASSWORD:?Set APPLICATION_DB_PASSWORD in .env}
-    ports:
-      - "127.0.0.1:${APPLICATION_DB_PORT:-5432}:5432"
     volumes:
       - application-db-data:/var/lib/postgresql/data
     healthcheck:
-      test:
-        - CMD-SHELL
-        - pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 12
       start_period: 10s
+    networks:
+      - backend
+
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: "no"
+    environment: *api-environment
+    command: ["--migrate"]
+    depends_on:
+      application-db:
+        condition: service_healthy
+    networks:
+      - backend
+
+  data-protection-init:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    user: "0:0"
+    restart: "no"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - chown -R "$${APP_UID}:$${APP_UID}" /var/lib/subiekt-mobile/data-protection
+    volumes:
+      - data-protection-keys:/var/lib/subiekt-mobile/data-protection
+    network_mode: none
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment: *api-environment
+    volumes:
+      - data-protection-keys:/var/lib/subiekt-mobile/data-protection
+    depends_on:
+      application-db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      data-protection-init:
+        condition: service_completed_successfully
+    networks:
+      - backend
+      - edge
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - edge
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:?Set CLOUDFLARE_TUNNEL_TOKEN in .env}
+    depends_on:
+      - web
+    networks:
+      - edge
 
 volumes:
   application-db-data:
+  data-protection-keys:
+
+networks:
+  backend:
+    internal: true
+  edge:
