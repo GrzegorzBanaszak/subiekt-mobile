@@ -1,0 +1,40 @@
+{
+  "title": "Subiekt Mobile",
+  "slug": "subiekt-mobile",
+  "type": "project",
+  "status": "W trakcie",
+  "featured": true,
+  "summary": "Aplikacja webowa i API wspierające pracę z danymi systemu Subiekt GT.",
+  "category": "Aplikacja biznesowa / API",
+  "technologies": [
+    ".NET",
+    "ASP.NET Core",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "SQL Server",
+    "Docker"
+  ],
+  "repository": "GrzegorzBanaszak/subiekt-mobile",
+  "links": {
+    "github": "https://github.com/GrzegorzBanaszak/subiekt-mobile",
+    "demo": "",
+    "docs": ""
+  },
+  "problem": "Potrzebny był wygodniejszy sposób podglądu i obsługi danych z systemu Subiekt GT bez bezpośredniej pracy na bazie danych.",
+  "decision": "Zdecydowałem się oddzielić backend API od frontendu, aby uzyskać czytelniejszą architekturę i możliwość dalszej rozbudowy aplikacji.",
+  "implementation": [
+    "Przygotowanie backendu API w .NET.",
+    "Przygotowanie frontendu w Next.js i React.",
+    "Konfiguracja połączenia z bazą SQL Server.",
+    "Rozdzielenie danych projektu od warstwy prezentacji.",
+    "Przygotowanie aplikacji pod lokalne uruchamianie i dalszy deployment."
+  ],
+  "result": "Powstała baza aplikacji pozwalająca rozwijać funkcje związane z podglądem danych, zamówieniami i pracą z systemem Subiekt GT.",
+  "lessonsLearned": [
+    "Konfiguracja połączenia aplikacji z SQL Server.",
+    "Oddzielenie backendu od frontendu.",
+    "Projektowanie prostego API dla danych biznesowych.",
+    "Praca z aplikacją rozwijaną iteracyjnie."
+  ]
+}
