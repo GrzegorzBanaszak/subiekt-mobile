@@ -18,7 +18,7 @@
   "repository": "GrzegorzBanaszak/subiekt-mobile",
   "links": {
     "github": "https://github.com/GrzegorzBanaszak/subiekt-mobile",
-    "demo": "",
+    "demo": "subiekt-demo",
     "docs": ""
   },
   "problem": "Potrzebny był wygodniejszy sposób podglądu i obsługi danych z systemu Subiekt GT bez bezpośredniej pracy na bazie danych.",
@@ -36,5 +36,6 @@
     "Oddzielenie backendu od frontendu.",
     "Projektowanie prostego API dla danych biznesowych.",
     "Praca z aplikacją rozwijaną iteracyjnie."
-  ]
+  ],
+  "demo": "subiekt-demo"
 }

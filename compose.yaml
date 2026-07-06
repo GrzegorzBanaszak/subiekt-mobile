@@ -22,7 +22,8 @@ services:
     volumes:
       - application-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      test:
+        ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
       interval: 5s
       timeout: 5s
       retries: 12
@@ -73,7 +74,7 @@ services:
         condition: service_completed_successfully
     networks:
       - backend
-      - edge
+      - public-proxy
 
   web:
     build:
@@ -83,16 +84,7 @@ services:
     depends_on:
       - api
     networks:
-      - edge
-
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    restart: unless-stopped
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:?Set CLOUDFLARE_TUNNEL_TOKEN in .env}
-    depends_on:
-      - web
-    networks:
-      - edge
+      - public-proxy
 
 volumes:
   application-db-data:
@@ -101,4 +93,6 @@ volumes:
 networks:
   backend:
     internal: true
-  edge:
+
+  public-proxy:
+    external: true
