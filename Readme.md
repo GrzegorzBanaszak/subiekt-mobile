@@ -248,6 +248,10 @@ Skopiuj przykładową konfigurację i ustaw lokalne hasło w pliku `.env`:
 Copy-Item .env.example .env
 ```
 
+Zmienna `APP_ORIGIN` określa główny origin frontendu dopuszczony przez CORS API.
+W środowisku produkcyjnym ustaw pełny adres z protokołem, bez ścieżki i ukośnika
+na końcu, na przykład `https://subiekt.example.com`.
+
 Następnie uruchom bazę aplikacji:
 
 ```powershell

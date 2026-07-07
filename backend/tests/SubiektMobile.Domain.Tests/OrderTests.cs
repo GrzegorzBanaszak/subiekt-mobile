@@ -1,4 +1,6 @@
 using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.Identity;
+using System.Globalization;
 using Xunit;
 
 namespace SubiektMobile.Domain.Tests;
@@ -96,8 +98,125 @@ public sealed class OrderTests
             order.AddItem(7, "Name", null, quantity, "szt.", null, ActorId, "Admin", Now));
     }
 
+    [Fact]
+    public void Shared_item_requires_reservation_and_can_be_partially_packed()
+    {
+        var employee = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+        var order = Create(PickingMode.SharedTeam);
+        var item = order.AddItem(7, "Name", null, 10, "szt.", null, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+
+        Assert.Throws<InvalidOperationException>(() => order.PackItem(item.Id, 4, employee, false, Now));
+        order.ReserveItem(item.Id, employee, Now);
+        order.PackItem(item.Id, 4, employee, false, Now.AddMinutes(1));
+
+        Assert.Equal(OrderItemStatus.Picking, item.Status);
+        Assert.Equal(4, item.PackedQuantity);
+        Assert.Equal(3, item.Version);
+        Assert.Equal(employee.Id, item.ReservedById);
+    }
+
+    [Fact]
+    public void Single_assignee_can_pack_remaining_quantity_in_multiple_batches()
+    {
+        var employee = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+        var order = Create();
+        var item = order.AddItem(7, "Name", null, 10, "szt.", null, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+
+        order.PackItem(item.Id, 4, employee, false, Now);
+
+        Assert.Equal(OrderItemStatus.ToPick, item.Status);
+        Assert.Equal(4, item.PackedQuantity);
+
+        order.PackItem(item.Id, 6, employee, false, Now.AddMinutes(1));
+
+        Assert.Equal(OrderItemStatus.Packed, item.Status);
+        Assert.Equal(10, item.PackedQuantity);
+    }
+
+    [Theory]
+    [InlineData("10.0001")]
+    [InlineData("0")]
+    [InlineData("-0.0001")]
+    [InlineData("1.00001")]
+    public void Invalid_packed_quantity_is_rejected(string value)
+    {
+        var employee = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+        var order = Create();
+        var item = order.AddItem(7, "Name", null, 10, "szt.", null, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            order.PackItem(item.Id, decimal.Parse(value, CultureInfo.InvariantCulture), employee, false, Now));
+    }
+
+    [Fact]
+    public void Released_partial_shared_item_can_be_completed_by_another_employee()
+    {
+        var first = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee one");
+        var second = new PickingActor(ActorKind.Employee, Guid.NewGuid(), "Employee two");
+        var order = Create(PickingMode.SharedTeam);
+        var item = order.AddItem(7, "Name", null, 10, "szt.", null, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+
+        order.ReserveItem(item.Id, first, Now);
+        order.PackItem(item.Id, 4, first, false, Now.AddMinutes(1));
+        order.ReleaseItem(item.Id, first, false, Now.AddMinutes(2));
+        order.ReserveItem(item.Id, second, Now.AddMinutes(3));
+        order.PackItem(item.Id, 6, second, false, Now.AddMinutes(4));
+
+        Assert.Equal(OrderItemStatus.Packed, item.Status);
+        Assert.Equal(10, item.PackedQuantity);
+        Assert.Null(item.ReservedById);
+        Assert.Equal(second.Id, item.PackedById);
+    }
+
+    [Fact]
+    public void Only_reservation_owner_can_release_but_administrator_can_override()
+    {
+        var owner = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+        var other = new PickingActor(ActorKind.Employee, Guid.NewGuid(), "Other employee");
+        var admin = new PickingActor(ActorKind.Administrator, ActorId, "Admin");
+        var order = Create(PickingMode.SharedTeam);
+        var item = order.AddItem(7, "Name", null, 1, "szt.", null, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+        order.ReserveItem(item.Id, owner, Now);
+
+        Assert.Throws<InvalidOperationException>(() => order.ReleaseItem(item.Id, other, false, Now));
+        order.ReleaseItem(item.Id, admin, true, Now);
+
+        Assert.Equal(OrderItemStatus.ToPick, item.Status);
+    }
+
+    [Fact]
+    public void Undo_packing_restores_available_item_and_clears_packed_quantity()
+    {
+        var employee = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+        var order = Create();
+        var item = order.AddItem(7, "Name", null, 1, "szt.", null, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+        order.PackItem(item.Id, 1, employee, false, Now);
+
+        order.UndoPackedItem(item.Id, employee, false, Now.AddMinutes(1));
+
+        Assert.Equal(OrderItemStatus.ToPick, item.Status);
+        Assert.Null(item.PackedQuantity);
+        Assert.Null(item.PackedById);
+    }
+
     private static Order Create() => Order.Create(Guid.NewGuid(), "ZAM-1", "Customer",
         new DateOnly(2026, 7, 6), ActorId, "Admin", Now, PickingMode.SingleAssignee,
+        [Candidate("22222222-2222-2222-2222-222222222222", "Employee")]);
+
+    private static Order Create(PickingMode mode) => Order.Create(Guid.NewGuid(), "ZAM-1", "Customer",
+        new DateOnly(2026, 7, 6), ActorId, "Admin", Now, mode,
         [Candidate("22222222-2222-2222-2222-222222222222", "Employee")]);
 
     private static OrderAssigneeCandidate Candidate(string employeeId, string name) =>

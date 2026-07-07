@@ -22,6 +22,8 @@ import { AppShell } from '../../shared/components/AppShell'
 import { OrdersPage } from '../../features/orders/pages/OrdersPage'
 import { NewOrderPage } from '../../features/orders/pages/NewOrderPage'
 import { OrderDetailsPage } from '../../features/orders/pages/OrderDetailsPage'
+import { PickingOrdersPage } from '../../features/picking/pages/PickingOrdersPage'
+import { PickingOrderPage } from '../../features/picking/pages/PickingOrderPage'
 
 export const appRouter = createBrowserRouter([
   {
@@ -62,6 +64,14 @@ export const appRouter = createBrowserRouter([
           {
             path: '/orders/:orderId',
             element: <AdministrationGuard permission="orders.manage"><OrderDetailsPage /></AdministrationGuard>,
+          },
+          {
+            path: '/picking',
+            element: <AdministrationGuard permission="orders.read-published"><PickingOrdersPage /></AdministrationGuard>,
+          },
+          {
+            path: '/picking/:orderId',
+            element: <AdministrationGuard permission="orders.read-published"><PickingOrderPage /></AdministrationGuard>,
           },
           {
             path: '/administration',

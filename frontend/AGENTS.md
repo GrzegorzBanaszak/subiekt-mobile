@@ -50,6 +50,8 @@ Szczegółowy punkt wyjścia dla widoków znajduje się w `docs/zarys-ekranow.md
 - Obsługuj konflikty współbieżności czytelnym komunikatem i odświeżeniem aktualnego stanu.
 - Nie wyliczaj wiążącej masy palety wyłącznie po stronie klienta; prezentuj wynik zatwierdzony przez API.
 - Ukrywaj niedostępne akcje dla wygody użytkownika, ale nie traktuj frontendu jako granicy autoryzacji.
+- Wszystkie teksty interfejsu dodawaj przez wspólny mechanizm i18n i uzupełniaj jednocześnie dla każdego obsługiwanego języka.
+- Nie tłumacz danych biznesowych otrzymanych z API, w szczególności nazw i symboli produktów, nazw klientów, organizacji ani pracowników.
 
 ## Komendy sprawdzające
 

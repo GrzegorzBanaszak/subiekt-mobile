@@ -3,6 +3,7 @@ import { apiClient } from '../../../api/client'
 
 export type ProductListItem = components['schemas']['ProductListItemResponse']
 export type ProductPage = components['schemas']['PagedResponseOfProductListItemResponse']
+export type ProductDetails = components['schemas']['ProductDetailsResponse']
 
 export class ProductsApiError extends Error {
   constructor(public readonly status: number) {
@@ -27,6 +28,18 @@ export async function getProducts({
         PageSize: pageSize,
       },
     },
+  })
+
+  if (!response.ok || !data) {
+    throw new ProductsApiError(response.status)
+  }
+
+  return data
+}
+
+export async function getProductDetails(id: number): Promise<ProductDetails> {
+  const { data, response } = await apiClient.GET('/api/products/{id}', {
+    params: { path: { id } },
   })
 
   if (!response.ok || !data) {

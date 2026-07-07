@@ -4,6 +4,7 @@ x-api-environment: &api-environment
   ASPNETCORE_ENVIRONMENT: Production
   ASPNETCORE_HTTP_PORTS: 8080
   ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+  Cors__MainOrigin: ${APP_ORIGIN:?Set APP_ORIGIN in .env}
   ConnectionStrings__ApplicationDb: Host=application-db;Port=5432;Database=${APPLICATION_DB_NAME:-subiekt_mobile};Username=${APPLICATION_DB_USER:-subiekt_mobile};Password=${APPLICATION_DB_PASSWORD:?Set APPLICATION_DB_PASSWORD in .env}
   ConnectionStrings__SubiektGt: ${SUBIEKT_GT_CONNECTION_STRING:?Set SUBIEKT_GT_CONNECTION_STRING in .env}
   DataProtection__KeyPath: /var/lib/subiekt-mobile/data-protection

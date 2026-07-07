@@ -20,6 +20,7 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<OrderAssignee> OrderAssignees => Set<OrderAssignee>();
+    public DbSet<OrderPickingEvent> OrderPickingEvents => Set<OrderPickingEvent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

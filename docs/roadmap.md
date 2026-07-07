@@ -93,7 +93,9 @@ Zakres minimalny:
 - [ ] Historia zmian statusów.
 - [ ] Testy współbieżności i przejść statusów.
 
-Zakres częściowej kompletacji należy ustalić przed zaprojektowaniem kontraktów API dla ilości spakowanej.
+Ilość spakowana jest kumulowana z kolejnych partii. Pozycja otrzymuje status spakowanej
+dopiero po osiągnięciu pełnej zamówionej ilości; wcześniej może zostać zwolniona i podjęta
+przez kolejnego przypisanego pracownika.
 
 ## Etap 5 — paletyzacja
 
@@ -111,7 +113,8 @@ Zakres minimalny:
 - [ ] Zamknięcie palety.
 - [ ] Obsługa wielu palet w jednym zamówieniu.
 
-Dzielenie jednej pozycji między palety należy rozstrzygnąć przed implementacją schematu danych.
+Jedna pozycja może być dzielona pomiędzy wiele palet. Przyszłe przypisanie do palety musi
+zawierać ilość i pilnować, aby suma przypisań nie przekroczyła ilości spakowanej.
 
 ## Etap 6 — etykiety palet
 

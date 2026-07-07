@@ -1,3 +1,5 @@
+using SubiektMobile.Domain.Identity;
+
 namespace SubiektMobile.Domain.Orders;
 
 public enum OrderStatus
@@ -63,6 +65,41 @@ public sealed class Order
     public IReadOnlyCollection<OrderItem> Items => _items;
     public PickingMode PickingMode { get; private set; }
     public IReadOnlyCollection<OrderAssignee> Assignees => _assignees;
+
+    public OrderItem ReserveItem(Guid itemId, PickingActor actor, DateTimeOffset now)
+    {
+        EnsurePublished();
+        if (PickingMode != PickingMode.SharedTeam)
+            throw new InvalidOperationException("Single-assignee orders do not require item reservation.");
+        var item = FindItem(itemId);
+        item.Reserve(actor, now);
+        return item;
+    }
+
+    public OrderItem ReleaseItem(Guid itemId, PickingActor actor, bool canOverride, DateTimeOffset now)
+    {
+        EnsurePublished();
+        var item = FindItem(itemId);
+        item.Release(actor, canOverride, now);
+        return item;
+    }
+
+    public OrderItem PackItem(Guid itemId, decimal packedQuantity, PickingActor actor,
+        bool canOverride, DateTimeOffset now)
+    {
+        EnsurePublished();
+        var item = FindItem(itemId);
+        item.Pack(packedQuantity, actor, PickingMode == PickingMode.SharedTeam, canOverride, now);
+        return item;
+    }
+
+    public OrderItem UndoPackedItem(Guid itemId, PickingActor actor, bool canOverride, DateTimeOffset now)
+    {
+        EnsurePublished();
+        var item = FindItem(itemId);
+        item.UndoPacked(actor, canOverride, now);
+        return item;
+    }
 
     public static Order Create(Guid id, string number, string customerName, DateOnly dueDate,
         Guid actorId, string actorName, DateTimeOffset now,
@@ -137,6 +174,15 @@ public sealed class Order
     {
         if (Status != OrderStatus.Draft) throw new InvalidOperationException("Only a draft order can be modified.");
     }
+
+    private void EnsurePublished()
+    {
+        if (Status != OrderStatus.ReadyForPicking)
+            throw new InvalidOperationException("Only a published order can be picked.");
+    }
+
+    private OrderItem FindItem(Guid itemId) => _items.SingleOrDefault(x => x.Id == itemId)
+        ?? throw new KeyNotFoundException("Order item was not found.");
 
     private void SetPickingConfiguration(PickingMode mode, IReadOnlyCollection<OrderAssigneeCandidate> assignees,
         Guid actorId, string actorName, DateTimeOffset now)
@@ -233,6 +279,7 @@ public sealed class OrderItem
         Unit = Order.RequireText(unit, nameof(unit), 20);
         UnitWeightKg = unitWeightKg;
         Status = OrderItemStatus.ToPick;
+        Version = 1;
     }
 
     public Guid Id { get; private set; }
@@ -244,8 +291,110 @@ public sealed class OrderItem
     public string Unit { get; private set; } = string.Empty;
     public decimal? UnitWeightKg { get; private set; }
     public OrderItemStatus Status { get; private set; }
+    public long Version { get; private set; }
+    public ActorKind? ReservedByKind { get; private set; }
+    public Guid? ReservedById { get; private set; }
+    public string? ReservedByName { get; private set; }
+    public DateTimeOffset? ReservedAtUtc { get; private set; }
+    public decimal? PackedQuantity { get; private set; }
+    public ActorKind? PackedByKind { get; private set; }
+    public Guid? PackedById { get; private set; }
+    public string? PackedByName { get; private set; }
+    public DateTimeOffset? PackedAtUtc { get; private set; }
 
     internal static OrderItem Create(Guid id, Guid orderId, int productId, string productName,
         string? productSymbol, decimal quantity, string unit, decimal? unitWeightKg) =>
         new(id, orderId, productId, productName, productSymbol, quantity, unit, unitWeightKg);
+
+    internal void Reserve(PickingActor actor, DateTimeOffset now)
+    {
+        if (Status != OrderItemStatus.ToPick)
+            throw new InvalidOperationException("Only an available item can be reserved.");
+        ValidateActor(actor);
+        Status = OrderItemStatus.Picking;
+        ReservedByKind = actor.Kind;
+        ReservedById = actor.Id;
+        ReservedByName = Order.RequireText(actor.DisplayName, nameof(actor.DisplayName), 120);
+        ReservedAtUtc = now;
+        Version++;
+    }
+
+    internal void Release(PickingActor actor, bool canOverride, DateTimeOffset now)
+    {
+        if (Status != OrderItemStatus.Picking)
+            throw new InvalidOperationException("Only a reserved item can be released.");
+        ValidateActor(actor);
+        if (!canOverride && ReservedById != actor.Id)
+            throw new InvalidOperationException("Only the current item owner can release it.");
+        Status = OrderItemStatus.ToPick;
+        ClearReservation();
+        Version++;
+    }
+
+    internal void Pack(decimal packedQuantity, PickingActor actor, bool reservationRequired,
+        bool canOverride, DateTimeOffset now)
+    {
+        ValidateActor(actor);
+        var alreadyPacked = PackedQuantity ?? 0;
+        var remainingQuantity = Quantity - alreadyPacked;
+        if (decimal.Round(packedQuantity, 4) != packedQuantity || packedQuantity <= 0 ||
+            packedQuantity > remainingQuantity)
+            throw new ArgumentOutOfRangeException(nameof(packedQuantity),
+                "Packed quantity must contain at most four decimal places and be greater than zero without exceeding the remaining quantity.");
+        if (reservationRequired)
+        {
+            if (Status != OrderItemStatus.Picking)
+                throw new InvalidOperationException("A shared item must be reserved before packing.");
+            if (!canOverride && ReservedById != actor.Id)
+                throw new InvalidOperationException("Only the current item owner can pack it.");
+        }
+        else if (Status != OrderItemStatus.ToPick)
+        {
+            throw new InvalidOperationException("Only an available item can be packed.");
+        }
+
+        PackedQuantity = alreadyPacked + packedQuantity;
+        PackedByKind = actor.Kind;
+        PackedById = actor.Id;
+        PackedByName = Order.RequireText(actor.DisplayName, nameof(actor.DisplayName), 120);
+        PackedAtUtc = now;
+        if (PackedQuantity == Quantity)
+        {
+            Status = OrderItemStatus.Packed;
+            ClearReservation();
+        }
+        Version++;
+    }
+
+    internal void UndoPacked(PickingActor actor, bool canOverride, DateTimeOffset now)
+    {
+        if (Status == OrderItemStatus.AssignedToPallet || PackedQuantity is null or <= 0)
+            throw new InvalidOperationException("Only an item with a packed quantity can be restored.");
+        ValidateActor(actor);
+        if (!canOverride && PackedById != actor.Id)
+            throw new InvalidOperationException("Only the employee who packed the item can restore it.");
+        if (Status == OrderItemStatus.Packed) Status = OrderItemStatus.ToPick;
+        PackedQuantity = null;
+        PackedByKind = null;
+        PackedById = null;
+        PackedByName = null;
+        PackedAtUtc = null;
+        Version++;
+    }
+
+    private void ClearReservation()
+    {
+        ReservedByKind = null;
+        ReservedById = null;
+        ReservedByName = null;
+        ReservedAtUtc = null;
+    }
+
+    private static void ValidateActor(PickingActor actor)
+    {
+        if (actor.Id == Guid.Empty || actor.Kind is ActorKind.System)
+            throw new ArgumentException("A picking actor is required.", nameof(actor));
+    }
 }
+
+public sealed record PickingActor(ActorKind Kind, Guid Id, string DisplayName);

@@ -50,9 +50,15 @@ describe('ordersApi', () => {
   })
 
   it('creates an order with CSRF protection', async () => {
-    await createOrder({ customerName: 'Klient', dueDate: '2026-07-10', pickingMode: 0, employeeIds: ['employee-1'] })
+    await createOrder({
+      customerName: 'Klient', dueDate: '2026-07-10', pickingMode: 0,
+      employeeIds: ['employee-1'], items: [{ productId: 7, quantity: 2.5 }],
+    })
     expect(apiMocks.POST).toHaveBeenCalledWith('/api/orders', {
-      body: { customerName: 'Klient', dueDate: '2026-07-10', pickingMode: 0, employeeIds: ['employee-1'] },
+      body: {
+        customerName: 'Klient', dueDate: '2026-07-10', pickingMode: 0,
+        employeeIds: ['employee-1'], items: [{ productId: 7, quantity: 2.5 }],
+      },
       headers: { 'X-CSRF-TOKEN': 'csrf-token' },
     })
   })

@@ -28,7 +28,8 @@ public sealed class OrdersController(ISender sender) : ControllerBase
     public async Task<ActionResult<OrderDto>> Create(CreateOrderRequest request, CancellationToken ct)
     {
         var order = await sender.Send(new CreateOrderCommand(request.CustomerName, request.DueDate,
-            request.PickingMode, request.EmployeeIds), ct);
+            request.PickingMode, request.EmployeeIds,
+            request.Items?.Select(x => new CreateOrderItemInput(x.ProductId, x.Quantity)).ToList() ?? []), ct);
         return CreatedAtAction(nameof(Get), new { id = order.Id }, order);
     }
 
@@ -67,7 +68,9 @@ public sealed class OrdersController(ISender sender) : ControllerBase
 }
 
 public sealed record CreateOrderRequest(string CustomerName, DateOnly DueDate,
-    PickingMode PickingMode, IReadOnlyCollection<Guid> EmployeeIds);
+    PickingMode PickingMode, IReadOnlyCollection<Guid> EmployeeIds,
+    IReadOnlyCollection<CreateOrderItemRequest>? Items = null);
+public sealed record CreateOrderItemRequest(int ProductId, decimal Quantity);
 public sealed record UpdateOrderRequest(string CustomerName, DateOnly DueDate, long Version);
 public sealed record AddOrderItemRequest(int ProductId, decimal Quantity, long Version);
 public sealed record VersionRequest(long Version);

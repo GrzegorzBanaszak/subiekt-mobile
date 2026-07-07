@@ -177,13 +177,13 @@ Masa jednostkowa i masa pustej palety powinny używać typu dziesiętnego oraz j
 - wspólny widok postępu,
 - atomowe rezerwowanie pozycji,
 - zwalnianie rezerwacji,
-- oznaczanie pozycji jako spakowanej,
+- kumulacyjne pakowanie częściowe; pozycja jest w pełni spakowana dopiero po osiągnięciu zamówionej ilości,
 - zapis autora i czasu każdej operacji.
 
 ### Palletization
 
 - tworzenie palet dla zamówienia,
-- wybór spakowanych pozycji,
+- wybór spakowanych ilości pozycji i możliwość podziału jednej pozycji pomiędzy wiele palet,
 - obliczanie mas,
 - zamykanie palety,
 - przygotowanie i ponowny wydruk etykiety.
@@ -242,8 +242,6 @@ każdej sesji i nie są utrwalane w rekordzie sesji.
 - sposób wdrażania i wykonywania kopii zapasowych PostgreSQL,
 - źródło zamawiających,
 - źródło i sposób korekty brakującej masy jednostkowej,
-- kompletacja częściowa i dzielenie ilości pozycji,
-- dzielenie pozycji pomiędzy palety,
 - strategia aktualizacji współdzielonego ekranu,
 - czas ważności rezerwacji oraz odzyskiwanie porzuconych pozycji,
 - format etykiety i integracja z drukarką,

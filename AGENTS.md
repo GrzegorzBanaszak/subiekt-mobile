@@ -73,7 +73,7 @@ Rezerwacja pozycji musi być atomowa i odporna na równoczesne żądania. W dany
 - Masa towarów jest sumą `masa jednostkowa × ilość na palecie`.
 - Masa całkowita jest sumą masy towarów i masy pustej palety.
 - Zamknięcie palety wymaga obecności masy jednostkowej dla każdej przypisanej pozycji i nieujemnej masy palety.
-- Reguły dzielenia jednej pozycji zamówienia pomiędzy kilka palet wymagają osobnej decyzji. Do czasu jej podjęcia nie należy implementować tego niejawnie.
+- Jedna pozycja zamówienia może być pakowana częściowo i docelowo dzielona pomiędzy kilka palet. Przypisania do palet muszą przechowywać ilość, a ich suma nie może przekroczyć ilości spakowanej.
 
 ### Etykieta palety
 
@@ -144,8 +144,6 @@ Model domenowy aplikacji nie może zależeć od struktury tabel Subiekta. Mapowa
 ## Decyzje wymagające doprecyzowania
 
 - źródło masy jednostkowej oraz zasady jej korekty, gdy Subiekt jej nie zawiera,
-- czy pozycję można kompletować częściowo i przez więcej niż jednego użytkownika w różnym czasie,
-- czy jedną pozycję zamówienia można dzielić pomiędzy kilka palet,
 - dane i sposób wyboru zamawiającego,
 - dokładne role i uprawnienia,
 - format, rozmiar i technologia wydruku etykiety,
@@ -174,6 +172,7 @@ Podczas implementacji:
 - oddzielaj modele odczytowe Subiekta od encji zapisywanych w bazie aplikacji,
 - uwzględniaj idempotencję i konflikty współbieżności w operacjach kompletacji,
 - nie implementuj nierozstrzygniętych decyzji biznesowych bez jawnego założenia zaakceptowanego w zadaniu.
+- każdy nowy lub zmieniany tekst interfejsu dodawaj przez istniejący mechanizm i18n we wszystkich obsługiwanych językach; nie tłumacz danych biznesowych zwracanych przez API, takich jak nazwy produktów.
 
 Po zmianie:
 
