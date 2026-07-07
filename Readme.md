@@ -55,11 +55,11 @@ Ważne: baza Subiekta jest w tym procesie wyłącznie źródłem danych towarowy
 
 ### Etap 1 — podgląd towarów
 
-- [ ] Lista towarów.
-- [ ] Wyszukiwanie towarów.
+- [x] Lista towarów.
+- [x] Wyszukiwanie towarów.
 - [ ] Szczegóły towaru.
-- [ ] Dane identyfikacyjne, kody, jednostki.
-- [ ] Masa jednostkowa albo jednoznaczna informacja o jej braku.
+- [x] Dane identyfikacyjne, kody, jednostki.
+- [x] Masa jednostkowa albo jednoznaczna informacja o jej braku.
 
 ### Etap 2 — użytkownicy i uprawnienia
 
@@ -77,11 +77,11 @@ Ważne: baza Subiekta jest w tym procesie wyłącznie źródłem danych towarowy
 
 ### Etap 4 — kompletacja współdzielona
 
-- [ ] Atomowe rezerwowanie pozycji.
-- [ ] Zwolnienie rezerwacji.
-- [ ] Oznaczanie pozycji jako spakowanej.
-- [ ] Wspólny widok postępu.
-- [ ] Obsługa konfliktów współbieżności.
+- [x] Atomowe rezerwowanie pozycji.
+- [x] Zwolnienie rezerwacji.
+- [x] Oznaczanie pozycji jako spakowanej.
+- [x] Wspólny widok postępu.
+- [x] Obsługa konfliktów współbieżności.
 
 ### Etap 5 — palety i etykiety
 
