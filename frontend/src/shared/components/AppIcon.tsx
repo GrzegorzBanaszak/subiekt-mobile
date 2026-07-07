@@ -24,6 +24,9 @@ export type AppIconName =
   | 'close'
   | 'organization'
   | 'personAdd'
+  | 'personCheck'
+  | 'refresh'
+  | 'history'
 
 const symbols: Record<AppIconName, string> = {
   box: 'inventory_2',
@@ -51,6 +54,9 @@ const symbols: Record<AppIconName, string> = {
   close: 'close',
   organization: 'corporate_fare',
   personAdd: 'person_add',
+  personCheck: 'person_check',
+  refresh: 'refresh',
+  history: 'history',
 }
 
 export function AppIcon({ name, className = 'size-6' }: { name: AppIconName; className?: string }) {

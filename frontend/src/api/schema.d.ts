@@ -1268,6 +1268,327 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/picking/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                    search?: string;
+                    status?: components["schemas"]["PickingOrderStatus"];
+                    dueDateFrom?: string;
+                    dueDateTo?: string;
+                    customer?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfPickingOrderListItemDto"];
+                        "application/json": components["schemas"]["PagedResultOfPickingOrderListItemDto"];
+                        "text/json": components["schemas"]["PagedResultOfPickingOrderListItemDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/picking/orders/{orderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    orderId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/picking/orders/{orderId}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path: {
+                    orderId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfPickingHistoryItemDto"];
+                        "application/json": components["schemas"]["PagedResultOfPickingHistoryItemDto"];
+                        "text/json": components["schemas"]["PagedResultOfPickingHistoryItemDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/picking/orders/{orderId}/items/{itemId}/reserve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    orderId: string;
+                    itemId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PickingMutationRequest"];
+                    "text/json": components["schemas"]["PickingMutationRequest"];
+                    "application/*+json": components["schemas"]["PickingMutationRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/picking/orders/{orderId}/items/{itemId}/release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    orderId: string;
+                    itemId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PickingMutationRequest"];
+                    "text/json": components["schemas"]["PickingMutationRequest"];
+                    "application/*+json": components["schemas"]["PickingMutationRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/picking/orders/{orderId}/items/{itemId}/pack": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    orderId: string;
+                    itemId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PackPickingItemRequest"];
+                    "text/json": components["schemas"]["PackPickingItemRequest"];
+                    "application/*+json": components["schemas"]["PackPickingItemRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/picking/orders/{orderId}/items/{itemId}/undo-pack": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    orderId: string;
+                    itemId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PickingMutationRequest"];
+                    "text/json": components["schemas"]["PickingMutationRequest"];
+                    "application/*+json": components["schemas"]["PickingMutationRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/products": {
         parameters: {
             query?: never;
@@ -1497,6 +1818,13 @@ export interface components {
             dueDate: string;
             pickingMode: components["schemas"]["PickingMode"];
             employeeIds: string[];
+            items?: null | components["schemas"]["CreateOrderItemRequest"][];
+        };
+        CreateOrderItemRequest: {
+            /** Format: int32 */
+            productId: number | string;
+            /** Format: double */
+            quantity: number | string;
         };
         CreateOrganizationRequest: {
             code: string;
@@ -1631,6 +1959,14 @@ export interface components {
             /** Format: date-time */
             updatedAtUtc: string;
         };
+        PackPickingItemRequest: {
+            /** Format: uuid */
+            operationId: string;
+            /** Format: int64 */
+            itemVersion: number | string;
+            /** Format: double */
+            packedQuantity: number | string;
+        };
         PagedResponseOfProductListItemResponse: {
             items: components["schemas"]["ProductListItemResponse"][];
             /** Format: int32 */
@@ -1653,7 +1989,128 @@ export interface components {
             /** Format: int32 */
             totalPages: number | string;
         };
+        PagedResultOfPickingHistoryItemDto: {
+            items: components["schemas"]["PickingHistoryItemDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PagedResultOfPickingOrderListItemDto: {
+            items: components["schemas"]["PickingOrderListItemDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PickingAction: number;
+        PickingActorDto: {
+            kind: components["schemas"]["ActorKind"];
+            /** Format: uuid */
+            id: string;
+            displayName: string;
+            /** Format: date-time */
+            atUtc: string;
+        };
+        PickingHistoryItemDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            operationId: string;
+            /** Format: uuid */
+            orderItemId: string;
+            productName: string;
+            action: components["schemas"]["PickingAction"];
+            fromStatus: components["schemas"]["OrderItemStatus"];
+            toStatus: components["schemas"]["OrderItemStatus"];
+            /** Format: double */
+            packedQuantity: null | number | string;
+            actorKind: components["schemas"]["ActorKind"];
+            /** Format: uuid */
+            actorId: string;
+            actorDisplayName: string;
+            /** Format: date-time */
+            occurredAtUtc: string;
+        };
+        PickingItemActionsDto: {
+            canReserve: boolean;
+            canRelease: boolean;
+            canPack: boolean;
+            canUndoPack: boolean;
+        };
+        PickingItemDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int32 */
+            productId: number | string;
+            productName: string;
+            productSymbol: null | string;
+            /** Format: double */
+            orderedQuantity: number | string;
+            /** Format: double */
+            remainingQuantity: number | string;
+            unit: string;
+            status: components["schemas"]["OrderItemStatus"];
+            /** Format: int64 */
+            version: number | string;
+            reservedBy: null | components["schemas"]["PickingActorDto"];
+            /** Format: double */
+            packedQuantity: null | number | string;
+            packedBy: null | components["schemas"]["PickingActorDto"];
+            actions: components["schemas"]["PickingItemActionsDto"];
+        };
         PickingMode: number;
+        PickingMutationRequest: {
+            /** Format: uuid */
+            operationId: string;
+            /** Format: int64 */
+            itemVersion: number | string;
+        };
+        PickingOrderDetailsDto: {
+            /** Format: uuid */
+            id: string;
+            number: string;
+            customerName: string;
+            /** Format: date */
+            dueDate: string;
+            pickingMode: components["schemas"]["PickingMode"];
+            pickingStatus: components["schemas"]["PickingOrderStatus"];
+            /** Format: int32 */
+            totalItemCount: number | string;
+            /** Format: int32 */
+            completedItemCount: number | string;
+            /** Format: int32 */
+            progressPercent: number | string;
+            isAssignedToCurrentUser: boolean;
+            canExecutePicking: boolean;
+            items: components["schemas"]["PickingItemDto"][];
+        };
+        PickingOrderListItemDto: {
+            /** Format: uuid */
+            id: string;
+            number: string;
+            customerName: string;
+            /** Format: date */
+            dueDate: string;
+            pickingMode: components["schemas"]["PickingMode"];
+            pickingStatus: components["schemas"]["PickingOrderStatus"];
+            /** Format: int32 */
+            totalItemCount: number | string;
+            /** Format: int32 */
+            completedItemCount: number | string;
+            /** Format: int32 */
+            progressPercent: number | string;
+            isAssignedToCurrentUser: boolean;
+        };
+        PickingOrderStatus: number;
         ProblemDetails: {
             type?: null | string;
             title?: null | string;

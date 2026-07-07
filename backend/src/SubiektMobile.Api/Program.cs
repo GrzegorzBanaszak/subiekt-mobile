@@ -74,14 +74,24 @@ builder.Services.AddRateLimiter(options =>
 
 builder.Services.AddCors(options =>
 {
+    var mainOrigin = builder.Configuration["Cors:MainOrigin"];
+    var allowedOrigins = new List<string>
+    {
+        "http://localhost:5173",
+        "https://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://127.0.0.1:5173"
+    };
+
+    if (!string.IsNullOrWhiteSpace(mainOrigin))
+    {
+        allowedOrigins.Add(mainOrigin.TrimEnd('/'));
+    }
+
     options.AddPolicy("Frontend", policy =>
     {
         policy
-            .WithOrigins(
-                "http://localhost:5173",
-                "https://localhost:5173",
-                "http://127.0.0.1:5173",
-                "https://127.0.0.1:5173")
+            .WithOrigins([.. allowedOrigins])
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod();

@@ -8,8 +8,9 @@ namespace SubiektMobile.Application.Orders;
 public sealed record ListOrdersQuery(int Page, int PageSize) : IRequest<PagedResult<OrderListItemDto>>;
 public sealed record GetOrderQuery(Guid Id) : IRequest<OrderDto>;
 public sealed record ListAvailableOrderAssigneesQuery : IRequest<IReadOnlyList<AvailableOrderAssigneeDto>>;
+public sealed record CreateOrderItemInput(int ProductId, decimal Quantity);
 public sealed record CreateOrderCommand(string CustomerName, DateOnly DueDate, PickingMode PickingMode,
-    IReadOnlyCollection<Guid> EmployeeIds) : IRequest<OrderDto>;
+    IReadOnlyCollection<Guid> EmployeeIds, IReadOnlyCollection<CreateOrderItemInput> Items) : IRequest<OrderDto>;
 public sealed record UpdateOrderCommand(Guid Id, string CustomerName, DateOnly DueDate, long Version) : IRequest<OrderDto>;
 public sealed record AddOrderItemCommand(Guid OrderId, int ProductId, decimal Quantity, long Version) : IRequest<OrderDto>;
 public sealed record RemoveOrderItemCommand(Guid OrderId, Guid ItemId, long Version) : IRequest<OrderDto>;
@@ -70,7 +71,8 @@ public sealed class ListAvailableOrderAssigneesHandler(IOrderWorkforceDirectory 
 }
 
 public sealed class CreateOrderHandler(IOrderStore store, IOrderNumberGenerator numbers, IOrderWorkforceDirectory workforce,
-    IApplicationAuthorizationService authorization, IAuditEntryFactory audits, TimeProvider time)
+    IProductReadRepository products, IApplicationAuthorizationService authorization,
+    IAuditEntryFactory audits, TimeProvider time)
     : IRequestHandler<CreateOrderCommand, OrderDto>
 {
     public async Task<OrderDto> Handle(CreateOrderCommand request, CancellationToken ct)
@@ -81,15 +83,25 @@ public sealed class CreateOrderHandler(IOrderStore store, IOrderNumberGenerator 
         var assignees = await workforce.ResolveActiveAsync(request.EmployeeIds, ct);
         if (assignees.Count != request.EmployeeIds.Distinct().Count())
             throw new RequestValidationException("Every assigned employee must be active and belong to an active organization.");
+        if (request.Items.Select(x => x.ProductId).Distinct().Count() != request.Items.Count)
+            throw new RequestValidationException("A product can be added to an order only once.");
         try
         {
             var order = Order.Create(id, numbers.Generate(id, now), request.CustomerName, request.DueDate,
                 actor.Id, actor.DisplayName, now, request.PickingMode, assignees);
+            foreach (var input in request.Items)
+            {
+                var product = await products.GetProductOrderSnapshotAsync(input.ProductId, ct)
+                    ?? throw new ResourceNotFoundException("Product was not found.");
+                order.AddItem(product.Id, product.Name, product.Symbol, input.Quantity, product.Unit,
+                    product.UnitWeightKg, actor.Id, actor.DisplayName, now);
+            }
             var result = await store.AddAsync(order, audits.Create(actor, "OrderCreated", "Order", id, now), ct);
             if (result != OrderStoreResult.Success) throw new ResourceConflictException("Order could not be created.");
             return GetOrderHandler.Map(order);
         }
-        catch (ArgumentException ex) { throw new RequestValidationException(ex.Message); }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        { throw new RequestValidationException(ex.Message); }
     }
 }
 
