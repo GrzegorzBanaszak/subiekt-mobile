@@ -27,6 +27,7 @@ export type AppIconName =
   | 'personCheck'
   | 'refresh'
   | 'history'
+  | 'info'
 
 const symbols: Record<AppIconName, string> = {
   box: 'inventory_2',
@@ -57,6 +58,7 @@ const symbols: Record<AppIconName, string> = {
   personCheck: 'person_check',
   refresh: 'refresh',
   history: 'history',
+  info: 'info',
 }
 
 export function AppIcon({ name, className = 'size-6' }: { name: AppIconName; className?: string }) {

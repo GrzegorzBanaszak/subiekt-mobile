@@ -17,6 +17,7 @@ import {
   type PickingOrderDetails,
 } from '../api/pickingApi'
 import { formatDate, formatDateTime, formatQuantity, pickingLocale } from '../pickingFormat'
+import { ProductDetailsDialog } from '../components/ProductDetailsDialog'
 import {
   filterPickingItems,
   isSharedPicking,
@@ -50,6 +51,7 @@ export function PickingOrderPage() {
   const [showHistory, setShowHistory] = useState(false)
   const [historyPage, setHistoryPage] = useState(1)
   const [packQuantities, setPackQuantities] = useState<Record<string, string>>({})
+  const [productItem, setProductItem] = useState<PickingItem | null>(null)
 
   const orderQuery = useQuery({
     queryKey: ['picking', 'order', orderId],
@@ -104,7 +106,7 @@ export function PickingOrderPage() {
   function execute(item: PickingItem, action: PickingMutation) {
     if (action === 'undo-pack' && !window.confirm(t('picking.confirm.undo').replace('{name}', item.productName))) return
     const packedQuantity = action === 'pack'
-      ? Number(packQuantities[item.id] ?? item.orderedQuantity)
+      ? Number(packQuantities[item.id] ?? item.remainingQuantity)
       : undefined
     if (action === 'pack' && (!Number.isFinite(packedQuantity) || packedQuantity! <= 0)) {
       setMessage(t('picking.error.quantityPositive'))
@@ -147,18 +149,20 @@ export function PickingOrderPage() {
 
     {items.length === 0
       ? <div className="grid min-h-48 place-items-center rounded-xl border border-slate-300 bg-white p-6 text-center text-slate-600">{t('picking.tab.empty')}</div>
-      : <div className="grid gap-3">{items.map((item) => <PickingItemCard busy={mutation.isPending} execute={execute} item={item} key={item.id} packQuantity={packQuantities[item.id] ?? String(item.remainingQuantity)} setPackQuantity={(value) => setPackQuantities((current) => ({ ...current, [item.id]: value }))} />)}</div>}
+      : <div className="grid gap-3">{items.map((item) => <PickingItemCard busy={mutation.isPending} execute={execute} item={item} key={item.id} packQuantity={packQuantities[item.id] ?? String(item.remainingQuantity)} setPackQuantity={(value) => setPackQuantities((current) => ({ ...current, [item.id]: value }))} showProduct={() => setProductItem(item)} />)}</div>}
 
     {showHistory && <HistoryPanel close={() => setShowHistory(false)} order={order} page={historyPage} query={historyQuery} setPage={setHistoryPage} />}
+    {productItem && <ProductDetailsDialog fallbackName={productItem.productName} onClose={() => setProductItem(null)} productId={Number(productItem.productId)} />}
   </section>
 }
 
-function PickingItemCard({ item, busy, execute, packQuantity, setPackQuantity }: {
+function PickingItemCard({ item, busy, execute, packQuantity, setPackQuantity, showProduct }: {
   item: PickingItem
   busy: boolean
   execute: (item: PickingItem, action: PickingMutation) => void
   packQuantity: string
   setPackQuantity: (value: string) => void
+  showProduct: () => void
 }) {
   const { language, t } = useI18n()
   const locale = pickingLocale(language)
@@ -169,7 +173,7 @@ function PickingItemCard({ item, busy, execute, packQuantity, setPackQuantity }:
       <dl className="grid shrink-0 grid-cols-2 gap-2 text-sm sm:grid-cols-3 xl:w-[440px]"><Quantity label={t('picking.item.ordered')} value={`${formatQuantity(Number(item.orderedQuantity), locale)} ${item.unit}`} /><Quantity label={t('picking.item.packedQuantity')} value={`${formatQuantity(Number(item.packedQuantity ?? 0), locale)} ${item.unit}`} /><Quantity label={t('picking.item.remainingQuantity')} value={`${formatQuantity(Number(item.remainingQuantity), locale)} ${item.unit}`} /></dl>
       <div className="flex min-w-64 flex-col gap-2 sm:flex-row sm:items-end xl:justify-end">
         {item.actions.canPack && <label className="block"><span className="mb-1 block text-xs font-semibold text-slate-600">{t('picking.item.quantityToPack')}</span><div className="flex h-11 overflow-hidden rounded-lg border border-slate-300 bg-white"><input aria-label={`${t('picking.item.quantityToPack')} ${item.productName}`} className="w-28 px-3 text-right" min="0.0001" max={Number(item.remainingQuantity)} step="0.0001" type="number" value={packQuantity} onChange={(event) => setPackQuantity(event.target.value)} /><span className="grid place-items-center border-l border-slate-300 bg-slate-50 px-3 text-sm">{item.unit}</span></div></label>}
-        <div className="flex flex-wrap gap-2">{item.actions.canReserve && <ActionButton busy={busy} label={t('picking.action.reserve')} onClick={() => execute(item, 'reserve')} />}{item.actions.canPack && <ActionButton busy={busy} label={t('picking.action.pack')} primary onClick={() => execute(item, 'pack')} />}{item.actions.canRelease && <ActionButton busy={busy} label={t('picking.action.release')} onClick={() => execute(item, 'release')} />}{item.actions.canUndoPack && <ActionButton busy={busy} label={t('picking.action.undo')} onClick={() => execute(item, 'undo-pack')} />}</div>
+        <div className="flex flex-wrap gap-2"><button className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 font-semibold text-slate-800 hover:bg-slate-100" onClick={showProduct}><AppIcon className="size-5" name="info" />{t('picking.product.open')}</button>{item.actions.canReserve && <ActionButton busy={busy} label={t('picking.action.reserve')} onClick={() => execute(item, 'reserve')} />}{item.actions.canPack && <ActionButton busy={busy} label={t('picking.action.pack')} primary onClick={() => execute(item, 'pack')} />}{item.actions.canRelease && <ActionButton busy={busy} label={t('picking.action.release')} onClick={() => execute(item, 'release')} />}{item.actions.canUndoPack && <ActionButton busy={busy} label={t('picking.action.undo')} onClick={() => execute(item, 'undo-pack')} />}</div>
       </div>
     </div>
   </article>
