@@ -84,8 +84,8 @@ jobs:
           BACKUP_DIR="/var/backups/subiekt-mobile"
           BACKUP_FILE="$BACKUP_DIR/subiekt-mobile-$(date +'%Y-%m-%d_%H-%M-%S').sql"
 
-          sudo mkdir -p "$BACKUP_DIR"
-          sudo chown "$USER":"$USER" "$BACKUP_DIR"
+          test -d "$BACKUP_DIR"
+          test -w "$BACKUP_DIR"
 
           if docker compose \
             --env-file /etc/subiekt-mobile/production.env \
