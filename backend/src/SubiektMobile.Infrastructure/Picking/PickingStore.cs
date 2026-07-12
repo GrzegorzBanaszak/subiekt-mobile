@@ -85,6 +85,28 @@ public sealed class PickingStore(ApplicationDbContext dbContext) : IPickingStore
             count == 0 ? 0 : (int)Math.Ceiling(count / (double)pageSize));
     }
 
+    public async Task<IReadOnlyDictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>> ListPalletAssignmentsAsync(
+        Guid orderId, CancellationToken ct)
+    {
+        var rows = await (
+            from palletItem in dbContext.PalletItems.AsNoTracking()
+            join pallet in dbContext.Pallets.AsNoTracking() on palletItem.PalletId equals pallet.Id
+            where pallet.OrderId == orderId
+            orderby pallet.Number
+            select new
+            {
+                palletItem.OrderItemId,
+                Assignment = new PickingPalletAssignmentDto(pallet.Id, pallet.Number, palletItem.Quantity)
+            }).ToListAsync(ct);
+        return rows.GroupBy(x => x.OrderItemId)
+            .ToDictionary(x => x.Key, x => (IReadOnlyList<PickingPalletAssignmentDto>)x.Select(row => row.Assignment).ToList());
+    }
+
+    public Task<decimal> GetPalletizedQuantityAsync(Guid orderItemId, CancellationToken ct) =>
+        dbContext.PalletItems.AsNoTracking()
+            .Where(x => x.OrderItemId == orderItemId)
+            .SumAsync(x => x.Quantity, ct);
+
     public Task<OrderPickingEvent?> FindOperationAsync(Guid operationId, CancellationToken ct) =>
         dbContext.OrderPickingEvents.AsNoTracking().SingleOrDefaultAsync(x => x.OperationId == operationId, ct);
 

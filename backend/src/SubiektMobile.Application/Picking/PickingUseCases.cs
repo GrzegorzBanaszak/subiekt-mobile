@@ -50,7 +50,8 @@ public sealed class GetPickingOrderHandler(IPickingStore store, IApplicationAuth
     {
         var actor = authorization.Require(Permissions.OrdersReadPublished);
         var order = await FindPublished(request.OrderId, store, false, ct);
-        return Map(order, actor);
+        var assignments = await store.ListPalletAssignmentsAsync(order.Id, ct);
+        return Map(order, actor, assignments);
     }
 
     internal static async Task<Order> FindPublished(Guid orderId, IPickingStore store, bool tracking,
@@ -63,15 +64,22 @@ public sealed class GetPickingOrderHandler(IPickingStore store, IApplicationAuth
         return order;
     }
 
-    internal static PickingOrderDetailsDto Map(Order order, CurrentActor actor)
+    internal static PickingOrderDetailsDto Map(Order order, CurrentActor actor,
+        IReadOnlyDictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>? palletAssignments = null)
     {
         var assigned = IsAssigned(order, actor);
         var canExecute = actor.Kind == ActorKind.Administrator || assigned;
         var completed = order.Items.Count(IsCompleted);
+        var assignmentsByItem = palletAssignments ?? new Dictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>();
+        var canCreatePallet = canExecute && actor.Permissions.Contains(Permissions.PalletsManage) &&
+            order.Items.Any(item => AvailableForPallet(item, assignmentsByItem.GetValueOrDefault(item.Id)) > 0);
         return new(order.Id, order.Number, order.CustomerName, order.DueDate, order.PickingMode,
             Status(order.Items), order.Items.Count, completed, Progress(completed, order.Items.Count),
-            assigned, canExecute, order.Items.OrderBy(x => x.ProductName).Select(item =>
+            assigned, canExecute, canCreatePallet, order.Items.OrderBy(x => x.ProductName).Select(item =>
             {
+                var itemAssignments = assignmentsByItem.GetValueOrDefault(item.Id) ?? [];
+                var palletizedQuantity = itemAssignments.Sum(x => x.Quantity);
+                var availableForPallet = AvailableForPallet(item, itemAssignments);
                 var isAdmin = actor.Kind == ActorKind.Administrator;
                 var ownsReservation = item.ReservedById == actor.Id;
                 var ownsPacked = item.PackedById == actor.Id;
@@ -83,13 +91,14 @@ public sealed class GetPickingOrderHandler(IPickingStore store, IApplicationAuth
                     ? item.Status == OrderItemStatus.ToPick
                     : item.Status == OrderItemStatus.Picking && (isAdmin || ownsReservation));
                 var canUndo = canExecute && item.Status != OrderItemStatus.AssignedToPallet &&
-                    item.PackedQuantity > 0 &&
+                    item.PackedQuantity > 0 && palletizedQuantity == 0 &&
                     (isAdmin || ownsPacked);
                 return new PickingItemDto(item.Id, item.ProductId, item.ProductName, item.ProductSymbol,
                     item.Quantity, item.Quantity - (item.PackedQuantity ?? 0), item.Unit, item.Status, item.Version,
                     Actor(item.ReservedByKind, item.ReservedById, item.ReservedByName, item.ReservedAtUtc),
                     item.PackedQuantity,
                     Actor(item.PackedByKind, item.PackedById, item.PackedByName, item.PackedAtUtc),
+                    palletizedQuantity, availableForPallet, itemAssignments,
                     new(canReserve, canRelease, canPack, canUndo));
             }).ToList());
     }
@@ -107,6 +116,13 @@ public sealed class GetPickingOrderHandler(IPickingStore store, IApplicationAuth
         return PickingOrderStatus.InProgress;
     }
     internal static int Progress(int completed, int total) => total == 0 ? 0 : (int)Math.Round(completed * 100m / total);
+
+    private static decimal AvailableForPallet(OrderItem item,
+        IReadOnlyCollection<PickingPalletAssignmentDto>? assignments)
+    {
+        var palletized = assignments?.Sum(x => x.Quantity) ?? 0;
+        return Math.Max(0, (item.PackedQuantity ?? 0) - palletized);
+    }
 
     private static PickingActorDto? Actor(ActorKind? kind, Guid? id, string? name, DateTimeOffset? at) =>
         kind.HasValue && id.HasValue && name is not null && at.HasValue
@@ -139,8 +155,7 @@ public abstract class PickingMutationHandlerBase(IPickingStore store,
         if (previous is not null)
         {
             EnsureSameOperation(previous, orderId, itemId, action, packedQuantity, actor);
-            return GetPickingOrderHandler.Map(
-                await GetPickingOrderHandler.FindPublished(orderId, store, false, ct), actor);
+            return await LoadMapped(orderId, actor, ct);
         }
 
         var order = await GetPickingOrderHandler.FindPublished(orderId, store, true, ct);
@@ -168,7 +183,8 @@ public abstract class PickingMutationHandlerBase(IPickingStore store,
                         actor.Kind == ActorKind.Administrator, now);
                     break;
                 case PickingAction.PackingUndone:
-                    order.UndoPackedItem(itemId, pickingActor, actor.Kind == ActorKind.Administrator, now);
+                    order.UndoPackedItem(itemId, pickingActor, actor.Kind == ActorKind.Administrator, now,
+                        await store.GetPalletizedQuantityAsync(itemId, ct));
                     break;
                 default:
                     throw new RequestValidationException("Unsupported picking action.");
@@ -191,7 +207,15 @@ public abstract class PickingMutationHandlerBase(IPickingStore store,
             EnsureSameOperation(duplicated, orderId, itemId, action, packedQuantity, actor);
             order = await GetPickingOrderHandler.FindPublished(orderId, store, false, ct);
         }
-        return GetPickingOrderHandler.Map(order, actor);
+        var assignments = await store.ListPalletAssignmentsAsync(orderId, ct);
+        return GetPickingOrderHandler.Map(order, actor, assignments);
+    }
+
+    private async Task<PickingOrderDetailsDto> LoadMapped(Guid orderId, CurrentActor actor, CancellationToken ct)
+    {
+        var order = await GetPickingOrderHandler.FindPublished(orderId, store, false, ct);
+        var assignments = await store.ListPalletAssignmentsAsync(orderId, ct);
+        return GetPickingOrderHandler.Map(order, actor, assignments);
     }
 
     private static void EnsureCanExecute(Order order, CurrentActor actor)

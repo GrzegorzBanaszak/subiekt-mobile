@@ -28,6 +28,11 @@ export type AppIconName =
   | 'refresh'
   | 'history'
   | 'info'
+  | 'print'
+  | 'download'
+  | 'scale'
+  | 'list'
+  | 'truck'
 
 const symbols: Record<AppIconName, string> = {
   box: 'inventory_2',
@@ -59,6 +64,11 @@ const symbols: Record<AppIconName, string> = {
   refresh: 'refresh',
   history: 'history',
   info: 'info',
+  print: 'print',
+  download: 'download',
+  scale: 'scale',
+  list: 'list_alt',
+  truck: 'local_shipping',
 }
 
 export function AppIcon({ name, className = 'size-6' }: { name: AppIconName; className?: string }) {

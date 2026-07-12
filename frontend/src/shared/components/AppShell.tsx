@@ -24,7 +24,7 @@ const navigationItems: NavigationItem[] = [
   { labelKey: 'navigation.products', icon: 'box', to: '/products', available: true },
   { labelKey: 'navigation.orders', icon: 'cart', to: '/orders', available: true, permission: 'orders.manage' },
   { labelKey: 'navigation.picking', icon: 'clipboard', to: '/picking', available: true, permission: 'orders.read-published' },
-  { labelKey: 'navigation.pallets', icon: 'pallet', to: '/pallets', available: false },
+  { labelKey: 'navigation.pallets', icon: 'pallet', to: '/pallets', available: true, permission: 'pallets.manage' },
   { labelKey: 'navigation.administration', icon: 'settings', to: '/administration', available: true, permission: identityManagePermission },
 ]
 

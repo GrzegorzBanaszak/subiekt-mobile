@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SubiektMobile.Infrastructure.Persistence.Application;
@@ -11,9 +12,11 @@ using SubiektMobile.Infrastructure.Persistence.Application;
 namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260709183057_AddPalletization")]
+    partial class AddPalletization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,8 +122,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                     b.HasIndex("OccurredAtUtc");
 
                     b.HasIndex("ActorKind", "ActorId");
-
-                    b.HasIndex("TargetType", "TargetId", "Action", "OccurredAtUtc");
 
                     b.ToTable("audit_entries", "app");
                 });

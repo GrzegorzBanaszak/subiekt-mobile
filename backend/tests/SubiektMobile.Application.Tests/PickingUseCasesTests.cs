@@ -76,6 +76,14 @@ public sealed class PickingUseCasesTests
             CancellationToken cancellationToken) =>
             throw new NotImplementedException();
 
+        public Task<IReadOnlyDictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>> ListPalletAssignmentsAsync(
+            Guid orderId, CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyDictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>>(
+                new Dictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>());
+
+        public Task<decimal> GetPalletizedQuantityAsync(Guid orderItemId, CancellationToken cancellationToken) =>
+            Task.FromResult(0m);
+
         public Task<OrderPickingEvent?> FindOperationAsync(Guid operationId, CancellationToken cancellationToken) =>
             Task.FromResult<OrderPickingEvent?>(operationId == operation.OperationId ? operation : null);
 

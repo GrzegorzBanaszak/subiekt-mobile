@@ -91,5 +91,6 @@ public sealed class AuditEntryConfiguration : IEntityTypeConfiguration<AuditEntr
         builder.Property(x => x.TargetType).HasMaxLength(80).IsRequired();
         builder.HasIndex(x => x.OccurredAtUtc);
         builder.HasIndex(x => new { x.ActorKind, x.ActorId });
+        builder.HasIndex(x => new { x.TargetType, x.TargetId, x.Action, x.OccurredAtUtc });
     }
 }

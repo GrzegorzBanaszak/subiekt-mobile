@@ -1,0 +1,129 @@
+name: CI and production deployment
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: subiekt-mobile-production
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    name: Build and verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose
+        run: |
+          touch ci.env
+
+          docker compose \
+            --env-file ci.env \
+            config \
+            --quiet
+        env:
+          APP_ORIGIN: http://localhost
+          APPLICATION_DB_PASSWORD: ci-password
+          SUBIEKT_GT_CONNECTION_STRING: Server=localhost;Database=SubiektGT;User Id=ci;Password=ci;TrustServerCertificate=True
+
+      - name: Build application images
+        run: |
+          docker compose build api web migrate data-protection-init
+        env:
+          APP_ORIGIN: http://localhost
+          APPLICATION_DB_PASSWORD: ci-password
+          SUBIEKT_GT_CONNECTION_STRING: Server=localhost;Database=SubiektGT;User Id=ci;Password=ci;TrustServerCertificate=True
+
+  deploy:
+    name: Deploy to local production server
+    needs: ci
+
+    runs-on:
+      - self-hosted
+      - linux
+      - production
+
+    environment: "production"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify production configuration
+        run: |
+          test -f /etc/subiekt-mobile/production.env
+
+          docker compose \
+            --env-file /etc/subiekt-mobile/production.env \
+            config \
+            --quiet
+
+      - name: Ensure required Docker network exists
+        run: |
+          docker network inspect public-proxy >/dev/null 2>&1 \
+            || docker network create public-proxy
+
+      - name: Create database backup
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BACKUP_DIR="/var/backups/subiekt-mobile"
+          BACKUP_FILE="$BACKUP_DIR/subiekt-mobile-$(date +'%Y-%m-%d_%H-%M-%S').sql"
+
+          sudo mkdir -p "$BACKUP_DIR"
+          sudo chown "$USER":"$USER" "$BACKUP_DIR"
+
+          if docker compose \
+            --env-file /etc/subiekt-mobile/production.env \
+            ps --status running application-db |
+            grep -q application-db
+          then
+            docker compose \
+              --env-file /etc/subiekt-mobile/production.env \
+              exec -T application-db \
+              sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' \
+              > "$BACKUP_FILE"
+
+            gzip "$BACKUP_FILE"
+
+            find "$BACKUP_DIR" \
+              -type f \
+              -name '*.sql.gz' \
+              -mtime +14 \
+              -delete
+          else
+            echo "Baza nie jest jeszcze uruchomiona — pomijam backup."
+          fi
+
+      - name: Build and deploy
+        run: |
+          docker compose \
+            --env-file /etc/subiekt-mobile/production.env \
+            up -d \
+            --build \
+            --remove-orphans
+
+      - name: Show deployment status
+        run: |
+          docker compose \
+            --env-file /etc/subiekt-mobile/production.env \
+            ps
+
+      - name: Show logs after failed deployment
+        if: failure()
+        run: |
+          docker compose \
+            --env-file /etc/subiekt-mobile/production.env \
+            logs \
+            --tail=200

@@ -47,7 +47,7 @@ Planowany proces:
 1. Użytkownik tworzy paletę ze spakowanych pozycji.
 2. Wprowadza masę pustej palety.
 3. System sumuje masę pozycji jako `masa jednostkowa × ilość` i dodaje masę palety.
-4. Po zamknięciu palety użytkownik może zweryfikować i wydrukować etykietę z zamawiającym, pozycjami i masą całkowitą.
+4. Po zamknięciu palety użytkownik może zweryfikować PDF 100×150 mm i wydać go do druku lub pobrania; dokument zawiera zamawiającego, pozycje, Code 39, tarę i masę całkowitą, a każde wydanie jest audytowane.
 
 Ważne: baza Subiekta jest w tym procesie wyłącznie źródłem danych towarowych w trybie odczytu.
 
@@ -85,11 +85,11 @@ Ważne: baza Subiekta jest w tym procesie wyłącznie źródłem danych towarowy
 
 ### Etap 5 — palety i etykiety
 
-- [ ] Tworzenie palet ze spakowanych pozycji.
-- [ ] Masa pustej palety.
-- [ ] Masa towarów i masa całkowita.
-- [ ] Zamknięcie palety.
-- [ ] Podgląd i wydruk etykiety.
+- [x] Tworzenie palet ze spakowanych pozycji.
+- [x] Masa pustej palety.
+- [x] Masa towarów i masa całkowita.
+- [x] Zamknięcie palety.
+- [x] Podgląd PDF i wydanie etykiety do druku lub pobrania.
 
 ## Technologie
 
@@ -258,6 +258,14 @@ Następnie uruchom bazę aplikacji:
 docker compose up -d application-db
 ```
 
+Domyslny `compose.yaml` jest przeznaczony do pracy lokalnej i uruchamia tylko PostgreSQL
+wystawiony na hoscie pod `localhost:5432`. Dzieki temu lokalne polecenia `dotnet run`,
+`dotnet ef database update` i testy moga laczyc sie z baza przez connection string:
+
+```text
+Host=localhost;Port=5432;Database=subiekt_mobile;Username=subiekt_mobile;Password=USTAWIONE_HASLO
+```
+
 Pełne wdrożenie produkcyjne (API, frontend, PostgreSQL i Cloudflare Tunnel) opisuje
 [`docs/deployment.md`](docs/deployment.md).
 
@@ -268,7 +276,7 @@ Host=localhost;Port=5432;Database=subiekt_mobile;Username=subiekt_mobile;Passwor
 ```
 
 Stan kontenera można sprawdzić poleceniem `docker compose ps`. Dane są zachowywane
-w wolumenie `application-db-data` po zatrzymaniu kontenera.
+w wolumenie `application-db-local-data` po zatrzymaniu kontenera.
 
 ## Uruchomienie backendu
 

@@ -124,6 +124,7 @@ export function PickingOrderPage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {order.isAssignedToCurrentUser && <span className="inline-flex min-h-10 items-center gap-2 rounded-full bg-blue-100 px-3 text-sm font-semibold text-blue-950"><AppIcon className="size-5" name="personCheck" />{t('picking.list.assigned')}</span>}
+          {order.canCreatePallet && <Link className="admin-action-button bg-blue-950 text-white hover:bg-blue-900" to={`/picking/${order.id}/pallets/new`}><AppIcon className="size-5" name="pallet" />{t('picking.detail.createPallet')}</Link>}
           <button className="admin-action-button" disabled={orderQuery.isFetching} onClick={() => void orderQuery.refetch()}><AppIcon className={orderQuery.isFetching ? 'size-5 animate-spin' : 'size-5'} name="refresh" />{t('picking.detail.refresh')}</button>
           <button className="admin-action-button" onClick={() => setShowHistory((value) => !value)}><AppIcon className="size-5" name="history" />{t('picking.detail.history')}</button>
         </div>
@@ -167,19 +168,38 @@ function PickingItemCard({ item, busy, execute, packQuantity, setPackQuantity, s
   const { language, t } = useI18n()
   const locale = pickingLocale(language)
   const actor = item.reservedBy ?? item.packedBy
+  const palletizedQuantity = Number(item.palletizedQuantity ?? 0)
+  const availableForPallet = Number(item.availableForPalletQuantity ?? 0)
+  const palletAssignments = item.palletAssignments ?? []
   return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm sm:p-5">
     <div className="flex flex-col gap-4 xl:flex-row xl:items-center">
       <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h3 className="font-bold text-blue-950 sm:text-lg">{item.productName}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${pickingItemStatusClass(item.status)}`}>{t(pickingItemStatusKey(item.status))}</span></div><p className="mt-1 text-sm text-slate-500">{item.productSymbol || `ID: ${item.productId}`}</p>{actor && <p className="mt-3 inline-flex items-center gap-2 text-sm text-slate-700"><AppIcon className="size-5" name="user" /><span><strong>{actor.displayName}</strong> · {formatDateTime(actor.atUtc, locale)}</span></p>}</div>
-      <dl className="grid shrink-0 grid-cols-2 gap-2 text-sm sm:grid-cols-3 xl:w-[440px]"><Quantity label={t('picking.item.ordered')} value={`${formatQuantity(Number(item.orderedQuantity), locale)} ${item.unit}`} /><Quantity label={t('picking.item.packedQuantity')} value={`${formatQuantity(Number(item.packedQuantity ?? 0), locale)} ${item.unit}`} /><Quantity label={t('picking.item.remainingQuantity')} value={`${formatQuantity(Number(item.remainingQuantity), locale)} ${item.unit}`} /></dl>
+      <dl className="grid shrink-0 grid-cols-2 gap-2 text-sm sm:grid-cols-4 xl:w-[600px]"><Quantity icon="cart" label={t('picking.item.ordered')} value={`${formatQuantity(Number(item.orderedQuantity), locale)} ${item.unit}`} /><Quantity icon="box" label={t('picking.item.packedQuantity')} value={`${formatQuantity(Number(item.packedQuantity ?? 0), locale)} ${item.unit}`} /><Quantity highlighted={palletizedQuantity > 0} icon="pallet" label={t('picking.item.palletizedQuantity')} value={`${formatQuantity(palletizedQuantity, locale)} ${item.unit}`} /><Quantity icon="clipboard" label={t('picking.item.remainingQuantity')} value={`${formatQuantity(Number(item.remainingQuantity), locale)} ${item.unit}`} /></dl>
       <div className="flex min-w-64 flex-col gap-2 sm:flex-row sm:items-end xl:justify-end">
         {item.actions.canPack && <label className="block"><span className="mb-1 block text-xs font-semibold text-slate-600">{t('picking.item.quantityToPack')}</span><div className="flex h-11 overflow-hidden rounded-lg border border-slate-300 bg-white"><input aria-label={`${t('picking.item.quantityToPack')} ${item.productName}`} className="w-28 px-3 text-right" min="0.0001" max={Number(item.remainingQuantity)} step="0.0001" type="number" value={packQuantity} onChange={(event) => setPackQuantity(event.target.value)} /><span className="grid place-items-center border-l border-slate-300 bg-slate-50 px-3 text-sm">{item.unit}</span></div></label>}
         <div className="flex flex-wrap gap-2"><button className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 font-semibold text-slate-800 hover:bg-slate-100" onClick={showProduct}><AppIcon className="size-5" name="info" />{t('picking.product.open')}</button>{item.actions.canReserve && <ActionButton busy={busy} label={t('picking.action.reserve')} onClick={() => execute(item, 'reserve')} />}{item.actions.canPack && <ActionButton busy={busy} label={t('picking.action.pack')} primary onClick={() => execute(item, 'pack')} />}{item.actions.canRelease && <ActionButton busy={busy} label={t('picking.action.release')} onClick={() => execute(item, 'release')} />}{item.actions.canUndoPack && <ActionButton busy={busy} label={t('picking.action.undo')} onClick={() => execute(item, 'undo-pack')} />}</div>
       </div>
     </div>
+    {(palletizedQuantity > 0 || availableForPallet > 0) && <div className="mt-4 grid gap-3 border-t border-slate-200 pt-4 lg:grid-cols-[1fr_auto] lg:items-start">
+      {palletizedQuantity > 0 && <section className="rounded-lg border border-indigo-200 bg-indigo-50 p-3">
+        <h4 className="flex items-center gap-2 text-sm font-bold text-indigo-950"><AppIcon className="size-5" name="pallet" />{t('picking.item.palletAssignments')}</h4>
+        <ul className="mt-2 flex flex-wrap gap-2 text-sm">
+          {palletAssignments.map((assignment) => <li key={assignment.palletId}>
+            <Link className="inline-flex min-h-8 items-center gap-1 rounded-full bg-white px-3 py-1 font-semibold text-indigo-950 ring-1 ring-indigo-200 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-800" to={`/pallets/${assignment.palletId}`}>
+              <AppIcon className="size-4" name="pallet" />
+              {t('picking.item.palletAssignmentText').replace('{number}', assignment.palletNumber).replace('{quantity}', `${formatQuantity(Number(assignment.quantity), locale)} ${item.unit}`)}
+            </Link>
+          </li>)}
+        </ul>
+      </section>}
+      {availableForPallet > 0 && <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-semibold text-emerald-950">
+        {t('picking.item.availableForPallet')}: {formatQuantity(availableForPallet, locale)} {item.unit}
+      </div>}
+    </div>}
   </article>
 }
 
-function Quantity({ label, value }: { label: string; value: string }) { return <div className="rounded-lg bg-slate-100 p-3"><dt className="text-xs text-slate-500">{label}</dt><dd className="mt-1 font-bold">{value}</dd></div> }
+function Quantity({ label, value, highlighted, icon }: { label: string; value: string; highlighted?: boolean; icon: 'cart' | 'box' | 'pallet' | 'clipboard' }) { return <div className={`rounded-lg p-3 ${highlighted ? 'bg-indigo-100 text-indigo-950' : 'bg-slate-100'}`}><dt className="flex items-center gap-1 text-xs text-slate-500"><AppIcon className="size-4" name={icon} />{label}</dt><dd className="mt-1 font-bold">{value}</dd></div> }
 function ActionButton({ label, onClick, busy, primary }: { label: string; onClick: () => void; busy: boolean; primary?: boolean }) { return <button className={`min-h-11 rounded-lg px-4 font-semibold disabled:opacity-50 ${primary ? 'bg-emerald-700 text-white hover:bg-emerald-800' : 'border border-blue-950 bg-white text-blue-950 hover:bg-blue-50'}`} disabled={busy} onClick={onClick}>{label}</button> }
 
 function HistoryPanel({ order, close, page, setPage, query }: {

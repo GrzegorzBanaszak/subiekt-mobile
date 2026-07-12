@@ -84,14 +84,14 @@ Cel: wiele osób kompletuje różne pozycje jednego zamówienia bez podwójnego 
 
 Zakres minimalny:
 
-- [ ] Lista zamówień gotowych do kompletacji.
-- [ ] Wspólny widok pozycji i postępu.
-- [ ] Atomowe zarezerwowanie pozycji przez użytkownika.
-- [ ] Czytelna obsługa konfliktu równoczesnej rezerwacji.
-- [ ] Zwolnienie pozycji.
-- [ ] Oznaczenie pozycji jako spakowanej.
-- [ ] Historia zmian statusów.
-- [ ] Testy współbieżności i przejść statusów.
+- [x] Lista zamówień gotowych do kompletacji.
+- [x] Wspólny widok pozycji i postępu.
+- [x] Atomowe zarezerwowanie pozycji przez użytkownika.
+- [x] Czytelna obsługa konfliktu równoczesnej rezerwacji.
+- [x] Zwolnienie pozycji.
+- [x] Oznaczenie pozycji jako spakowanej.
+- [x] Historia zmian statusów.
+- [x] Testy współbieżności i przejść statusów.
 
 Ilość spakowana jest kumulowana z kolejnych partii. Pozycja otrzymuje status spakowanej
 dopiero po osiągnięciu pełnej zamówionej ilości; wcześniej może zostać zwolniona i podjęta
@@ -103,15 +103,15 @@ Cel: użytkownik grupuje spakowane pozycje na paletach i otrzymuje wiarygodną m
 
 Zakres minimalny:
 
-- [ ] Utworzenie palety w ramach zamówienia.
-- [ ] Wprowadzenie masy pustej palety.
-- [ ] Wybór spakowanych, nieprzypisanych pozycji.
-- [ ] Atomowe przypisanie pozycji do palety.
-- [ ] Obliczenie masy towarów.
-- [ ] Obliczenie masy całkowitej.
-- [ ] Walidacja brakujących lub niepoprawnych mas.
-- [ ] Zamknięcie palety.
-- [ ] Obsługa wielu palet w jednym zamówieniu.
+- [x] Utworzenie palety w ramach zamówienia.
+- [x] Wprowadzenie masy pustej palety.
+- [x] Wybór spakowanych, nieprzypisanych pozycji.
+- [x] Atomowe przypisanie pozycji do palety.
+- [x] Obliczenie masy towarów.
+- [x] Obliczenie masy całkowitej.
+- [x] Walidacja brakujących lub niepoprawnych mas.
+- [x] Zamknięcie palety.
+- [x] Obsługa wielu palet w jednym zamówieniu.
 
 Jedna pozycja może być dzielona pomiędzy wiele palet. Przyszłe przypisanie do palety musi
 zawierać ilość i pilnować, aby suma przypisań nie przekroczyła ilości spakowanej.
@@ -122,14 +122,14 @@ Cel: użytkownik może zweryfikować i wydrukować etykietę zamkniętej palety.
 
 Zakres minimalny:
 
-- [ ] Ustalenie rozmiaru i formatu etykiety.
-- [ ] Dane zamawiającego, zamówienia i palety.
-- [ ] Lista pozycji i ilości.
-- [ ] Masa towarów, tara i masa całkowita.
-- [ ] Podgląd przed wydrukiem.
-- [ ] Wydruk lub pobranie dokumentu.
-- [ ] Historia pierwszego i ponownego wydruku.
-- [ ] Testy generatora etykiety.
+- [x] PDF 100×150 mm w pionie.
+- [x] Dane zamawiającego, zamówienia i palety.
+- [x] Lista pozycji i ilości.
+- [x] Masa towarów, tara i masa całkowita.
+- [x] Podgląd dokładnie tego samego PDF przed wydaniem.
+- [x] Wydanie PDF do druku lub pobrania.
+- [x] Historia pierwszego i kolejnych wydań PDF.
+- [x] Testy generatora etykiety.
 
 ## Etap 7 — stabilizacja i funkcje dodatkowe
 

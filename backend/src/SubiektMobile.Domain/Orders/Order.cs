@@ -93,11 +93,20 @@ public sealed class Order
         return item;
     }
 
-    public OrderItem UndoPackedItem(Guid itemId, PickingActor actor, bool canOverride, DateTimeOffset now)
+    public OrderItem UndoPackedItem(Guid itemId, PickingActor actor, bool canOverride, DateTimeOffset now,
+        decimal palletizedQuantity = 0)
     {
         EnsurePublished();
         var item = FindItem(itemId);
-        item.UndoPacked(actor, canOverride, now);
+        item.UndoPacked(actor, canOverride, now, palletizedQuantity);
+        return item;
+    }
+
+    public OrderItem AssignPackedQuantityToPallet(Guid itemId, decimal totalPalletizedQuantity)
+    {
+        EnsurePublished();
+        var item = FindItem(itemId);
+        item.AssignPackedQuantityToPallet(totalPalletizedQuantity);
         return item;
     }
 
@@ -366,10 +375,13 @@ public sealed class OrderItem
         Version++;
     }
 
-    internal void UndoPacked(PickingActor actor, bool canOverride, DateTimeOffset now)
+    internal void UndoPacked(PickingActor actor, bool canOverride, DateTimeOffset now,
+        decimal palletizedQuantity)
     {
         if (Status == OrderItemStatus.AssignedToPallet || PackedQuantity is null or <= 0)
             throw new InvalidOperationException("Only an item with a packed quantity can be restored.");
+        if (palletizedQuantity > 0)
+            throw new InvalidOperationException("Packed quantity assigned to a pallet cannot be restored.");
         ValidateActor(actor);
         if (!canOverride && PackedById != actor.Id)
             throw new InvalidOperationException("Only the employee who packed the item can restore it.");
@@ -379,6 +391,24 @@ public sealed class OrderItem
         PackedById = null;
         PackedByName = null;
         PackedAtUtc = null;
+        Version++;
+    }
+
+    internal void AssignPackedQuantityToPallet(decimal totalPalletizedQuantity)
+    {
+        if (decimal.Round(totalPalletizedQuantity, 4) != totalPalletizedQuantity || totalPalletizedQuantity < 0)
+            throw new ArgumentOutOfRangeException(nameof(totalPalletizedQuantity),
+                "Palletized quantity must contain at most four decimal places and cannot be negative.");
+        var packedQuantity = PackedQuantity ?? 0;
+        if (packedQuantity <= 0)
+            throw new InvalidOperationException("Only packed quantity can be assigned to a pallet.");
+        if (totalPalletizedQuantity > packedQuantity)
+            throw new InvalidOperationException("Palletized quantity cannot exceed packed quantity.");
+        if (packedQuantity == Quantity && totalPalletizedQuantity == Quantity)
+        {
+            Status = OrderItemStatus.AssignedToPallet;
+            ClearReservation();
+        }
         Version++;
     }
 

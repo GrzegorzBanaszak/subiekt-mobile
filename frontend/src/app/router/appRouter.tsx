@@ -24,6 +24,9 @@ import { NewOrderPage } from '../../features/orders/pages/NewOrderPage'
 import { OrderDetailsPage } from '../../features/orders/pages/OrderDetailsPage'
 import { PickingOrdersPage } from '../../features/picking/pages/PickingOrdersPage'
 import { PickingOrderPage } from '../../features/picking/pages/PickingOrderPage'
+import { PalletsPage } from '../../features/pallets/pages/PalletsPage'
+import { NewPalletPage } from '../../features/pallets/pages/NewPalletPage'
+import { PalletDetailsPage } from '../../features/pallets/pages/PalletDetailsPage'
 
 export const appRouter = createBrowserRouter([
   {
@@ -72,6 +75,18 @@ export const appRouter = createBrowserRouter([
           {
             path: '/picking/:orderId',
             element: <AdministrationGuard permission="orders.read-published"><PickingOrderPage /></AdministrationGuard>,
+          },
+          {
+            path: '/pallets',
+            element: <AdministrationGuard permission="pallets.manage"><PalletsPage /></AdministrationGuard>,
+          },
+          {
+            path: '/picking/:orderId/pallets/new',
+            element: <AdministrationGuard permission="pallets.manage"><NewPalletPage /></AdministrationGuard>,
+          },
+          {
+            path: '/pallets/:palletId',
+            element: <AdministrationGuard permission="pallets.manage"><PalletDetailsPage /></AdministrationGuard>,
           },
           {
             path: '/administration',

@@ -34,7 +34,7 @@ services:
 
   migrate:
     build:
-      context: .
+      context: ../..
       dockerfile: backend/Dockerfile
     restart: "no"
     environment: *api-environment
@@ -47,7 +47,7 @@ services:
 
   data-protection-init:
     build:
-      context: .
+      context: ../..
       dockerfile: backend/Dockerfile
     user: "0:0"
     restart: "no"
@@ -60,7 +60,7 @@ services:
 
   api:
     build:
-      context: .
+      context: ../..
       dockerfile: backend/Dockerfile
     restart: unless-stopped
     environment: *api-environment
@@ -79,7 +79,7 @@ services:
 
   web:
     build:
-      context: .
+      context: ../..
       dockerfile: frontend/Dockerfile
     restart: unless-stopped
     depends_on:

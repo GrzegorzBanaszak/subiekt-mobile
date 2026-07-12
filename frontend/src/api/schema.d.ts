@@ -1268,6 +1268,239 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/pallets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfPalletListItemDto"];
+                        "application/json": components["schemas"]["PagedResultOfPalletListItemDto"];
+                        "text/json": components["schemas"]["PagedResultOfPalletListItemDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/{orderId}/pallets/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    orderId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PalletCandidatesDto"];
+                        "application/json": components["schemas"]["PalletCandidatesDto"];
+                        "text/json": components["schemas"]["PalletCandidatesDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/{orderId}/pallets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    orderId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreatePalletRequest"];
+                    "text/json": components["schemas"]["CreatePalletRequest"];
+                    "application/*+json": components["schemas"]["CreatePalletRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PalletDetailsDto"];
+                        "application/json": components["schemas"]["PalletDetailsDto"];
+                        "text/json": components["schemas"]["PalletDetailsDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/pallets/{palletId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    palletId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PalletDetailsDto"];
+                        "application/json": components["schemas"]["PalletDetailsDto"];
+                        "text/json": components["schemas"]["PalletDetailsDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/pallets/{palletId}/label-preview": {
+        parameters: { query?: never; header?: never; path?: never; cookie?: never; };
+        get: {
+            parameters: { query?: { language?: components["schemas"]["PalletLabelLanguage"]; }; header?: never; path: { palletId: string; }; cookie?: never; };
+            requestBody?: never;
+            responses: {
+                200: { headers: { [name: string]: unknown; }; content: { "application/pdf": Blob; }; };
+                404: { headers: { [name: string]: unknown; }; content: { "application/json": components["schemas"]["ProblemDetails"]; }; };
+            };
+        };
+        put?: never; post?: never; delete?: never; options?: never; head?: never; patch?: never; trace?: never;
+    };
+    "/api/pallets/{palletId}/label-issues": {
+        parameters: { query?: never; header?: never; path?: never; cookie?: never; };
+        get?: never;
+        post: {
+            parameters: { query?: never; header?: never; path: { palletId: string; }; cookie?: never; };
+            requestBody: { content: { "application/json": components["schemas"]["PalletLabelIssueRequest"]; }; };
+            responses: {
+                200: { headers: { [name: string]: unknown; }; content: { "application/pdf": Blob; }; };
+                400: { headers: { [name: string]: unknown; }; content: { "application/json": components["schemas"]["ProblemDetails"]; }; };
+                404: { headers: { [name: string]: unknown; }; content: { "application/json": components["schemas"]["ProblemDetails"]; }; };
+            };
+        };
+        put?: never; delete?: never; options?: never; head?: never; patch?: never; trace?: never;
+    };
     "/api/picking/orders": {
         parameters: {
             query?: never;
@@ -1812,6 +2045,12 @@ export interface components {
             code: string;
             displayName: string;
         };
+        CreateOrderItemRequest: {
+            /** Format: int32 */
+            productId: number | string;
+            /** Format: double */
+            quantity: number | string;
+        };
         CreateOrderRequest: {
             customerName: string;
             /** Format: date */
@@ -1820,15 +2059,24 @@ export interface components {
             employeeIds: string[];
             items?: null | components["schemas"]["CreateOrderItemRequest"][];
         };
-        CreateOrderItemRequest: {
-            /** Format: int32 */
-            productId: number | string;
-            /** Format: double */
-            quantity: number | string;
-        };
         CreateOrganizationRequest: {
             code: string;
             name: string;
+        };
+        CreatePalletItemRequest: {
+            /** Format: uuid */
+            orderItemId: string;
+            /** Format: double */
+            quantity: number | string;
+            /** Format: int64 */
+            itemVersion: number | string;
+        };
+        CreatePalletRequest: {
+            /** Format: uuid */
+            operationId: string;
+            /** Format: double */
+            emptyPalletWeightKg: number | string;
+            items: null | components["schemas"]["CreatePalletItemRequest"][];
         };
         CsrfTokenResponse: {
             token: string;
@@ -1989,6 +2237,17 @@ export interface components {
             /** Format: int32 */
             totalPages: number | string;
         };
+        PagedResultOfPalletListItemDto: {
+            items: components["schemas"]["PalletListItemDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
         PagedResultOfPickingHistoryItemDto: {
             items: components["schemas"]["PickingHistoryItemDto"][];
             /** Format: int32 */
@@ -2011,6 +2270,130 @@ export interface components {
             /** Format: int32 */
             totalPages: number | string;
         };
+        PalletCandidateItemDto: {
+            /** Format: uuid */
+            orderItemId: string;
+            /** Format: int32 */
+            productId: number | string;
+            productName: string;
+            productSymbol: null | string;
+            /** Format: double */
+            orderedQuantity: number | string;
+            /** Format: double */
+            packedQuantity: number | string;
+            /** Format: double */
+            palletizedQuantity: number | string;
+            /** Format: double */
+            availableForPalletQuantity: number | string;
+            unit: string;
+            /** Format: double */
+            unitWeightKg: null | number | string;
+            /** Format: int64 */
+            version: number | string;
+        };
+        PalletCandidatesDto: {
+            /** Format: uuid */
+            orderId: string;
+            orderNumber: string;
+            customerName: string;
+            /** Format: date */
+            dueDate: string;
+            items: components["schemas"]["PalletCandidateItemDto"][];
+        };
+        PalletDetailsDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            orderId: string;
+            orderNumber: string;
+            palletNumber: string;
+            customerName: string;
+            status: components["schemas"]["PalletStatus"];
+            /** Format: double */
+            emptyPalletWeightKg: number | string;
+            /** Format: double */
+            goodsWeightKg: number | string;
+            /** Format: double */
+            totalWeightKg: number | string;
+            closedByKind: components["schemas"]["ActorKind"];
+            /** Format: uuid */
+            closedById: string;
+            closedByName: string;
+            /** Format: date-time */
+            closedAtUtc: string;
+            items: components["schemas"]["PalletDetailsItemDto"][];
+            label: components["schemas"]["PalletLabelPreviewDto"];
+            labelIssues: components["schemas"]["PalletLabelIssueDto"][];
+        };
+        PalletDetailsItemDto: {
+            /** Format: uuid */
+            orderItemId: string;
+            /** Format: int32 */
+            productId: number | string;
+            productName: string;
+            productSymbol: null | string;
+            /** Format: double */
+            quantity: number | string;
+            unit: string;
+            /** Format: double */
+            unitWeightKg: number | string;
+            /** Format: double */
+            lineWeightKg: number | string;
+        };
+        PalletLabelItemDto: {
+            productName: string;
+            /** Format: double */
+            quantity: number | string;
+            unit: string;
+        };
+        PalletLabelIssueDto: {
+            /** Format: int32 */
+            number: number | string;
+            mode: components["schemas"]["PalletLabelIssueMode"];
+            actorKind: components["schemas"]["ActorKind"];
+            actorDisplayName: string;
+            /** Format: date-time */
+            occurredAtUtc: string;
+        };
+        PalletLabelIssueMode: "Print" | "Download";
+        PalletLabelLanguage: "Polish" | "English";
+        PalletLabelIssueRequest: {
+            mode: components["schemas"]["PalletLabelIssueMode"];
+            language?: components["schemas"]["PalletLabelLanguage"];
+        };
+        PalletLabelPreviewDto: {
+            orderNumber: string;
+            palletNumber: string;
+            customerName: string;
+            /** Format: double */
+            goodsWeightKg: number | string;
+            /** Format: double */
+            emptyPalletWeightKg: number | string;
+            /** Format: double */
+            totalWeightKg: number | string;
+            items: components["schemas"]["PalletLabelItemDto"][];
+        };
+        PalletListItemDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            orderId: string;
+            orderNumber: string;
+            palletNumber: string;
+            customerName: string;
+            status: components["schemas"]["PalletStatus"];
+            /** Format: double */
+            goodsWeightKg: number | string;
+            /** Format: double */
+            emptyPalletWeightKg: number | string;
+            /** Format: double */
+            totalWeightKg: number | string;
+            /** Format: int32 */
+            itemCount: number | string;
+            /** Format: date-time */
+            closedAtUtc: string;
+        };
+        PalletStatus: number;
         PickingAction: number;
         PickingActorDto: {
             kind: components["schemas"]["ActorKind"];
@@ -2065,6 +2448,11 @@ export interface components {
             /** Format: double */
             packedQuantity: null | number | string;
             packedBy: null | components["schemas"]["PickingActorDto"];
+            /** Format: double */
+            palletizedQuantity: number | string;
+            /** Format: double */
+            availableForPalletQuantity: number | string;
+            palletAssignments: components["schemas"]["PickingPalletAssignmentDto"][];
             actions: components["schemas"]["PickingItemActionsDto"];
         };
         PickingMode: number;
@@ -2091,6 +2479,7 @@ export interface components {
             progressPercent: number | string;
             isAssignedToCurrentUser: boolean;
             canExecutePicking: boolean;
+            canCreatePallet: boolean;
             items: components["schemas"]["PickingItemDto"][];
         };
         PickingOrderListItemDto: {
@@ -2111,6 +2500,13 @@ export interface components {
             isAssignedToCurrentUser: boolean;
         };
         PickingOrderStatus: number;
+        PickingPalletAssignmentDto: {
+            /** Format: uuid */
+            palletId: string;
+            palletNumber: string;
+            /** Format: double */
+            quantity: number | string;
+        };
         ProblemDetails: {
             type?: null | string;
             title?: null | string;

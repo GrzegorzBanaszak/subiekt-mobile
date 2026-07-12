@@ -211,6 +211,90 @@ public sealed class OrderTests
         Assert.Null(item.PackedById);
     }
 
+    [Fact]
+    public void Pallet_assignment_marks_item_assigned_only_after_full_quantity_is_palletized()
+    {
+        var employee = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+        var order = Create();
+        var item = order.AddItem(7, "Name", null, 20, "szt.", 1.5m, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+
+        order.PackItem(item.Id, 10, employee, false, Now);
+        order.AssignPackedQuantityToPallet(item.Id, 10);
+
+        Assert.Equal(OrderItemStatus.ToPick, item.Status);
+        Assert.Equal(10, item.PackedQuantity);
+
+        order.PackItem(item.Id, 10, employee, false, Now.AddMinutes(1));
+        order.AssignPackedQuantityToPallet(item.Id, 20);
+
+        Assert.Equal(OrderItemStatus.AssignedToPallet, item.Status);
+    }
+
+    [Fact]
+    public void Pallet_assignment_cannot_exceed_packed_quantity()
+    {
+        var employee = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+        var order = Create();
+        var item = order.AddItem(7, "Name", null, 20, "szt.", 1.5m, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+        order.PackItem(item.Id, 10, employee, false, Now);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            order.AssignPackedQuantityToPallet(item.Id, 11));
+    }
+
+    [Fact]
+    public void Undo_packing_is_blocked_after_pallet_assignment()
+    {
+        var employee = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+        var order = Create();
+        var item = order.AddItem(7, "Name", null, 20, "szt.", 1.5m, ActorId, "Admin", Now);
+        order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
+        order.PackItem(item.Id, 10, employee, false, Now);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            order.UndoPackedItem(item.Id, employee, false, Now.AddMinutes(1), 10));
+    }
+
+    [Fact]
+    public void Closed_pallet_requires_items_and_valid_weights()
+    {
+        var actor = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+        var orderId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+
+        Assert.Throws<InvalidOperationException>(() => Pallet.CreateClosed(Guid.NewGuid(),
+            Guid.NewGuid(), orderId, "PAL-1", 0, [], actor, Now));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Pallet.CreateClosed(Guid.NewGuid(),
+            Guid.NewGuid(), orderId, "PAL-1", -0.0001m,
+            [new PalletItemAllocation(itemId, 1, 1)], actor, Now));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Pallet.CreateClosed(Guid.NewGuid(),
+            Guid.NewGuid(), orderId, "PAL-1", 0,
+            [new PalletItemAllocation(itemId, 1, 0)], actor, Now));
+    }
+
+    [Fact]
+    public void Closed_pallet_calculates_goods_and_total_weight()
+    {
+        var actor = new PickingActor(ActorKind.Employee,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"), "Employee");
+
+        var pallet = Pallet.CreateClosed(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(),
+            "PAL-1", 25m,
+            [
+                new PalletItemAllocation(Guid.NewGuid(), 10, 1.5m),
+                new PalletItemAllocation(Guid.NewGuid(), 2, 4.25m)
+            ], actor, Now);
+
+        Assert.Equal(23.5m, pallet.GoodsWeightKg);
+        Assert.Equal(48.5m, pallet.TotalWeightKg);
+    }
+
     private static Order Create() => Order.Create(Guid.NewGuid(), "ZAM-1", "Customer",
         new DateOnly(2026, 7, 6), ActorId, "Admin", Now, PickingMode.SingleAssignee,
         [Candidate("22222222-2222-2222-2222-222222222222", "Employee")]);

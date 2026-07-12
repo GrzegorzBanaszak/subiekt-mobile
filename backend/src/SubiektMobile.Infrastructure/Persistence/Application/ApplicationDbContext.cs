@@ -21,6 +21,8 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<OrderAssignee> OrderAssignees => Set<OrderAssignee>();
     public DbSet<OrderPickingEvent> OrderPickingEvents => Set<OrderPickingEvent>();
+    public DbSet<Pallet> Pallets => Set<Pallet>();
+    public DbSet<PalletItem> PalletItems => Set<PalletItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

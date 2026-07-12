@@ -16,6 +16,9 @@ function item(id: string, status: number, reservedById?: string): PickingItem {
     reservedBy: reservedById ? { kind: 0, id: reservedById, displayName: 'Pracownik', atUtc: '2026-07-07T10:00:00Z' } : null,
     packedQuantity: null,
     packedBy: null,
+    palletizedQuantity: 0,
+    availableForPalletQuantity: 0,
+    palletAssignments: [],
     actions: { canReserve: false, canRelease: false, canPack: false, canUndoPack: false },
   }
 }
