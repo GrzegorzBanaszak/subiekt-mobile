@@ -41,9 +41,9 @@ konteneryzacji (typowo `nesting=1`). Szczegóły zależą od konfiguracji Proxmo
 4. Uruchom wdrożenie:
 
    ```bash
-   docker compose -f compose.production.yaml up -d --build
-   docker compose -f compose.production.yaml ps
-   docker compose -f compose.production.yaml logs -f migrate api web cloudflared
+   docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env up -d --build
+   docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env ps
+   docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env logs -f migrate api web
    ```
 
 Serwis `migrate` najpierw wykonuje migracje PostgreSQL, a `data-protection-init` ustawia
@@ -59,9 +59,9 @@ Nie zmieni to istniejącego konta root i ograniczy ekspozycję hasła bootstrapo
 Przed aktualizacją wykonaj kopię bazy PostgreSQL. Następnie pobierz kod i przebuduj usługi:
 
 ```bash
-docker compose -f compose.production.yaml exec -T application-db pg_dump -U subiekt_mobile -d subiekt_mobile -Fc > subiekt-mobile.dump
+docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env exec -T application-db pg_dump -U subiekt_mobile -d subiekt_mobile -Fc > subiekt-mobile.dump
 git pull --ff-only
-docker compose -f compose.production.yaml up -d --build
+docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env up -d --build
 ```
 
 Jeżeli zmieniono `APPLICATION_DB_USER` lub `APPLICATION_DB_NAME`, użyj tych wartości w
