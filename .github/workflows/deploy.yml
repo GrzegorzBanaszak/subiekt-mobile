@@ -1,4 +1,4 @@
-name: CI and production deployment
+name: Build and deploy
 
 on:
   push:
@@ -7,126 +7,126 @@ on:
 
   workflow_dispatch:
 
-permissions:
-  contents: read
-
-env:
-  COMPOSE_FILE: infra/prod/compose.yaml
-
 concurrency:
   group: subiekt-mobile-production
   cancel-in-progress: false
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAMESPACE: grzegorzbanaszak
+
 jobs:
-  ci:
-    name: Build and verify
+  build-and-push:
+    name: Build ${{ matrix.image }}
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    permissions:
+      contents: read
+      packages: write
 
-      - name: Validate Docker Compose
-        run: |
-          touch ci.env
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: subiekt-mobile-api
+            dockerfile: backend/Dockerfile
 
-          docker compose \
-            --env-file ci.env \
-            config \
-            --quiet
-        env:
-          APP_ORIGIN: http://localhost
-          APPLICATION_DB_PASSWORD: ci-password
-          SUBIEKT_GT_CONNECTION_STRING: Server=localhost;Database=SubiektGT;User Id=ci;Password=ci;TrustServerCertificate=True
-
-      - name: Build application images
-        run: |
-          docker compose build api web migrate data-protection-init
-        env:
-          APP_ORIGIN: http://localhost
-          APPLICATION_DB_PASSWORD: ci-password
-          SUBIEKT_GT_CONNECTION_STRING: Server=localhost;Database=SubiektGT;User Id=ci;Password=ci;TrustServerCertificate=True
-
-  deploy:
-    name: Deploy to local production server
-    needs: ci
-
-    runs-on:
-      - self-hosted
-      - linux
-      - production
-
-    environment: "production"
+          - image: subiekt-mobile-web
+            dockerfile: frontend/Dockerfile
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Verify production configuration
-        run: |
-          test -f /etc/subiekt-mobile/production.env
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-          docker compose \
-            --env-file /etc/subiekt-mobile/production.env \
-            config \
-            --quiet
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Ensure required Docker network exists
-        run: |
-          docker network inspect public-proxy >/dev/null 2>&1 \
-            || docker network create public-proxy
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{ matrix.image }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{ matrix.image }}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
 
-      - name: Create database backup
+  request-deployment:
+    name: Request homelab deployment
+    needs:
+      - build-and-push
+
+    if: github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Send deployment request
         shell: bash
+        env:
+          DEPLOY_TOKEN: ${{ secrets.HOMELAB_DEPLOY_TOKEN }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           set -euo pipefail
 
-          BACKUP_DIR="/var/backups/subiekt-mobile"
-          BACKUP_FILE="$BACKUP_DIR/subiekt-mobile-$(date +'%Y-%m-%d_%H-%M-%S').sql"
-
-          test -d "$BACKUP_DIR"
-          test -w "$BACKUP_DIR"
-
-          if docker compose \
-            --env-file /etc/subiekt-mobile/production.env \
-            ps --status running application-db |
-            grep -q application-db
-          then
-            docker compose \
-              --env-file /etc/subiekt-mobile/production.env \
-              exec -T application-db \
-              sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' \
-              > "$BACKUP_FILE"
-
-            gzip "$BACKUP_FILE"
-
-            find "$BACKUP_DIR" \
-              -type f \
-              -name '*.sql.gz' \
-              -mtime +14 \
-              -delete
-          else
-            echo "Baza nie jest jeszcze uruchomiona — pomijam backup."
+          if [[ -z "${DEPLOY_TOKEN:-}" ]]; then
+            echo "Brakuje sekretu HOMELAB_DEPLOY_TOKEN."
+            exit 1
           fi
 
-      - name: Build and deploy
-        run: |
-          docker compose \
-            --env-file /etc/subiekt-mobile/production.env \
-            up -d \
-            --build \
-            --remove-orphans
+          PAYLOAD="$(
+            jq -n \
+              --arg app "subiekt-mobile" \
+              --arg image_tag "$IMAGE_TAG" \
+              --arg repository "$GITHUB_REPOSITORY" \
+              --arg commit "$GITHUB_SHA" \
+              '{
+                event_type: "deploy",
+                client_payload: {
+                  app: $app,
+                  image_tag: $image_tag,
+                  repository: $repository,
+                  commit: $commit
+                }
+              }'
+          )"
 
-      - name: Show deployment status
-        run: |
-          docker compose \
-            --env-file /etc/subiekt-mobile/production.env \
-            ps
+          HTTP_STATUS="$(
+            curl \
+              --silent \
+              --show-error \
+              --location \
+              --output /tmp/deploy-response.txt \
+              --write-out "%{http_code}" \
+              --request POST \
+              --header "Accept: application/vnd.github+json" \
+              --header "Authorization: Bearer $DEPLOY_TOKEN" \
+              --header "X-GitHub-Api-Version: 2026-03-10" \
+              https://api.github.com/repos/GrzegorzBanaszak/homelab-deploy/dispatches \
+              --data "$PAYLOAD"
+          )"
 
-      - name: Show logs after failed deployment
-        if: failure()
-        run: |
-          docker compose \
-            --env-file /etc/subiekt-mobile/production.env \
-            logs \
-            --tail=200
+          if [[ "$HTTP_STATUS" != "204" ]]; then
+            echo "Nie udało się uruchomić wdrożenia."
+            echo "Kod HTTP: $HTTP_STATUS"
+            cat /tmp/deploy-response.txt
+            exit 1
+          fi
+
+          echo "Przekazano wdrożenie subiekt-mobile."
+          echo "Tag obrazu: $IMAGE_TAG"
