@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Szczegóły palety - Subiekt Mobile</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e5e8eb",
+                        "on-primary-fixed-variant": "#005228",
+                        "primary-fixed-dim": "#4ae183",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#4ae183",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#cce5ff",
+                        "on-secondary-fixed": "#161c27",
+                        "surface-container-highest": "#e0e3e6",
+                        "error-container": "#ffdad6",
+                        "outline": "#6c7b6d",
+                        "tertiary-container": "#5fbaff",
+                        "tertiary-fixed-dim": "#92ccff",
+                        "on-surface-variant": "#3d4a3e",
+                        "on-tertiary-fixed": "#001d31",
+                        "surface": "#f7fafd",
+                        "surface-dim": "#d7dadd",
+                        "secondary": "#585e6c",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#414754",
+                        "tertiary": "#006397",
+                        "surface-bright": "#f7fafd",
+                        "on-tertiary-fixed-variant": "#004b73",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#6bfe9c",
+                        "on-background": "#181c1e",
+                        "on-primary-fixed": "#00210c",
+                        "outline-variant": "#bbcbbb",
+                        "on-tertiary-container": "#004970",
+                        "on-surface": "#181c1e",
+                        "surface-variant": "#e0e3e6",
+                        "surface-container-low": "#f1f4f7",
+                        "on-secondary-container": "#5e6473",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#006d37",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#ebeef1",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#dde2f3",
+                        "secondary-fixed-dim": "#c1c6d7",
+                        "background": "#f7fafd",
+                        "primary-container": "#2ecc71",
+                        "secondary-fixed": "#dde2f3",
+                        "primary": "#006d37",
+                        "inverse-on-surface": "#eef1f4",
+                        "on-primary-container": "#005027",
+                        "inverse-surface": "#2d3133"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar_width": "272px",
+                        "stack_md": "16px",
+                        "gutter": "24px",
+                        "header_height": "64px",
+                        "card_padding": "20px",
+                        "stack_sm": "8px"
+                    },
+                    "fontFamily": {
+                        "label-muted": ["Inter"],
+                        "mono-data": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-bold": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-muted": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "mono-data": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Utilities for simulated barcode in UI */
+        .barcode-lines {
+            background-image: repeating-linear-gradient(to right, transparent 0, transparent 2px, #000 2px, #000 4px, transparent 4px, transparent 5px, #000 5px, #000 8px, transparent 8px, transparent 10px, #000 10px, #000 11px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased overflow-hidden">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[272px] bg-surface border-r border-outline-variant flex flex-col py-4 gap-1 z-20">
+<div class="px-5 mb-6">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Subiekt Mobile</h1>
+<p class="font-label-muted text-label-muted text-secondary mt-1">Warehouse Management</p>
+</div>
+<div class="flex-1 overflow-y-auto">
+<a class="flex items-center h-12 text-secondary hover:bg-surface-container-highest transition-colors rounded-lg px-3 mx-2 group" href="#">
+<span class="material-symbols-outlined w-5 h-5 mr-3 group-hover:text-on-surface">inventory_2</span>
+<span class="font-body-md text-body-md group-hover:text-on-surface">Towary</span>
+</a>
+<a class="flex items-center h-12 text-secondary hover:bg-surface-container-highest transition-colors rounded-lg px-3 mx-2 group" href="#">
+<span class="material-symbols-outlined w-5 h-5 mr-3 group-hover:text-on-surface">shopping_cart</span>
+<span class="font-body-md text-body-md group-hover:text-on-surface">Zamówienia klientów</span>
+</a>
+<a class="flex items-center h-12 text-secondary hover:bg-surface-container-highest transition-colors rounded-lg px-3 mx-2 group" href="#">
+<span class="material-symbols-outlined w-5 h-5 mr-3 group-hover:text-on-surface">warehouse</span>
+<span class="font-body-md text-body-md group-hover:text-on-surface">Zamówienia magazynowe</span>
+</a>
+<a class="flex items-center h-12 text-secondary hover:bg-surface-container-highest transition-colors rounded-lg px-3 mx-2 group" href="#">
+<span class="material-symbols-outlined w-5 h-5 mr-3 group-hover:text-on-surface">conveyor_belt</span>
+<span class="font-body-md text-body-md group-hover:text-on-surface">Kompletacja</span>
+</a>
+<a class="flex items-center h-12 text-secondary hover:bg-surface-container-highest transition-colors rounded-lg px-3 mx-2 group" href="#">
+<span class="material-symbols-outlined w-5 h-5 mr-3 group-hover:text-on-surface">local_shipping</span>
+<span class="font-body-md text-body-md group-hover:text-on-surface">Wysyłki</span>
+</a>
+<a class="flex items-center h-12 bg-primary-container text-on-primary-container rounded-lg px-3 mx-2" href="#">
+<span class="material-symbols-outlined w-5 h-5 mr-3" style="font-variation-settings: 'FILL' 1;">inventory</span>
+<span class="font-body-md text-body-md font-semibold">Palety</span>
+</a>
+<a class="flex items-center h-12 text-secondary hover:bg-surface-container-highest transition-colors rounded-lg px-3 mx-2 group mt-4" href="#">
+<span class="material-symbols-outlined w-5 h-5 mr-3 group-hover:text-on-surface">settings</span>
+<span class="font-body-md text-body-md group-hover:text-on-surface">Administracja</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 h-16 w-[calc(100%-272px)] bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-6 z-10">
+<div class="flex items-center gap-4">
+<!-- Breadcrumb / Context -->
+<div class="flex items-center text-secondary font-body-sm text-body-sm">
+<span>Palety</span>
+<span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Szczegóły palety</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container-high rounded-full p-2 text-on-surface-variant cursor-pointer transition-all duration-200">
+<span class="material-symbols-outlined">language</span>
+</button>
+<button class="hover:bg-surface-container-high rounded-full p-2 text-on-surface-variant cursor-pointer transition-all duration-200">
+<span class="material-symbols-outlined">logout</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden ml-2 flex items-center justify-center">
+<img class="object-cover w-full h-full" data-alt="A small, professional headshot photo of an administrator wearing a warehouse safety vest, neutral background, bright even lighting, corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx4m_9pHww9PQ7wGn6X8uTSrgc0d1VkA5kXNxoMA8wmxDUt9lcpJF3dMFmmmS2-FLy2jlYM35f1Pgurwo7IwDuAHo2JlFrCqS-Uo_pDLdQAQ1Q4Y9cphi8s-_iKT5x4OYFIx9q7S9jrTJkgFqWpwAmoX75NlygJgHJf9UCEAk2vpu2WHhOE2ohiUKwMDTquPmc7scBiSpQD1F-HpcPtx_KMWXcW9G2QzPCPborofrG5PqGMrcH5Q"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[272px] mt-[64px] h-[calc(100vh-64px)] overflow-y-auto p-gutter bg-background flex flex-col gap-gutter">
+<!-- Page Header & Status -->
+<div class="flex justify-between items-end">
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Master Pallet #MP-2023-8841</h2>
+<span class="bg-surface-container-highest text-secondary px-2.5 py-0.5 rounded text-[11px] font-bold tracking-wide uppercase border border-outline-variant">W toku</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary">Ostatnia aktualizacja: 24 Paź 2023, 14:32</p>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-lowest border border-outline text-primary font-label-bold text-label-bold px-4 py-2 rounded-lg hover:bg-surface-container-low transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    Pobierz PDF
+                </button>
+<button class="bg-surface-container-lowest border border-outline text-primary font-label-bold text-label-bold px-4 py-2 rounded-lg hover:bg-surface-container-low transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                    Drukuj etykietę Master
+                </button>
+<button class="bg-primary text-on-primary font-label-bold text-label-bold px-6 py-2 rounded-lg hover:bg-surface-tint transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">lock_outline</span>
+                    Zamknij paletę
+                </button>
+</div>
+</div>
+<!-- Meta Data Card Grid -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.02)] p-card_padding grid grid-cols-4 gap-6">
+<div>
+<p class="font-label-muted text-label-muted text-secondary mb-1 uppercase tracking-wider">Wysyłka (Shipment)</p>
+<p class="font-body-lg text-body-lg text-on-surface">SHP-99021-DE</p>
+</div>
+<div>
+<p class="font-label-muted text-label-muted text-secondary mb-1 uppercase tracking-wider">Awizo (Delivery Note)</p>
+<p class="font-body-lg text-body-lg text-on-surface">DN-8472-A</p>
+</div>
+<div>
+<p class="font-label-muted text-label-muted text-secondary mb-1 uppercase tracking-wider">Miejsce odbioru (Dock)</p>
+<p class="font-body-lg text-body-lg text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">forklift</span>
+                    Brama 12, Sektor D
+                </p>
+</div>
+<div>
+<p class="font-label-muted text-label-muted text-secondary mb-1 uppercase tracking-wider">Całkowita waga</p>
+<p class="font-body-lg text-body-lg text-on-surface">428.50 kg</p>
+</div>
+</div>
+<!-- Complex Split Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-start">
+<!-- Left Column: Table & History (Span 2) -->
+<div class="lg:col-span-2 flex flex-col gap-gutter">
+<!-- Packages Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.02)] overflow-hidden">
+<div class="p-card_padding border-b border-outline-variant flex justify-between items-center bg-surface-bright">
+<h3 class="font-headline-md text-headline-md text-on-surface">Zawartość palety (Paczki)</h3>
+<span class="bg-surface-container-high text-on-surface-variant font-mono-data text-mono-data px-2.5 py-1 rounded-full">Sztuk: 4</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant font-label-bold text-label-bold text-secondary">
+<th class="p-3 pl-card_padding">Nr Paczki (HU)</th>
+<th class="p-3">Part Number</th>
+<th class="p-3">S/N / Batch</th>
+<th class="p-3 text-right">Ilość</th>
+<th class="p-3 text-right pr-card_padding">Waga</th>
+</tr>
+</thead>
+<tbody class="font-mono-data text-mono-data text-on-surface">
+<tr class="border-b border-outline-variant hover:bg-surface-bright transition-colors group">
+<td class="p-3 pl-card_padding flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px] group-hover:text-primary">package_2</span>
+                                        PKG-001-A
+                                    </td>
+<td class="p-3">A001-8X9-44</td>
+<td class="p-3 text-secondary">SN: 98112-A</td>
+<td class="p-3 text-right">120 szt</td>
+<td class="p-3 text-right pr-card_padding text-secondary">45.0 kg</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-bright transition-colors group">
+<td class="p-3 pl-card_padding flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px] group-hover:text-primary">package_2</span>
+                                        PKG-002-A
+                                    </td>
+<td class="p-3">A001-8X9-44</td>
+<td class="p-3 text-secondary">SN: 98113-A</td>
+<td class="p-3 text-right">120 szt</td>
+<td class="p-3 text-right pr-card_padding text-secondary">45.0 kg</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-bright transition-colors group">
+<td class="p-3 pl-card_padding flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px] group-hover:text-primary">package_2</span>
+                                        PKG-003-B
+                                    </td>
+<td class="p-3">B882-1Y0-12</td>
+<td class="p-3 text-secondary">BAT: 2023-W41</td>
+<td class="p-3 text-right">50 szt</td>
+<td class="p-3 text-right pr-card_padding text-secondary">150.5 kg</td>
+</tr>
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="p-3 pl-card_padding flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px] group-hover:text-primary">package_2</span>
+                                        PKG-004-C
+                                    </td>
+<td class="p-3">C990-2Z1-00</td>
+<td class="p-3 text-secondary">BAT: 2023-W41</td>
+<td class="p-3 text-right">80 szt</td>
+<td class="p-3 text-right pr-card_padding text-secondary">188.0 kg</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Print History -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.02)] p-card_padding">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Historia wydruków</h3>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between py-2 border-b border-surface-container-highest last:border-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">print</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Etykieta Master (VDA 4902)</p>
+<p class="font-label-muted text-label-muted text-secondary">Przez: Jan Kowalski</p>
+</div>
+</div>
+<span class="font-mono-data text-mono-data text-secondary">Dzisiaj, 14:15</span>
+</div>
+<div class="flex items-center justify-between py-2 border-b border-surface-container-highest last:border-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">description</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Lista pakunkowa PDF</p>
+<p class="font-label-muted text-label-muted text-secondary">Przez: System Auto</p>
+</div>
+</div>
+<span class="font-mono-data text-mono-data text-secondary">Dzisiaj, 10:05</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Label Preview (Span 1) -->
+<div class="lg:col-span-1 flex flex-col gap-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.02)] p-card_padding sticky top-gutter">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">visibility</span>
+                            Podgląd VDA 4902
+                        </h3>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed text-[10px] uppercase font-bold px-2 py-0.5 rounded">DIN A5</span>
+</div>
+<!-- Realistic VDA 4902 Mockup (Structural) -->
+<div class="bg-white border-[2px] border-black text-black font-sans w-full aspect-[1.414/1] relative flex flex-col overflow-hidden text-[8px] leading-tight select-none">
+<!-- Row 1 -->
+<div class="flex border-b border-black h-[15%]">
+<div class="w-1/2 border-r border-black p-1 flex flex-col">
+<span class="font-bold">Receiver (N)</span>
+<span class="text-[10px] mt-0.5">Automotive Plant Alpha<br/>Assembly Line 4<br/>Berlin, DE</span>
+</div>
+<div class="w-1/2 p-1 flex flex-col">
+<span class="font-bold">Unloading Point (P)</span>
+<span class="text-[12px] font-bold mt-1 text-center border border-black p-0.5 mx-4">DOCK 12</span>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="flex border-b border-black h-[15%]">
+<div class="w-1/2 border-r border-black p-1 flex flex-col">
+<span class="font-bold">Supplier (V)</span>
+<span class="text-[9px] mt-0.5">Subiekt Parts Ltd.<br/>Warsaw, PL</span>
+<div class="mt-auto font-mono text-[7px]">V 123456789</div>
+</div>
+<div class="w-1/4 border-r border-black p-1 flex flex-col justify-between">
+<span class="font-bold">Weight Neto</span>
+<span class="text-[10px] text-right font-bold">400 kg</span>
+<span class="font-bold border-t border-black pt-0.5">Weight Bruto</span>
+<span class="text-[10px] text-right font-bold">428.5 kg</span>
+</div>
+<div class="w-1/4 p-1 flex flex-col">
+<span class="font-bold">Date</span>
+<span class="text-[9px]">24.10.2023</span>
+<span class="font-bold border-t border-black pt-0.5 mt-auto">No. of Boxes</span>
+<span class="text-[10px] text-right font-bold">4</span>
+</div>
+</div>
+<!-- Row 3: Part Number (CRITICAL) -->
+<div class="flex flex-col border-b border-black h-[25%] p-1 relative">
+<span class="font-bold">Part Number (P)</span>
+<div class="flex items-center justify-between px-2 h-full">
+<span class="text-[20px] font-bold tracking-tighter">MIXED-MASTER</span>
+<div class="w-3/5 h-8 barcode-lines opacity-80"></div>
+</div>
+<div class="absolute bottom-1 right-2 font-mono text-[8px]">(P) MIXED-MASTER</div>
+</div>
+<!-- Row 4: Quantity & Description -->
+<div class="flex border-b border-black h-[15%]">
+<div class="w-1/3 border-r border-black p-1 flex flex-col relative">
+<span class="font-bold">Quantity (Q)</span>
+<span class="text-[14px] font-bold mt-1">370 PC</span>
+<div class="absolute bottom-1 right-1 font-mono text-[7px]">(Q) 370</div>
+</div>
+<div class="w-2/3 p-1 flex flex-col">
+<span class="font-bold">Description</span>
+<span class="text-[10px] mt-1">MASTER PALLET - CONSOLIDATED ASSORTMENT</span>
+</div>
+</div>
+<!-- Row 5: Serial & Master info -->
+<div class="flex h-[30%]">
+<div class="w-1/2 border-r border-black p-1 flex flex-col relative">
+<span class="font-bold">Serial Number (S)</span>
+<div class="flex flex-col items-center justify-center h-full mt-1">
+<div class="w-4/5 h-6 barcode-lines opacity-80"></div>
+<span class="text-[11px] font-bold mt-1">MP-2023-8841</span>
+</div>
+<div class="absolute bottom-1 right-1 font-mono text-[7px]">(S) MP20238841</div>
+</div>
+<div class="w-1/2 p-1 flex flex-col justify-between">
+<div class="flex justify-between border-b border-black pb-1">
+<div class="flex flex-col">
+<span class="font-bold">Master (M)</span>
+<span class="text-[12px] font-black text-center mt-0.5">M</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-bold">Shipment (H)</span>
+<span class="text-[9px] mt-1">SHP-99021-DE</span>
+</div>
+</div>
+<div class="flex items-center justify-center mt-1 opacity-20">
+<!-- Decorative block simulating small print -->
+<div class="w-full h-1 bg-black mb-0.5"></div>
+<div class="w-3/4 h-1 bg-black"></div>
+</div>
+</div>
+</div>
+</div>
+<p class="font-label-muted text-label-muted text-secondary mt-3 text-center">Wizualizacja ma charakter poglądowy.</p>
+</div>
+</div>
+</div>
+</main>
+</body></html>
