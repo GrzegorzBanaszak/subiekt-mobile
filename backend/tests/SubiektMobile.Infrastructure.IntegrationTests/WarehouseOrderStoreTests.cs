@@ -1,15 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using SubiektMobile.Application.Orders;
+using SubiektMobile.Application.WarehouseOrders;
 using SubiektMobile.Domain.Identity;
-using SubiektMobile.Domain.Orders;
-using SubiektMobile.Infrastructure.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
+using SubiektMobile.Infrastructure.WarehouseOrders;
 using SubiektMobile.Infrastructure.Persistence.Application;
 using Xunit;
 
 namespace SubiektMobile.Infrastructure.IntegrationTests;
 
 [Collection(PostgreSqlIdentityCollection.Name)]
-public sealed class OrderStoreTests
+public sealed class WarehouseOrderStoreTests
 {
     [PostgreSqlFact]
     public async Task First_item_is_saved_with_expected_order_version()
@@ -20,26 +20,26 @@ public sealed class OrderStoreTests
             .Options;
         await using var context = new ApplicationDbContext(options);
         await using var transaction = await context.Database.BeginTransactionAsync();
-        var store = new OrderStore(context);
+        var store = new WarehouseOrderStore(context);
         var now = new DateTimeOffset(2026, 7, 5, 20, 0, 0, TimeSpan.Zero);
         var actorId = Guid.NewGuid();
-        var order = Order.Create(Guid.NewGuid(), $"TEST-{Guid.NewGuid():N}", "Test customer",
+        var order = WarehouseOrder.Create(Guid.NewGuid(), $"TEST-{Guid.NewGuid():N}", "Test customer",
             new DateOnly(2026, 7, 6), actorId, "Test actor", now);
 
-        Assert.Equal(OrderStoreResult.Success,
-            await store.AddAsync(order, Audit(actorId, order.Id, "OrderCreated", now), CancellationToken.None));
+        Assert.Equal(WarehouseOrderStoreResult.Success,
+            await store.AddAsync(order, Audit(actorId, order.Id, "WarehouseOrderCreated", now), CancellationToken.None));
         order.AddItem(1, "Test product", "TEST", 1, "szt.", 0.2m,
             actorId, "Test actor", now.AddMinutes(1));
 
         var result = await store.SaveAsync(order, 1,
-            Audit(actorId, order.Id, "OrderItemAdded", now.AddMinutes(1)), CancellationToken.None);
+            Audit(actorId, order.Id, "WarehouseOrderItemAdded", now.AddMinutes(1)), CancellationToken.None);
 
-        Assert.Equal(OrderStoreResult.Success, result);
+        Assert.Equal(WarehouseOrderStoreResult.Success, result);
         Assert.Equal(2, order.Version);
-        Assert.Single(await context.OrderItems.Where(x => x.OrderId == order.Id).ToListAsync());
+        Assert.Single(await context.WarehouseOrderItems.Where(x => x.WarehouseOrderId == order.Id).ToListAsync());
         await transaction.RollbackAsync();
     }
 
-    private static AuditEntry Audit(Guid actorId, Guid orderId, string action, DateTimeOffset now) =>
-        AuditEntry.Create(ActorKind.Administrator, actorId, null, "Test actor", action, "Order", orderId, now);
+    private static AuditEntry Audit(Guid actorId, Guid warehouseOrderId, string action, DateTimeOffset now) =>
+        AuditEntry.Create(ActorKind.Administrator, actorId, null, "Test actor", action, "WarehouseOrder", warehouseOrderId, now);
 }

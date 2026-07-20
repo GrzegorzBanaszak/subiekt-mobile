@@ -54,6 +54,44 @@ korzysta z jednego originu i poprawnie obsługuje cookies sesji oraz CSRF.
 Po pierwszym poprawnym uruchomieniu można usunąć trzy zmienne `BOOTSTRAP_ADMIN_*` z `.env`.
 Nie zmieni to istniejącego konta root i ograniczy ekspozycję hasła bootstrapowego.
 
+## Migracje bazy aplikacji
+
+Migracje dotyczą wyłącznie PostgreSQL aplikacji (`application-db`). Nie modyfikują bazy
+Subiekta GT. W obrazie backendu dostępny jest tryb `--migrate`, uruchamiany przez jednorazowy
+serwis Compose `migrate`.
+
+Przy pierwszym wdrożeniu nie wykonuj dodatkowego kroku: polecenie `up -d --build` z sekcji
+„Konfiguracja” uruchamia `migrate` automatycznie przed API.
+
+Przy aktualizacji, która zawiera migrację, wykonaj poniższą procedurę. Nie pomijaj kopii
+zapasowej — także migracja zmieniająca nazwy tabel, taka jak `orders` → `warehouse_orders`,
+powinna mieć możliwość odtworzenia danych.
+
+```bash
+# 1. Kopia zapasowa działającej bazy.
+docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env exec -T application-db pg_dump -U subiekt_mobile -d subiekt_mobile -Fc > subiekt-mobile-before-migration.dump
+
+# 2. Pobranie kodu i zbudowanie obrazu zawierającego nową migrację.
+git pull --ff-only
+docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env build migrate api web
+
+# 3. Zatrzymanie ruchu do poprzedniej wersji API i wykonanie migracji.
+docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env stop api web
+docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env run --rm migrate
+
+# 4. Uruchomienie nowej wersji po poprawnym zakończeniu migracji.
+docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env up -d --no-deps api web
+docker compose -f infra/prod/compose.yaml --env-file infra/prod/.env ps
+```
+
+Polecenie z kroku 3 musi zakończyć się kodem `0`. Jeżeli zakończy się błędem, **nie uruchamiaj
+API ani nie wykonuj ręcznych zmian w tabelach**. Zachowaj logi polecenia i odtwórz bazę z kopii
+zapasowej dopiero po ustaleniu przyczyny.
+
+W razie potrzeby odtworzenie kopii wykonaj po zatrzymaniu API, na pustej bazie lub po usunięciu
+jej danych zgodnie z procedurą administracyjną PostgreSQL. Nie wykonuj `pg_restore` na działającej
+bazie produkcyjnej bez zweryfikowania docelowego hosta, bazy i użytkownika.
+
 ## Aktualizacja i kopia zapasowa
 
 Przed aktualizacją wykonaj kopię bazy PostgreSQL. Następnie pobierz kod i przebuduj usługi:

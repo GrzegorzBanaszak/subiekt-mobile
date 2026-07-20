@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SubiektMobile.Domain.Identity;
-using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
 using SubiektMobile.Infrastructure.Persistence.Application.Entities;
 
 namespace SubiektMobile.Infrastructure.Persistence.Application;
@@ -17,10 +17,10 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<AuthenticationSession> AuthenticationSessions => Set<AuthenticationSession>();
     public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
-    public DbSet<Order> Orders => Set<Order>();
-    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-    public DbSet<OrderAssignee> OrderAssignees => Set<OrderAssignee>();
-    public DbSet<OrderPickingEvent> OrderPickingEvents => Set<OrderPickingEvent>();
+    public DbSet<WarehouseOrder> WarehouseOrders => Set<WarehouseOrder>();
+    public DbSet<WarehouseOrderItem> WarehouseOrderItems => Set<WarehouseOrderItem>();
+    public DbSet<WarehouseOrderAssignee> WarehouseOrderAssignees => Set<WarehouseOrderAssignee>();
+    public DbSet<WarehouseOrderPickingEvent> WarehouseOrderPickingEvents => Set<WarehouseOrderPickingEvent>();
     public DbSet<Pallet> Pallets => Set<Pallet>();
     public DbSet<PalletItem> PalletItems => Set<PalletItem>();
 

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const apiMocks = vi.hoisted(() => ({ GET: vi.fn(), POST: vi.fn(), PUT: vi.fn(), DELETE: vi.fn() }))
 vi.mock('../../../api/client', () => ({ apiClient: apiMocks }))
 
-import { addOrderItem, configureOrderPicking, createOrder, deleteOrder, publishOrder } from './ordersApi'
+import { addWarehouseOrderItem, configureWarehouseOrderPicking, createWarehouseOrder, deleteWarehouseOrder, publishWarehouseOrder } from './warehouseOrdersApi'
 
 const order = {
   id: '11111111-1111-1111-1111-111111111111', number: 'ZAM-1', customerName: 'Klient',
@@ -13,7 +13,7 @@ const order = {
   updatedAtUtc: '2026-07-05T10:00:00Z', publishedAtUtc: null, version: 1, items: [],
 }
 
-describe('ordersApi', () => {
+describe('warehouseOrdersApi', () => {
   beforeEach(() => {
     apiMocks.GET.mockReset()
     apiMocks.POST.mockReset()
@@ -29,9 +29,9 @@ describe('ordersApi', () => {
   it('deletes a draft with its current version and CSRF protection', async () => {
     apiMocks.DELETE.mockResolvedValue({ response: new Response(null, { status: 204 }) })
 
-    await deleteOrder(order.id, 3)
+    await deleteWarehouseOrder(order.id, 3)
 
-    expect(apiMocks.DELETE).toHaveBeenCalledWith('/api/orders/{id}', {
+    expect(apiMocks.DELETE).toHaveBeenCalledWith('/api/warehouse-orders/{id}', {
       params: { path: { id: order.id }, query: { version: 3 } },
       headers: { 'X-CSRF-TOKEN': 'csrf-token' },
     })
@@ -40,9 +40,9 @@ describe('ordersApi', () => {
   it('updates picking mode and assignees with the current version', async () => {
     apiMocks.PUT.mockResolvedValue({ data: order, response: new Response(null, { status: 200 }) })
 
-    await configureOrderPicking(order.id, 1, ['employee-1', 'employee-2'], 4)
+    await configureWarehouseOrderPicking(order.id, 1, ['employee-1', 'employee-2'], 4)
 
-    expect(apiMocks.PUT).toHaveBeenCalledWith('/api/orders/{id}/picking-configuration', {
+    expect(apiMocks.PUT).toHaveBeenCalledWith('/api/warehouse-orders/{id}/picking-configuration', {
       params: { path: { id: order.id } },
       body: { pickingMode: 1, employeeIds: ['employee-1', 'employee-2'], version: 4 },
       headers: { 'X-CSRF-TOKEN': 'csrf-token' },
@@ -50,11 +50,11 @@ describe('ordersApi', () => {
   })
 
   it('creates an order with CSRF protection', async () => {
-    await createOrder({
+    await createWarehouseOrder({
       customerName: 'Klient', dueDate: '2026-07-10', pickingMode: 0,
       employeeIds: ['employee-1'], items: [{ productId: 7, quantity: 2.5 }],
     })
-    expect(apiMocks.POST).toHaveBeenCalledWith('/api/orders', {
+    expect(apiMocks.POST).toHaveBeenCalledWith('/api/warehouse-orders', {
       body: {
         customerName: 'Klient', dueDate: '2026-07-10', pickingMode: 0,
         employeeIds: ['employee-1'], items: [{ productId: 7, quantity: 2.5 }],
@@ -64,14 +64,14 @@ describe('ordersApi', () => {
   })
 
   it('passes the current version while adding an item and publishing', async () => {
-    await addOrderItem(order.id, 7, 2.5, 4)
-    await publishOrder(order.id, 5)
+    await addWarehouseOrderItem(order.id, 7, 2.5, 4)
+    await publishWarehouseOrder(order.id, 5)
 
-    expect(apiMocks.POST).toHaveBeenNthCalledWith(1, '/api/orders/{id}/items', {
+    expect(apiMocks.POST).toHaveBeenNthCalledWith(1, '/api/warehouse-orders/{id}/items', {
       params: { path: { id: order.id } }, body: { productId: 7, quantity: 2.5, version: 4 },
       headers: { 'X-CSRF-TOKEN': 'csrf-token' },
     })
-    expect(apiMocks.POST).toHaveBeenNthCalledWith(2, '/api/orders/{id}/publish', {
+    expect(apiMocks.POST).toHaveBeenNthCalledWith(2, '/api/warehouse-orders/{id}/publish', {
       params: { path: { id: order.id } }, body: { version: 5 },
       headers: { 'X-CSRF-TOKEN': 'csrf-token' },
     })
@@ -86,8 +86,8 @@ describe('ordersApi', () => {
       .mockResolvedValueOnce({ error: { detail: 'Order was modified by another request.' }, response: new Response(null, { status: 409 }) })
       .mockResolvedValueOnce({ data: { ...order, version: 4 }, response: new Response(null, { status: 200 }) })
 
-    await expect(addOrderItem(order.id, 7, 1, 1)).resolves.toMatchObject({ version: 4 })
-    expect(apiMocks.POST).toHaveBeenLastCalledWith('/api/orders/{id}/items', {
+    await expect(addWarehouseOrderItem(order.id, 7, 1, 1)).resolves.toMatchObject({ version: 4 })
+    expect(apiMocks.POST).toHaveBeenLastCalledWith('/api/warehouse-orders/{id}/items', {
       params: { path: { id: order.id } }, body: { productId: 7, quantity: 1, version: 3 },
       headers: { 'X-CSRF-TOKEN': 'csrf-2' },
     })

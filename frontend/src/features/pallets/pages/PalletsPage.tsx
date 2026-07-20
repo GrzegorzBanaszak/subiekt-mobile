@@ -78,7 +78,7 @@ function PalletRow({ pallet, locale, open }: { pallet: PalletListItem; locale: s
   const { t } = useI18n()
   return <tr className="cursor-pointer hover:bg-slate-50" onClick={open} onKeyDown={(event) => event.key === 'Enter' && open()} tabIndex={0}>
     <td className="p-4 font-semibold"><span className="inline-flex items-center gap-2"><AppIcon className="size-5 text-indigo-800" name="pallet" />{pallet.palletNumber}</span></td>
-    <td className="p-4">{pallet.orderNumber}</td>
+    <td className="p-4">{pallet.warehouseOrderNumber}</td>
     <td className="p-4">{pallet.customerName}</td>
     <td className="p-4"><Status value={pallet.status} /></td>
     <td className="p-4 text-right font-semibold">{formatWeightKg(Number(pallet.totalWeightKg), locale)}</td>
@@ -99,7 +99,7 @@ function PalletCard({ pallet, locale, open }: { pallet: PalletListItem; locale: 
       <Status value={pallet.status} />
     </div>
     <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-200 pt-3 text-sm">
-      <div><span className="block text-slate-500">{t('pallets.list.orderNumber')}</span>{pallet.orderNumber}</div>
+      <div><span className="block text-slate-500">{t('pallets.list.orderNumber')}</span>{pallet.warehouseOrderNumber}</div>
       <div><span className="block text-slate-500">{t('pallets.list.weight')}</span>{formatWeightKg(Number(pallet.totalWeightKg), locale)}</div>
       <div><span className="block text-slate-500">{t('pallets.list.items')}</span>{pallet.itemCount}</div>
       <div><span className="block text-slate-500">{t('pallets.list.closedAt')}</span>{formatDateTime(pallet.closedAtUtc, locale)}</div>

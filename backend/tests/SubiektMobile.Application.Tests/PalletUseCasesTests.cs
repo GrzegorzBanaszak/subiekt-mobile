@@ -2,7 +2,7 @@ using SubiektMobile.Application.Identity;
 using SubiektMobile.Application.Pallets;
 using SubiektMobile.Application.Products;
 using SubiektMobile.Domain.Identity;
-using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
 using Xunit;
 
 namespace SubiektMobile.Application.Tests;
@@ -102,13 +102,13 @@ public sealed class PalletUseCasesTests
         Assert.Empty(store.LabelIssues);
     }
 
-    private static Order CreatePublishedOrder(Guid? EmployeeId = null)
+    private static WarehouseOrder CreatePublishedOrder(Guid? EmployeeId = null)
     {
         var employeeId = EmployeeId ?? PalletUseCasesTests.EmployeeId;
-        var order = Order.Create(Guid.NewGuid(), "ZAM-1", "Customer",
+        var order = WarehouseOrder.Create(Guid.NewGuid(), "ZAM-1", "Customer",
             new DateOnly(2026, 7, 6), CreatorId, "Creator", Now,
             PickingMode.SingleAssignee,
-            [new OrderAssigneeCandidate(employeeId, OrganizationId, "Picker")]);
+            [new WarehouseOrderAssigneeCandidate(employeeId, OrganizationId, "Picker")]);
         var item = order.AddItem(7, "Test product", "TP", 20m, "szt.", 1.2m,
             CreatorId, "Creator", Now);
         order.Publish(new DateOnly(2026, 7, 5), CreatorId, "Creator", Now);
@@ -131,7 +131,7 @@ public sealed class PalletUseCasesTests
         [], new PalletLabelPreviewDto("ZAM-1", "PAL-1", "Customer", 10m, 25m, 35m,
             [new PalletLabelItemDto("Product", 1m, "szt.")]), []);
 
-    private sealed class PalletStoreStub(Order order) : IPalletStore
+    private sealed class PalletStoreStub(WarehouseOrder order) : IPalletStore
     {
         public IReadOnlyDictionary<Guid, decimal> PalletizedQuantities { get; init; } =
             new Dictionary<Guid, decimal>();
@@ -143,11 +143,11 @@ public sealed class PalletUseCasesTests
             CancellationToken cancellationToken) =>
             Task.FromResult(new PagedResult<PalletListItemDto>([], page, pageSize, 0, 0));
 
-        public Task<Order?> FindOrderAsync(Guid orderId, bool tracking, CancellationToken cancellationToken) =>
-            Task.FromResult<Order?>(orderId == order.Id ? order : null);
+        public Task<WarehouseOrder?> FindWarehouseOrderAsync(Guid warehouseOrderId, bool tracking, CancellationToken cancellationToken) =>
+            Task.FromResult<WarehouseOrder?>(warehouseOrderId == order.Id ? order : null);
 
         public Task<IReadOnlyDictionary<Guid, decimal>> GetPalletizedQuantitiesAsync(
-            Guid orderId, CancellationToken cancellationToken) =>
+            Guid warehouseOrderId, CancellationToken cancellationToken) =>
             Task.FromResult(PalletizedQuantities);
 
         public Task<PalletOperationSnapshot?> FindOperationAsync(

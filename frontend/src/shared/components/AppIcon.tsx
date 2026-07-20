@@ -32,6 +32,7 @@ export type AppIconName =
   | 'download'
   | 'scale'
   | 'list'
+  | 'more'
   | 'truck'
 
 const symbols: Record<AppIconName, string> = {
@@ -68,6 +69,7 @@ const symbols: Record<AppIconName, string> = {
   download: 'download',
   scale: 'scale',
   list: 'list_alt',
+  more: 'more_horiz',
   truck: 'local_shipping',
 }
 

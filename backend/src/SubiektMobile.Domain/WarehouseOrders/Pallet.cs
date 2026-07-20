@@ -1,6 +1,6 @@
 using SubiektMobile.Domain.Identity;
 
-namespace SubiektMobile.Domain.Orders;
+namespace SubiektMobile.Domain.WarehouseOrders;
 
 public enum PalletStatus
 {
@@ -8,7 +8,7 @@ public enum PalletStatus
 }
 
 public sealed record PalletItemAllocation(
-    Guid OrderItemId,
+    Guid WarehouseOrderItemId,
     decimal Quantity,
     decimal UnitWeightKg);
 
@@ -18,34 +18,34 @@ public sealed class Pallet
 
     private Pallet() { }
 
-    private Pallet(Guid id, Guid operationId, Guid orderId, string number,
+    private Pallet(Guid id, Guid operationId, Guid warehouseOrderId, string number,
         decimal emptyPalletWeightKg, IReadOnlyCollection<PalletItemAllocation> allocations,
         PickingActor actor, DateTimeOffset now)
     {
-        if (id == Guid.Empty || operationId == Guid.Empty || orderId == Guid.Empty)
+        if (id == Guid.Empty || operationId == Guid.Empty || warehouseOrderId == Guid.Empty)
             throw new ArgumentException("Pallet identifiers are required.");
         ValidateActor(actor);
         if (emptyPalletWeightKg < 0)
             throw new ArgumentOutOfRangeException(nameof(emptyPalletWeightKg), "Empty pallet weight cannot be negative.");
         if (allocations.Count == 0)
             throw new InvalidOperationException("Pallet must contain at least one item.");
-        if (allocations.Select(x => x.OrderItemId).Distinct().Count() != allocations.Count)
+        if (allocations.Select(x => x.WarehouseOrderItemId).Distinct().Count() != allocations.Count)
             throw new InvalidOperationException("An order item can be assigned to a pallet only once in a single operation.");
 
         Id = id;
         OperationId = operationId;
-        OrderId = orderId;
-        Number = Order.RequireText(number, nameof(number), 40);
+        WarehouseOrderId = warehouseOrderId;
+        Number = WarehouseOrder.RequireText(number, nameof(number), 40);
         Status = PalletStatus.Closed;
         EmptyPalletWeightKg = NormalizeWeight(emptyPalletWeightKg);
         ClosedByKind = actor.Kind;
         ClosedById = actor.Id;
-        ClosedByName = Order.RequireText(actor.DisplayName, nameof(actor.DisplayName), 120);
+        ClosedByName = WarehouseOrder.RequireText(actor.DisplayName, nameof(actor.DisplayName), 120);
         ClosedAtUtc = now;
 
         foreach (var allocation in allocations)
         {
-            _items.Add(PalletItem.Create(Guid.NewGuid(), Id, OrderId, allocation.OrderItemId,
+            _items.Add(PalletItem.Create(Guid.NewGuid(), Id, WarehouseOrderId, allocation.WarehouseOrderItemId,
                 allocation.Quantity, allocation.UnitWeightKg));
         }
 
@@ -55,7 +55,7 @@ public sealed class Pallet
 
     public Guid Id { get; private set; }
     public Guid OperationId { get; private set; }
-    public Guid OrderId { get; private set; }
+    public Guid WarehouseOrderId { get; private set; }
     public string Number { get; private set; } = string.Empty;
     public PalletStatus Status { get; private set; }
     public decimal EmptyPalletWeightKg { get; private set; }
@@ -67,10 +67,10 @@ public sealed class Pallet
     public DateTimeOffset ClosedAtUtc { get; private set; }
     public IReadOnlyCollection<PalletItem> Items => _items;
 
-    public static Pallet CreateClosed(Guid id, Guid operationId, Guid orderId, string number,
+    public static Pallet CreateClosed(Guid id, Guid operationId, Guid warehouseOrderId, string number,
         decimal emptyPalletWeightKg, IReadOnlyCollection<PalletItemAllocation> allocations,
         PickingActor actor, DateTimeOffset now) =>
-        new(id, operationId, orderId, number, emptyPalletWeightKg, allocations, actor, now);
+        new(id, operationId, warehouseOrderId, number, emptyPalletWeightKg, allocations, actor, now);
 
     public static decimal NormalizeWeight(decimal value) =>
         Math.Round(value, 4, MidpointRounding.AwayFromZero);
@@ -86,10 +86,10 @@ public sealed class PalletItem
 {
     private PalletItem() { }
 
-    private PalletItem(Guid id, Guid palletId, Guid orderId, Guid orderItemId,
+    private PalletItem(Guid id, Guid palletId, Guid warehouseOrderId, Guid warehouseOrderItemId,
         decimal quantity, decimal unitWeightKg)
     {
-        if (id == Guid.Empty || palletId == Guid.Empty || orderId == Guid.Empty || orderItemId == Guid.Empty)
+        if (id == Guid.Empty || palletId == Guid.Empty || warehouseOrderId == Guid.Empty || warehouseOrderItemId == Guid.Empty)
             throw new ArgumentException("Pallet item identifiers are required.");
         if (decimal.Round(quantity, 4) != quantity || quantity <= 0)
             throw new ArgumentOutOfRangeException(nameof(quantity),
@@ -100,8 +100,8 @@ public sealed class PalletItem
 
         Id = id;
         PalletId = palletId;
-        OrderId = orderId;
-        OrderItemId = orderItemId;
+        WarehouseOrderId = warehouseOrderId;
+        WarehouseOrderItemId = warehouseOrderItemId;
         Quantity = quantity;
         UnitWeightKg = Pallet.NormalizeWeight(unitWeightKg);
         LineWeightKg = Pallet.NormalizeWeight(quantity * UnitWeightKg);
@@ -109,13 +109,13 @@ public sealed class PalletItem
 
     public Guid Id { get; private set; }
     public Guid PalletId { get; private set; }
-    public Guid OrderId { get; private set; }
-    public Guid OrderItemId { get; private set; }
+    public Guid WarehouseOrderId { get; private set; }
+    public Guid WarehouseOrderItemId { get; private set; }
     public decimal Quantity { get; private set; }
     public decimal UnitWeightKg { get; private set; }
     public decimal LineWeightKg { get; private set; }
 
-    internal static PalletItem Create(Guid id, Guid palletId, Guid orderId, Guid orderItemId,
+    internal static PalletItem Create(Guid id, Guid palletId, Guid warehouseOrderId, Guid warehouseOrderItemId,
         decimal quantity, decimal unitWeightKg) =>
-        new(id, palletId, orderId, orderItemId, quantity, unitWeightKg);
+        new(id, palletId, warehouseOrderId, warehouseOrderItemId, quantity, unitWeightKg);
 }

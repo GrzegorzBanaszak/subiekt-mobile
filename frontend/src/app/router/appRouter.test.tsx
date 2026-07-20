@@ -8,6 +8,16 @@ import { appRouter } from './appRouter'
 afterEach(cleanup)
 
 describe('appRouter', () => {
+  it.each([
+    ['/orders', '/warehouse-orders'],
+    ['/orders/new', '/warehouse-orders/new'],
+    ['/orders/legacy-id', '/warehouse-orders/legacy-id'],
+  ])('redirects the legacy route %s to %s', async (legacyPath, warehouseOrderPath) => {
+    await appRouter.navigate(legacyPath)
+
+    expect(appRouter.state.location.pathname).toBe(warehouseOrderPath)
+  })
+
   it('redirects an administrator with a temporary password to the password change page', async () => {
     await appRouter.navigate('/products')
 

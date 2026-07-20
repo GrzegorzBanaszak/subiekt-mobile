@@ -1,14 +1,14 @@
 using SubiektMobile.Domain.Identity;
 
-namespace SubiektMobile.Domain.Orders;
+namespace SubiektMobile.Domain.WarehouseOrders;
 
-public enum OrderStatus
+public enum WarehouseOrderStatus
 {
     Draft,
     ReadyForPicking
 }
 
-public enum OrderItemStatus
+public enum WarehouseOrderItemStatus
 {
     ToPick,
     Picking,
@@ -22,23 +22,23 @@ public enum PickingMode
     SharedTeam
 }
 
-public sealed record OrderAssigneeCandidate(Guid EmployeeId, Guid OrganizationId, string EmployeeDisplayName);
+public sealed record WarehouseOrderAssigneeCandidate(Guid EmployeeId, Guid OrganizationId, string EmployeeDisplayName);
 
-public sealed class Order
+public sealed class WarehouseOrder
 {
-    private readonly List<OrderItem> _items = [];
-    private readonly List<OrderAssignee> _assignees = [];
+    private readonly List<WarehouseOrderItem> _items = [];
+    private readonly List<WarehouseOrderAssignee> _assignees = [];
 
-    private Order() { }
+    private WarehouseOrder() { }
 
-    private Order(Guid id, string number, string customerName, DateOnly dueDate,
+    private WarehouseOrder(Guid id, string number, string customerName, DateOnly dueDate,
         Guid createdById, string createdByName, DateTimeOffset createdAtUtc,
-        PickingMode pickingMode, IReadOnlyCollection<OrderAssigneeCandidate> assignees)
+        PickingMode pickingMode, IReadOnlyCollection<WarehouseOrderAssigneeCandidate> assignees)
     {
         Id = id;
         Number = RequireText(number, nameof(number), 40);
         SetHeader(customerName, dueDate);
-        Status = OrderStatus.Draft;
+        Status = WarehouseOrderStatus.Draft;
         CreatedById = createdById;
         CreatedByName = RequireText(createdByName, nameof(createdByName), 120);
         CreatedAtUtc = createdAtUtc;
@@ -53,7 +53,7 @@ public sealed class Order
     public string Number { get; private set; } = string.Empty;
     public string CustomerName { get; private set; } = string.Empty;
     public DateOnly DueDate { get; private set; }
-    public OrderStatus Status { get; private set; }
+    public WarehouseOrderStatus Status { get; private set; }
     public Guid CreatedById { get; private set; }
     public string CreatedByName { get; private set; } = string.Empty;
     public DateTimeOffset CreatedAtUtc { get; private set; }
@@ -62,11 +62,11 @@ public sealed class Order
     public DateTimeOffset UpdatedAtUtc { get; private set; }
     public DateTimeOffset? PublishedAtUtc { get; private set; }
     public long Version { get; private set; }
-    public IReadOnlyCollection<OrderItem> Items => _items;
+    public IReadOnlyCollection<WarehouseOrderItem> Items => _items;
     public PickingMode PickingMode { get; private set; }
-    public IReadOnlyCollection<OrderAssignee> Assignees => _assignees;
+    public IReadOnlyCollection<WarehouseOrderAssignee> Assignees => _assignees;
 
-    public OrderItem ReserveItem(Guid itemId, PickingActor actor, DateTimeOffset now)
+    public WarehouseOrderItem ReserveItem(Guid itemId, PickingActor actor, DateTimeOffset now)
     {
         EnsurePublished();
         if (PickingMode != PickingMode.SharedTeam)
@@ -76,7 +76,7 @@ public sealed class Order
         return item;
     }
 
-    public OrderItem ReleaseItem(Guid itemId, PickingActor actor, bool canOverride, DateTimeOffset now)
+    public WarehouseOrderItem ReleaseItem(Guid itemId, PickingActor actor, bool canOverride, DateTimeOffset now)
     {
         EnsurePublished();
         var item = FindItem(itemId);
@@ -84,7 +84,7 @@ public sealed class Order
         return item;
     }
 
-    public OrderItem PackItem(Guid itemId, decimal packedQuantity, PickingActor actor,
+    public WarehouseOrderItem PackItem(Guid itemId, decimal packedQuantity, PickingActor actor,
         bool canOverride, DateTimeOffset now)
     {
         EnsurePublished();
@@ -93,7 +93,7 @@ public sealed class Order
         return item;
     }
 
-    public OrderItem UndoPackedItem(Guid itemId, PickingActor actor, bool canOverride, DateTimeOffset now,
+    public WarehouseOrderItem UndoPackedItem(Guid itemId, PickingActor actor, bool canOverride, DateTimeOffset now,
         decimal palletizedQuantity = 0)
     {
         EnsurePublished();
@@ -102,7 +102,7 @@ public sealed class Order
         return item;
     }
 
-    public OrderItem AssignPackedQuantityToPallet(Guid itemId, decimal totalPalletizedQuantity)
+    public WarehouseOrderItem AssignPackedQuantityToPallet(Guid itemId, decimal totalPalletizedQuantity)
     {
         EnsurePublished();
         var item = FindItem(itemId);
@@ -110,13 +110,13 @@ public sealed class Order
         return item;
     }
 
-    public static Order Create(Guid id, string number, string customerName, DateOnly dueDate,
+    public static WarehouseOrder Create(Guid id, string number, string customerName, DateOnly dueDate,
         Guid actorId, string actorName, DateTimeOffset now,
         PickingMode pickingMode = PickingMode.SingleAssignee,
-        IReadOnlyCollection<OrderAssigneeCandidate>? assignees = null)
+        IReadOnlyCollection<WarehouseOrderAssigneeCandidate>? assignees = null)
     {
         if (id == Guid.Empty || actorId == Guid.Empty) throw new ArgumentException("Identifiers are required.");
-        return new Order(id, number, customerName, dueDate, actorId, actorName, now,
+        return new WarehouseOrder(id, number, customerName, dueDate, actorId, actorName, now,
             pickingMode, assignees ?? []);
     }
 
@@ -127,12 +127,12 @@ public sealed class Order
         Touch(actorId, actorName, now);
     }
 
-    public OrderItem AddItem(int productId, string productName, string? productSymbol,
+    public WarehouseOrderItem AddItem(int productId, string productName, string? productSymbol,
         decimal quantity, string unit, decimal? unitWeightKg, Guid actorId, string actorName, DateTimeOffset now)
     {
         EnsureDraft();
         if (_items.Any(x => x.ProductId == productId)) throw new InvalidOperationException("Product is already present in the order.");
-        var item = OrderItem.Create(Guid.NewGuid(), Id, productId, productName, productSymbol, quantity, unit, unitWeightKg);
+        var item = WarehouseOrderItem.Create(Guid.NewGuid(), Id, productId, productName, productSymbol, quantity, unit, unitWeightKg);
         _items.Add(item);
         Touch(actorId, actorName, now);
         return item;
@@ -153,12 +153,12 @@ public sealed class Order
         if (_items.Count == 0) throw new InvalidOperationException("Order must contain at least one item.");
         if (DueDate < today) throw new InvalidOperationException("Due date cannot be in the past.");
         ValidateAssigneesForPublishing();
-        Status = OrderStatus.ReadyForPicking;
+        Status = WarehouseOrderStatus.ReadyForPicking;
         PublishedAtUtc = now;
         Touch(actorId, actorName, now);
     }
 
-    public void ConfigurePicking(PickingMode mode, IReadOnlyCollection<OrderAssigneeCandidate> assignees,
+    public void ConfigurePicking(PickingMode mode, IReadOnlyCollection<WarehouseOrderAssigneeCandidate> assignees,
         Guid actorId, string actorName, DateTimeOffset now)
     {
         EnsureDraft();
@@ -168,7 +168,7 @@ public sealed class Order
 
     public void EnsureCanDelete()
     {
-        if (Status != OrderStatus.Draft)
+        if (Status != WarehouseOrderStatus.Draft)
             throw new InvalidOperationException("Only a draft order can be deleted.");
     }
 
@@ -181,19 +181,19 @@ public sealed class Order
 
     private void EnsureDraft()
     {
-        if (Status != OrderStatus.Draft) throw new InvalidOperationException("Only a draft order can be modified.");
+        if (Status != WarehouseOrderStatus.Draft) throw new InvalidOperationException("Only a draft order can be modified.");
     }
 
     private void EnsurePublished()
     {
-        if (Status != OrderStatus.ReadyForPicking)
+        if (Status != WarehouseOrderStatus.ReadyForPicking)
             throw new InvalidOperationException("Only a published order can be picked.");
     }
 
-    private OrderItem FindItem(Guid itemId) => _items.SingleOrDefault(x => x.Id == itemId)
+    private WarehouseOrderItem FindItem(Guid itemId) => _items.SingleOrDefault(x => x.Id == itemId)
         ?? throw new KeyNotFoundException("Order item was not found.");
 
-    private void SetPickingConfiguration(PickingMode mode, IReadOnlyCollection<OrderAssigneeCandidate> assignees,
+    private void SetPickingConfiguration(PickingMode mode, IReadOnlyCollection<WarehouseOrderAssigneeCandidate> assignees,
         Guid actorId, string actorName, DateTimeOffset now)
     {
         if (!Enum.IsDefined(mode)) throw new ArgumentOutOfRangeException(nameof(mode));
@@ -204,7 +204,7 @@ public sealed class Order
             throw new ArgumentException("Single-assignee mode accepts at most one employee.", nameof(assignees));
 
         _assignees.Clear();
-        _assignees.AddRange(distinct.Select(x => OrderAssignee.Create(
+        _assignees.AddRange(distinct.Select(x => WarehouseOrderAssignee.Create(
             Guid.NewGuid(), Id, x.EmployeeId, x.OrganizationId, x.EmployeeDisplayName,
             actorId, actorName, now)));
         PickingMode = mode;
@@ -236,27 +236,27 @@ public sealed class Order
     }
 }
 
-public sealed class OrderAssignee
+public sealed class WarehouseOrderAssignee
 {
-    private OrderAssignee() { }
+    private WarehouseOrderAssignee() { }
 
-    private OrderAssignee(Guid id, Guid orderId, Guid employeeId, Guid organizationId,
+    private WarehouseOrderAssignee(Guid id, Guid warehouseOrderId, Guid employeeId, Guid organizationId,
         string employeeDisplayName, Guid assignedById, string assignedByName, DateTimeOffset assignedAtUtc)
     {
         if (employeeId == Guid.Empty || organizationId == Guid.Empty || assignedById == Guid.Empty)
             throw new ArgumentException("Assignment identifiers are required.");
         Id = id;
-        OrderId = orderId;
+        WarehouseOrderId = warehouseOrderId;
         EmployeeId = employeeId;
         OrganizationId = organizationId;
-        EmployeeDisplayName = Order.RequireText(employeeDisplayName, nameof(employeeDisplayName), 120);
+        EmployeeDisplayName = WarehouseOrder.RequireText(employeeDisplayName, nameof(employeeDisplayName), 120);
         AssignedById = assignedById;
-        AssignedByName = Order.RequireText(assignedByName, nameof(assignedByName), 120);
+        AssignedByName = WarehouseOrder.RequireText(assignedByName, nameof(assignedByName), 120);
         AssignedAtUtc = assignedAtUtc;
     }
 
     public Guid Id { get; private set; }
-    public Guid OrderId { get; private set; }
+    public Guid WarehouseOrderId { get; private set; }
     public Guid EmployeeId { get; private set; }
     public Guid OrganizationId { get; private set; }
     public string EmployeeDisplayName { get; private set; } = string.Empty;
@@ -264,42 +264,42 @@ public sealed class OrderAssignee
     public string AssignedByName { get; private set; } = string.Empty;
     public DateTimeOffset AssignedAtUtc { get; private set; }
 
-    internal static OrderAssignee Create(Guid id, Guid orderId, Guid employeeId, Guid organizationId,
+    internal static WarehouseOrderAssignee Create(Guid id, Guid warehouseOrderId, Guid employeeId, Guid organizationId,
         string employeeDisplayName, Guid assignedById, string assignedByName, DateTimeOffset assignedAtUtc) =>
-        new(id, orderId, employeeId, organizationId, employeeDisplayName, assignedById, assignedByName, assignedAtUtc);
+        new(id, warehouseOrderId, employeeId, organizationId, employeeDisplayName, assignedById, assignedByName, assignedAtUtc);
 }
 
-public sealed class OrderItem
+public sealed class WarehouseOrderItem
 {
-    private OrderItem() { }
+    private WarehouseOrderItem() { }
 
-    private OrderItem(Guid id, Guid orderId, int productId, string productName, string? productSymbol,
+    private WarehouseOrderItem(Guid id, Guid warehouseOrderId, int productId, string productName, string? productSymbol,
         decimal quantity, string unit, decimal? unitWeightKg)
     {
         if (productId <= 0) throw new ArgumentOutOfRangeException(nameof(productId));
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity), "Quantity must be greater than zero.");
         if (unitWeightKg < 0) throw new ArgumentOutOfRangeException(nameof(unitWeightKg), "Unit weight cannot be negative.");
         Id = id;
-        OrderId = orderId;
+        WarehouseOrderId = warehouseOrderId;
         ProductId = productId;
-        ProductName = Order.RequireText(productName, nameof(productName), 300);
+        ProductName = WarehouseOrder.RequireText(productName, nameof(productName), 300);
         ProductSymbol = string.IsNullOrWhiteSpace(productSymbol) ? null : productSymbol.Trim();
         Quantity = quantity;
-        Unit = Order.RequireText(unit, nameof(unit), 20);
+        Unit = WarehouseOrder.RequireText(unit, nameof(unit), 20);
         UnitWeightKg = unitWeightKg;
-        Status = OrderItemStatus.ToPick;
+        Status = WarehouseOrderItemStatus.ToPick;
         Version = 1;
     }
 
     public Guid Id { get; private set; }
-    public Guid OrderId { get; private set; }
+    public Guid WarehouseOrderId { get; private set; }
     public int ProductId { get; private set; }
     public string ProductName { get; private set; } = string.Empty;
     public string? ProductSymbol { get; private set; }
     public decimal Quantity { get; private set; }
     public string Unit { get; private set; } = string.Empty;
     public decimal? UnitWeightKg { get; private set; }
-    public OrderItemStatus Status { get; private set; }
+    public WarehouseOrderItemStatus Status { get; private set; }
     public long Version { get; private set; }
     public ActorKind? ReservedByKind { get; private set; }
     public Guid? ReservedById { get; private set; }
@@ -311,31 +311,31 @@ public sealed class OrderItem
     public string? PackedByName { get; private set; }
     public DateTimeOffset? PackedAtUtc { get; private set; }
 
-    internal static OrderItem Create(Guid id, Guid orderId, int productId, string productName,
+    internal static WarehouseOrderItem Create(Guid id, Guid warehouseOrderId, int productId, string productName,
         string? productSymbol, decimal quantity, string unit, decimal? unitWeightKg) =>
-        new(id, orderId, productId, productName, productSymbol, quantity, unit, unitWeightKg);
+        new(id, warehouseOrderId, productId, productName, productSymbol, quantity, unit, unitWeightKg);
 
     internal void Reserve(PickingActor actor, DateTimeOffset now)
     {
-        if (Status != OrderItemStatus.ToPick)
+        if (Status != WarehouseOrderItemStatus.ToPick)
             throw new InvalidOperationException("Only an available item can be reserved.");
         ValidateActor(actor);
-        Status = OrderItemStatus.Picking;
+        Status = WarehouseOrderItemStatus.Picking;
         ReservedByKind = actor.Kind;
         ReservedById = actor.Id;
-        ReservedByName = Order.RequireText(actor.DisplayName, nameof(actor.DisplayName), 120);
+        ReservedByName = WarehouseOrder.RequireText(actor.DisplayName, nameof(actor.DisplayName), 120);
         ReservedAtUtc = now;
         Version++;
     }
 
     internal void Release(PickingActor actor, bool canOverride, DateTimeOffset now)
     {
-        if (Status != OrderItemStatus.Picking)
+        if (Status != WarehouseOrderItemStatus.Picking)
             throw new InvalidOperationException("Only a reserved item can be released.");
         ValidateActor(actor);
         if (!canOverride && ReservedById != actor.Id)
             throw new InvalidOperationException("Only the current item owner can release it.");
-        Status = OrderItemStatus.ToPick;
+        Status = WarehouseOrderItemStatus.ToPick;
         ClearReservation();
         Version++;
     }
@@ -352,12 +352,12 @@ public sealed class OrderItem
                 "Packed quantity must contain at most four decimal places and be greater than zero without exceeding the remaining quantity.");
         if (reservationRequired)
         {
-            if (Status != OrderItemStatus.Picking)
+            if (Status != WarehouseOrderItemStatus.Picking)
                 throw new InvalidOperationException("A shared item must be reserved before packing.");
             if (!canOverride && ReservedById != actor.Id)
                 throw new InvalidOperationException("Only the current item owner can pack it.");
         }
-        else if (Status != OrderItemStatus.ToPick)
+        else if (Status != WarehouseOrderItemStatus.ToPick)
         {
             throw new InvalidOperationException("Only an available item can be packed.");
         }
@@ -365,11 +365,11 @@ public sealed class OrderItem
         PackedQuantity = alreadyPacked + packedQuantity;
         PackedByKind = actor.Kind;
         PackedById = actor.Id;
-        PackedByName = Order.RequireText(actor.DisplayName, nameof(actor.DisplayName), 120);
+        PackedByName = WarehouseOrder.RequireText(actor.DisplayName, nameof(actor.DisplayName), 120);
         PackedAtUtc = now;
         if (PackedQuantity == Quantity)
         {
-            Status = OrderItemStatus.Packed;
+            Status = WarehouseOrderItemStatus.Packed;
             ClearReservation();
         }
         Version++;
@@ -378,14 +378,14 @@ public sealed class OrderItem
     internal void UndoPacked(PickingActor actor, bool canOverride, DateTimeOffset now,
         decimal palletizedQuantity)
     {
-        if (Status == OrderItemStatus.AssignedToPallet || PackedQuantity is null or <= 0)
+        if (Status == WarehouseOrderItemStatus.AssignedToPallet || PackedQuantity is null or <= 0)
             throw new InvalidOperationException("Only an item with a packed quantity can be restored.");
         if (palletizedQuantity > 0)
             throw new InvalidOperationException("Packed quantity assigned to a pallet cannot be restored.");
         ValidateActor(actor);
         if (!canOverride && PackedById != actor.Id)
             throw new InvalidOperationException("Only the employee who packed the item can restore it.");
-        if (Status == OrderItemStatus.Packed) Status = OrderItemStatus.ToPick;
+        if (Status == WarehouseOrderItemStatus.Packed) Status = WarehouseOrderItemStatus.ToPick;
         PackedQuantity = null;
         PackedByKind = null;
         PackedById = null;
@@ -406,7 +406,7 @@ public sealed class OrderItem
             throw new InvalidOperationException("Palletized quantity cannot exceed packed quantity.");
         if (packedQuantity == Quantity && totalPalletizedQuantity == Quantity)
         {
-            Status = OrderItemStatus.AssignedToPallet;
+            Status = WarehouseOrderItemStatus.AssignedToPallet;
             ClearReservation();
         }
         Version++;

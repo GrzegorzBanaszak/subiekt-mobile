@@ -89,7 +89,7 @@ public sealed class PalletLabelPdfRenderer : IPalletLabelPdfRenderer
         }
 
         y -= 3;
-        Text(builder, $"{strings.Order}: {label.OrderNumber}", Left, y, 9, false);
+        Text(builder, $"{strings.Order}: {label.WarehouseOrderNumber}", Left, y, 9, false);
         y -= 14;
         Text(builder, $"{strings.Pallet}: {label.PalletNumber}", Left, y, 12, true);
         y -= 50;

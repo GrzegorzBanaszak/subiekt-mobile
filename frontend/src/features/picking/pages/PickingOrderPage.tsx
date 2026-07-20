@@ -8,13 +8,13 @@ import { useAuth } from '../../auth/authContext'
 import { AppIcon } from '../../../shared/components/AppIcon'
 import {
   getPickingHistory,
-  getPickingOrder,
+  getPickingWarehouseOrder,
   mutatePickingItem,
   type PickingHistoryItem,
   type PickingHistoryPage,
   type PickingItem,
   type PickingMutation,
-  type PickingOrderDetails,
+  type PickingWarehouseOrderDetails,
 } from '../api/pickingApi'
 import { formatDate, formatDateTime, formatQuantity, pickingLocale } from '../pickingFormat'
 import { ProductDetailsDialog } from '../components/ProductDetailsDialog'
@@ -43,7 +43,7 @@ interface MutationVariables {
 
 export function PickingOrderPage() {
   const { language, t } = useI18n()
-  const { orderId = '' } = useParams()
+  const { warehouseOrderId = '' } = useParams()
   const { actor } = useAuth()
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<PickingTab>('all')
@@ -54,24 +54,24 @@ export function PickingOrderPage() {
   const [productItem, setProductItem] = useState<PickingItem | null>(null)
 
   const orderQuery = useQuery({
-    queryKey: ['picking', 'order', orderId],
-    queryFn: () => getPickingOrder(orderId),
-    enabled: Boolean(orderId),
+    queryKey: ['picking', 'warehouse-order', warehouseOrderId],
+    queryFn: () => getPickingWarehouseOrder(warehouseOrderId),
+    enabled: Boolean(warehouseOrderId),
     refetchOnMount: 'always',
   })
   const historyQuery = useQuery({
-    queryKey: ['picking', 'history', orderId, historyPage],
-    queryFn: () => getPickingHistory(orderId, historyPage),
-    enabled: Boolean(orderId) && showHistory,
+    queryKey: ['picking', 'history', warehouseOrderId, historyPage],
+    queryFn: () => getPickingHistory(warehouseOrderId, historyPage),
+    enabled: Boolean(warehouseOrderId) && showHistory,
   })
   const mutation = useMutation({
     mutationFn: ({ item, action, packedQuantity }: MutationVariables) =>
-      mutatePickingItem(orderId, item.id, Number(item.version), action, packedQuantity),
+      mutatePickingItem(warehouseOrderId, item.id, Number(item.version), action, packedQuantity),
     onMutate: () => setMessage(null),
     onSuccess: (updated, variables) => {
-      queryClient.setQueryData(['picking', 'order', orderId], updated)
-      void queryClient.invalidateQueries({ queryKey: ['picking', 'orders'] })
-      void queryClient.invalidateQueries({ queryKey: ['picking', 'history', orderId] })
+      queryClient.setQueryData(['picking', 'warehouse-order', warehouseOrderId], updated)
+      void queryClient.invalidateQueries({ queryKey: ['picking', 'warehouse-orders'] })
+      void queryClient.invalidateQueries({ queryKey: ['picking', 'history', warehouseOrderId] })
       setPackQuantities((current) => {
         const next = { ...current }
         delete next[variables.item.id]
@@ -203,7 +203,7 @@ function Quantity({ label, value, highlighted, icon }: { label: string; value: s
 function ActionButton({ label, onClick, busy, primary }: { label: string; onClick: () => void; busy: boolean; primary?: boolean }) { return <button className={`min-h-11 rounded-lg px-4 font-semibold disabled:opacity-50 ${primary ? 'bg-emerald-700 text-white hover:bg-emerald-800' : 'border border-blue-950 bg-white text-blue-950 hover:bg-blue-50'}`} disabled={busy} onClick={onClick}>{label}</button> }
 
 function HistoryPanel({ order, close, page, setPage, query }: {
-  order: PickingOrderDetails
+  order: PickingWarehouseOrderDetails
   close: () => void
   page: number
   setPage: (page: number) => void

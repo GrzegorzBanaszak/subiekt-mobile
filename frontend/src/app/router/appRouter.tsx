@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate, redirect } from 'react-router-dom'
 import {
   GuestRoute,
   ProtectedRoute,
@@ -19,9 +19,9 @@ import {
   identityManagePermission,
 } from '../../features/administration/permissions'
 import { AppShell } from '../../shared/components/AppShell'
-import { OrdersPage } from '../../features/orders/pages/OrdersPage'
-import { NewOrderPage } from '../../features/orders/pages/NewOrderPage'
-import { OrderDetailsPage } from '../../features/orders/pages/OrderDetailsPage'
+import { WarehouseOrdersPage } from '../../features/warehouse-orders/pages/WarehouseOrdersPage'
+import { NewWarehouseOrderPage } from '../../features/warehouse-orders/pages/NewWarehouseOrderPage'
+import { WarehouseOrderDetailsPage } from '../../features/warehouse-orders/pages/WarehouseOrderDetailsPage'
 import { PickingOrdersPage } from '../../features/picking/pages/PickingOrdersPage'
 import { PickingOrderPage } from '../../features/picking/pages/PickingOrderPage'
 import { PalletsPage } from '../../features/pallets/pages/PalletsPage'
@@ -57,31 +57,43 @@ export const appRouter = createBrowserRouter([
             element: <ProductsPage />,
           },
           {
+            path: '/warehouse-orders',
+            element: <AdministrationGuard permission="warehouse-orders.manage"><WarehouseOrdersPage /></AdministrationGuard>,
+          },
+          {
+            path: '/warehouse-orders/new',
+            element: <AdministrationGuard permission="warehouse-orders.manage"><NewWarehouseOrderPage /></AdministrationGuard>,
+          },
+          {
+            path: '/warehouse-orders/:warehouseOrderId',
+            element: <AdministrationGuard permission="warehouse-orders.manage"><WarehouseOrderDetailsPage /></AdministrationGuard>,
+          },
+          {
             path: '/orders',
-            element: <AdministrationGuard permission="orders.manage"><OrdersPage /></AdministrationGuard>,
+            loader: () => redirect('/warehouse-orders'),
           },
           {
             path: '/orders/new',
-            element: <AdministrationGuard permission="orders.manage"><NewOrderPage /></AdministrationGuard>,
+            loader: () => redirect('/warehouse-orders/new'),
           },
           {
-            path: '/orders/:orderId',
-            element: <AdministrationGuard permission="orders.manage"><OrderDetailsPage /></AdministrationGuard>,
+            path: '/orders/:warehouseOrderId',
+            loader: ({ params }) => redirect(`/warehouse-orders/${params.warehouseOrderId}`),
           },
           {
             path: '/picking',
-            element: <AdministrationGuard permission="orders.read-published"><PickingOrdersPage /></AdministrationGuard>,
+            element: <AdministrationGuard permission="warehouse-orders.read-published"><PickingOrdersPage /></AdministrationGuard>,
           },
           {
-            path: '/picking/:orderId',
-            element: <AdministrationGuard permission="orders.read-published"><PickingOrderPage /></AdministrationGuard>,
+            path: '/picking/:warehouseOrderId',
+            element: <AdministrationGuard permission="warehouse-orders.read-published"><PickingOrderPage /></AdministrationGuard>,
           },
           {
             path: '/pallets',
             element: <AdministrationGuard permission="pallets.manage"><PalletsPage /></AdministrationGuard>,
           },
           {
-            path: '/picking/:orderId/pallets/new',
+            path: '/picking/:warehouseOrderId/pallets/new',
             element: <AdministrationGuard permission="pallets.manage"><NewPalletPage /></AdministrationGuard>,
           },
           {

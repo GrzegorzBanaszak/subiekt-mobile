@@ -20,8 +20,8 @@ describe('pickingApi', () => {
   it('packs an item with an idempotency key, current version and CSRF protection', async () => {
     await mutatePickingItem('order-1', 'item-1', 7, 'pack', 2.5)
 
-    expect(apiMocks.POST).toHaveBeenCalledWith('/api/picking/orders/{orderId}/items/{itemId}/pack', {
-      params: { path: { orderId: 'order-1', itemId: 'item-1' } },
+    expect(apiMocks.POST).toHaveBeenCalledWith('/api/picking/warehouse-orders/{warehouseOrderId}/items/{itemId}/pack', {
+      params: { path: { warehouseOrderId: 'order-1', itemId: 'item-1' } },
       headers: { 'X-CSRF-TOKEN': 'csrf-token' },
       body: {
         operationId: '11111111-1111-4111-8111-111111111111',
@@ -34,8 +34,8 @@ describe('pickingApi', () => {
   it('reserves an item using the dedicated endpoint', async () => {
     await mutatePickingItem('order-1', 'item-1', 3, 'reserve')
 
-    expect(apiMocks.POST).toHaveBeenCalledWith('/api/picking/orders/{orderId}/items/{itemId}/reserve', {
-      params: { path: { orderId: 'order-1', itemId: 'item-1' } },
+    expect(apiMocks.POST).toHaveBeenCalledWith('/api/picking/warehouse-orders/{warehouseOrderId}/items/{itemId}/reserve', {
+      params: { path: { warehouseOrderId: 'order-1', itemId: 'item-1' } },
       headers: { 'X-CSRF-TOKEN': 'csrf-token' },
       body: { operationId: '11111111-1111-4111-8111-111111111111', itemVersion: 3 },
     })

@@ -2,7 +2,7 @@ using SubiektMobile.Application.Identity;
 using SubiektMobile.Application.Picking;
 using SubiektMobile.Application.Products;
 using SubiektMobile.Domain.Identity;
-using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
 using Xunit;
 
 namespace SubiektMobile.Application.Tests;
@@ -26,7 +26,7 @@ public sealed class PickingUseCasesTests
         var pickingActor = new PickingActor(ActorKind.Employee, employeeId, "Picker");
         var operationId = Guid.NewGuid();
 
-        var order = Order.Create(
+        var order = WarehouseOrder.Create(
             Guid.NewGuid(),
             "ZAM-1",
             "Customer",
@@ -35,17 +35,17 @@ public sealed class PickingUseCasesTests
             "Creator",
             now,
             PickingMode.SingleAssignee,
-            [new OrderAssigneeCandidate(employeeId, organizationId, "Picker")]);
+            [new WarehouseOrderAssigneeCandidate(employeeId, organizationId, "Picker")]);
         var item = order.AddItem(7, "Test product", "TP", 10m, "szt.", 1.2m, creatorId, "Creator", now);
         order.Publish(new DateOnly(2026, 7, 5), creatorId, "Creator", now);
         order.PackItem(item.Id, 3m, pickingActor, false, now.AddMinutes(1));
 
-        var previousOperation = OrderPickingEvent.Create(
+        var previousOperation = WarehouseOrderPickingEvent.Create(
             operationId,
             order,
             item,
             PickingAction.Packed,
-            OrderItemStatus.ToPick,
+            WarehouseOrderItemStatus.ToPick,
             3m,
             pickingActor,
             now.AddMinutes(1));
@@ -63,32 +63,32 @@ public sealed class PickingUseCasesTests
                 CancellationToken.None));
     }
 
-    private sealed class PickingStoreStub(Order order, OrderPickingEvent operation) : IPickingStore
+    private sealed class PickingStoreStub(WarehouseOrder order, WarehouseOrderPickingEvent operation) : IPickingStore
     {
-        public Task<PagedResult<PickingOrderListItemDto>> ListAsync(PickingOrderListFilter filter,
+        public Task<PagedResult<PickingWarehouseOrderListItemDto>> ListAsync(PickingWarehouseOrderListFilter filter,
             CurrentActor actor, CancellationToken cancellationToken) =>
             throw new NotImplementedException();
 
-        public Task<Order?> FindOrderAsync(Guid orderId, bool tracking, CancellationToken cancellationToken) =>
-            Task.FromResult<Order?>(orderId == order.Id ? order : null);
+        public Task<WarehouseOrder?> FindWarehouseOrderAsync(Guid warehouseOrderId, bool tracking, CancellationToken cancellationToken) =>
+            Task.FromResult<WarehouseOrder?>(warehouseOrderId == order.Id ? order : null);
 
-        public Task<PagedResult<PickingHistoryItemDto>> ListHistoryAsync(Guid orderId, int page, int pageSize,
+        public Task<PagedResult<PickingHistoryItemDto>> ListHistoryAsync(Guid warehouseOrderId, int page, int pageSize,
             CancellationToken cancellationToken) =>
             throw new NotImplementedException();
 
         public Task<IReadOnlyDictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>> ListPalletAssignmentsAsync(
-            Guid orderId, CancellationToken cancellationToken) =>
+            Guid warehouseOrderId, CancellationToken cancellationToken) =>
             Task.FromResult<IReadOnlyDictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>>(
                 new Dictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>());
 
-        public Task<decimal> GetPalletizedQuantityAsync(Guid orderItemId, CancellationToken cancellationToken) =>
+        public Task<decimal> GetPalletizedQuantityAsync(Guid warehouseOrderItemId, CancellationToken cancellationToken) =>
             Task.FromResult(0m);
 
-        public Task<OrderPickingEvent?> FindOperationAsync(Guid operationId, CancellationToken cancellationToken) =>
-            Task.FromResult<OrderPickingEvent?>(operationId == operation.OperationId ? operation : null);
+        public Task<WarehouseOrderPickingEvent?> FindOperationAsync(Guid operationId, CancellationToken cancellationToken) =>
+            Task.FromResult<WarehouseOrderPickingEvent?>(operationId == operation.OperationId ? operation : null);
 
-        public Task<PickingStoreMutationResult> SaveMutationAsync(OrderItem item, long expectedVersion,
-            OrderPickingEvent pickingEvent, AuditEntry audit, CancellationToken cancellationToken) =>
+        public Task<PickingStoreMutationResult> SaveMutationAsync(WarehouseOrderItem item, long expectedVersion,
+            WarehouseOrderPickingEvent pickingEvent, AuditEntry audit, CancellationToken cancellationToken) =>
             throw new NotImplementedException();
     }
 

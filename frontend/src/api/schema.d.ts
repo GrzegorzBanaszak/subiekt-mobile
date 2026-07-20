@@ -887,7 +887,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/orders": {
+    "/api/warehouse-orders": {
         parameters: {
             query?: never;
             header?: never;
@@ -912,9 +912,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["PagedResultOfOrderListItemDto"];
-                        "application/json": components["schemas"]["PagedResultOfOrderListItemDto"];
-                        "text/json": components["schemas"]["PagedResultOfOrderListItemDto"];
+                        "text/plain": components["schemas"]["PagedResultOfWarehouseOrderListItemDto"];
+                        "application/json": components["schemas"]["PagedResultOfWarehouseOrderListItemDto"];
+                        "text/json": components["schemas"]["PagedResultOfWarehouseOrderListItemDto"];
                     };
                 };
             };
@@ -929,9 +929,9 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["CreateOrderRequest"];
-                    "text/json": components["schemas"]["CreateOrderRequest"];
-                    "application/*+json": components["schemas"]["CreateOrderRequest"];
+                    "application/json": components["schemas"]["CreateWarehouseOrderRequest"];
+                    "text/json": components["schemas"]["CreateWarehouseOrderRequest"];
+                    "application/*+json": components["schemas"]["CreateWarehouseOrderRequest"];
                 };
             };
             responses: {
@@ -941,9 +941,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["OrderDto"];
-                        "application/json": components["schemas"]["OrderDto"];
-                        "text/json": components["schemas"]["OrderDto"];
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
                     };
                 };
             };
@@ -954,7 +954,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/orders/{id}": {
+    "/api/warehouse-orders/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -978,9 +978,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["OrderDto"];
-                        "application/json": components["schemas"]["OrderDto"];
-                        "text/json": components["schemas"]["OrderDto"];
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
                     };
                 };
                 /** @description Not Found */
@@ -1007,9 +1007,9 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UpdateOrderRequest"];
-                    "text/json": components["schemas"]["UpdateOrderRequest"];
-                    "application/*+json": components["schemas"]["UpdateOrderRequest"];
+                    "application/json": components["schemas"]["UpdateWarehouseOrderRequest"];
+                    "text/json": components["schemas"]["UpdateWarehouseOrderRequest"];
+                    "application/*+json": components["schemas"]["UpdateWarehouseOrderRequest"];
                 };
             };
             responses: {
@@ -1019,9 +1019,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["OrderDto"];
-                        "application/json": components["schemas"]["OrderDto"];
-                        "text/json": components["schemas"]["OrderDto"];
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
                     };
                 };
             };
@@ -1054,7 +1054,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/orders/{id}/items": {
+    "/api/warehouse-orders/{id}/items": {
         parameters: {
             query?: never;
             header?: never;
@@ -1074,9 +1074,9 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["AddOrderItemRequest"];
-                    "text/json": components["schemas"]["AddOrderItemRequest"];
-                    "application/*+json": components["schemas"]["AddOrderItemRequest"];
+                    "application/json": components["schemas"]["AddWarehouseOrderItemRequest"];
+                    "text/json": components["schemas"]["AddWarehouseOrderItemRequest"];
+                    "application/*+json": components["schemas"]["AddWarehouseOrderItemRequest"];
                 };
             };
             responses: {
@@ -1086,9 +1086,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["OrderDto"];
-                        "application/json": components["schemas"]["OrderDto"];
-                        "text/json": components["schemas"]["OrderDto"];
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
                     };
                 };
             };
@@ -1099,7 +1099,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/orders/{id}/items/{itemId}": {
+    "/api/warehouse-orders/{id}/items/{itemId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1129,9 +1129,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["OrderDto"];
-                        "application/json": components["schemas"]["OrderDto"];
-                        "text/json": components["schemas"]["OrderDto"];
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
                     };
                 };
             };
@@ -1141,7 +1141,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/orders/{id}/publish": {
+    "/api/warehouse-orders/{id}/publish": {
         parameters: {
             query?: never;
             header?: never;
@@ -1173,9 +1173,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["OrderDto"];
-                        "application/json": components["schemas"]["OrderDto"];
-                        "text/json": components["schemas"]["OrderDto"];
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
                     };
                 };
             };
@@ -1186,7 +1186,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/orders/available-assignees": {
+    "/api/warehouse-orders/available-assignees": {
         parameters: {
             query?: never;
             header?: never;
@@ -1208,9 +1208,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["AvailableOrderAssigneeDto"][];
-                        "application/json": components["schemas"]["AvailableOrderAssigneeDto"][];
-                        "text/json": components["schemas"]["AvailableOrderAssigneeDto"][];
+                        "text/plain": components["schemas"]["AvailableWarehouseOrderAssigneeDto"][];
+                        "application/json": components["schemas"]["AvailableWarehouseOrderAssigneeDto"][];
+                        "text/json": components["schemas"]["AvailableWarehouseOrderAssigneeDto"][];
                     };
                 };
             };
@@ -1223,7 +1223,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/orders/{id}/picking-configuration": {
+    "/api/warehouse-orders/{id}/picking-configuration": {
         parameters: {
             query?: never;
             header?: never;
@@ -1242,9 +1242,9 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["ConfigureOrderPickingRequest"];
-                    "text/json": components["schemas"]["ConfigureOrderPickingRequest"];
-                    "application/*+json": components["schemas"]["ConfigureOrderPickingRequest"];
+                    "application/json": components["schemas"]["ConfigureWarehouseOrderPickingRequest"];
+                    "text/json": components["schemas"]["ConfigureWarehouseOrderPickingRequest"];
+                    "application/*+json": components["schemas"]["ConfigureWarehouseOrderPickingRequest"];
                 };
             };
             responses: {
@@ -1254,9 +1254,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["OrderDto"];
-                        "application/json": components["schemas"]["OrderDto"];
-                        "text/json": components["schemas"]["OrderDto"];
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
                     };
                 };
             };
@@ -1308,7 +1308,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/orders/{orderId}/pallets/candidates": {
+    "/api/warehouse-orders/{warehouseOrderId}/pallets/candidates": {
         parameters: {
             query?: never;
             header?: never;
@@ -1320,7 +1320,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    orderId: string;
+                    warehouseOrderId: string;
                 };
                 cookie?: never;
             };
@@ -1358,7 +1358,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/orders/{orderId}/pallets": {
+    "/api/warehouse-orders/{warehouseOrderId}/pallets": {
         parameters: {
             query?: never;
             header?: never;
@@ -1372,7 +1372,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    orderId: string;
+                    warehouseOrderId: string;
                 };
                 cookie?: never;
             };
@@ -1476,32 +1476,115 @@ export interface paths {
         trace?: never;
     };
     "/api/pallets/{palletId}/label-preview": {
-        parameters: { query?: never; header?: never; path?: never; cookie?: never; };
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         get: {
-            parameters: { query?: { language?: components["schemas"]["PalletLabelLanguage"]; }; header?: never; path: { palletId: string; }; cookie?: never; };
+            parameters: {
+                query?: {
+                    language?: components["schemas"]["PalletLabelLanguage"];
+                };
+                header?: never;
+                path: {
+                    palletId: string;
+                };
+                cookie?: never;
+            };
             requestBody?: never;
             responses: {
-                200: { headers: { [name: string]: unknown; }; content: { "application/pdf": Blob; }; };
-                404: { headers: { [name: string]: unknown; }; content: { "application/json": components["schemas"]["ProblemDetails"]; }; };
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/pdf": unknown;
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/pdf": components["schemas"]["ProblemDetails"];
+                    };
+                };
             };
         };
-        put?: never; post?: never; delete?: never; options?: never; head?: never; patch?: never; trace?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
     "/api/pallets/{palletId}/label-issues": {
-        parameters: { query?: never; header?: never; path?: never; cookie?: never; };
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         get?: never;
+        put?: never;
         post: {
-            parameters: { query?: never; header?: never; path: { palletId: string; }; cookie?: never; };
-            requestBody: { content: { "application/json": components["schemas"]["PalletLabelIssueRequest"]; }; };
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    palletId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PalletLabelIssueRequest"];
+                    "text/json": components["schemas"]["PalletLabelIssueRequest"];
+                    "application/*+json": components["schemas"]["PalletLabelIssueRequest"];
+                };
+            };
             responses: {
-                200: { headers: { [name: string]: unknown; }; content: { "application/pdf": Blob; }; };
-                400: { headers: { [name: string]: unknown; }; content: { "application/json": components["schemas"]["ProblemDetails"]; }; };
-                404: { headers: { [name: string]: unknown; }; content: { "application/json": components["schemas"]["ProblemDetails"]; }; };
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/pdf": unknown;
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/pdf": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/pdf": components["schemas"]["ProblemDetails"];
+                    };
+                };
             };
         };
-        put?: never; delete?: never; options?: never; head?: never; patch?: never; trace?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    "/api/picking/orders": {
+    "/api/picking/warehouse-orders": {
         parameters: {
             query?: never;
             header?: never;
@@ -1514,7 +1597,7 @@ export interface paths {
                     page?: number | string;
                     pageSize?: number | string;
                     search?: string;
-                    status?: components["schemas"]["PickingOrderStatus"];
+                    status?: components["schemas"]["PickingWarehouseOrderStatus"];
                     dueDateFrom?: string;
                     dueDateTo?: string;
                     customer?: string;
@@ -1531,9 +1614,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["PagedResultOfPickingOrderListItemDto"];
-                        "application/json": components["schemas"]["PagedResultOfPickingOrderListItemDto"];
-                        "text/json": components["schemas"]["PagedResultOfPickingOrderListItemDto"];
+                        "text/plain": components["schemas"]["PagedResultOfPickingWarehouseOrderListItemDto"];
+                        "application/json": components["schemas"]["PagedResultOfPickingWarehouseOrderListItemDto"];
+                        "text/json": components["schemas"]["PagedResultOfPickingWarehouseOrderListItemDto"];
                     };
                 };
             };
@@ -1546,7 +1629,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/picking/orders/{orderId}": {
+    "/api/picking/warehouse-orders/{warehouseOrderId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1558,7 +1641,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    orderId: string;
+                    warehouseOrderId: string;
                 };
                 cookie?: never;
             };
@@ -1570,9 +1653,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
-                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
-                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/plain": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
                     };
                 };
                 /** @description Not Found */
@@ -1596,7 +1679,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/picking/orders/{orderId}/history": {
+    "/api/picking/warehouse-orders/{warehouseOrderId}/history": {
         parameters: {
             query?: never;
             header?: never;
@@ -1611,7 +1694,7 @@ export interface paths {
                 };
                 header?: never;
                 path: {
-                    orderId: string;
+                    warehouseOrderId: string;
                 };
                 cookie?: never;
             };
@@ -1638,7 +1721,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/picking/orders/{orderId}/items/{itemId}/reserve": {
+    "/api/picking/warehouse-orders/{warehouseOrderId}/items/{itemId}/reserve": {
         parameters: {
             query?: never;
             header?: never;
@@ -1652,7 +1735,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    orderId: string;
+                    warehouseOrderId: string;
                     itemId: string;
                 };
                 cookie?: never;
@@ -1671,9 +1754,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
-                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
-                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/plain": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
                     };
                 };
             };
@@ -1684,7 +1767,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/picking/orders/{orderId}/items/{itemId}/release": {
+    "/api/picking/warehouse-orders/{warehouseOrderId}/items/{itemId}/release": {
         parameters: {
             query?: never;
             header?: never;
@@ -1698,7 +1781,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    orderId: string;
+                    warehouseOrderId: string;
                     itemId: string;
                 };
                 cookie?: never;
@@ -1717,9 +1800,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
-                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
-                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/plain": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
                     };
                 };
             };
@@ -1730,7 +1813,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/picking/orders/{orderId}/items/{itemId}/pack": {
+    "/api/picking/warehouse-orders/{warehouseOrderId}/items/{itemId}/pack": {
         parameters: {
             query?: never;
             header?: never;
@@ -1744,7 +1827,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    orderId: string;
+                    warehouseOrderId: string;
                     itemId: string;
                 };
                 cookie?: never;
@@ -1763,9 +1846,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
-                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
-                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/plain": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
                     };
                 };
             };
@@ -1776,7 +1859,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/picking/orders/{orderId}/items/{itemId}/undo-pack": {
+    "/api/picking/warehouse-orders/{warehouseOrderId}/items/{itemId}/undo-pack": {
         parameters: {
             query?: never;
             header?: never;
@@ -1790,7 +1873,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    orderId: string;
+                    warehouseOrderId: string;
                     itemId: string;
                 };
                 cookie?: never;
@@ -1809,9 +1892,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["PickingOrderDetailsDto"];
-                        "application/json": components["schemas"]["PickingOrderDetailsDto"];
-                        "text/json": components["schemas"]["PickingOrderDetailsDto"];
+                        "text/plain": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "application/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
+                        "text/json": components["schemas"]["PickingWarehouseOrderDetailsDto"];
                     };
                 };
             };
@@ -1985,7 +2068,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         ActorKind: number;
-        AddOrderItemRequest: {
+        AddWarehouseOrderItemRequest: {
             /** Format: int32 */
             productId: number | string;
             /** Format: double */
@@ -2010,7 +2093,7 @@ export interface components {
             username: string;
             password: string;
         };
-        AvailableOrderAssigneeDto: {
+        AvailableWarehouseOrderAssigneeDto: {
             /** Format: uuid */
             employeeId: string;
             /** Format: uuid */
@@ -2027,7 +2110,7 @@ export interface components {
             currentPassword: string;
             newPassword: string;
         };
-        ConfigureOrderPickingRequest: {
+        ConfigureWarehouseOrderPickingRequest: {
             pickingMode: components["schemas"]["PickingMode"];
             employeeIds: string[];
             /** Format: int64 */
@@ -2045,27 +2128,13 @@ export interface components {
             code: string;
             displayName: string;
         };
-        CreateOrderItemRequest: {
-            /** Format: int32 */
-            productId: number | string;
-            /** Format: double */
-            quantity: number | string;
-        };
-        CreateOrderRequest: {
-            customerName: string;
-            /** Format: date */
-            dueDate: string;
-            pickingMode: components["schemas"]["PickingMode"];
-            employeeIds: string[];
-            items?: null | components["schemas"]["CreateOrderItemRequest"][];
-        };
         CreateOrganizationRequest: {
             code: string;
             name: string;
         };
         CreatePalletItemRequest: {
             /** Format: uuid */
-            orderItemId: string;
+            warehouseOrderItemId: string;
             /** Format: double */
             quantity: number | string;
             /** Format: int64 */
@@ -2077,6 +2146,20 @@ export interface components {
             /** Format: double */
             emptyPalletWeightKg: number | string;
             items: null | components["schemas"]["CreatePalletItemRequest"][];
+        };
+        CreateWarehouseOrderItemRequest: {
+            /** Format: int32 */
+            productId: number | string;
+            /** Format: double */
+            quantity: number | string;
+        };
+        CreateWarehouseOrderRequest: {
+            customerName: string;
+            /** Format: date */
+            dueDate: string;
+            pickingMode: components["schemas"]["PickingMode"];
+            employeeIds: string[];
+            items?: null | components["schemas"]["CreateWarehouseOrderItemRequest"][];
         };
         CsrfTokenResponse: {
             token: string;
@@ -2127,75 +2210,6 @@ export interface components {
             entityTag?: null | components["schemas"]["EntityTagHeaderValue"];
             enableRangeProcessing?: boolean;
         };
-        OrderAssigneeDto: {
-            /** Format: uuid */
-            employeeId: string;
-            /** Format: uuid */
-            organizationId: string;
-            employeeDisplayName: string;
-            /** Format: uuid */
-            assignedById: string;
-            assignedByName: string;
-            /** Format: date-time */
-            assignedAtUtc: string;
-        };
-        OrderDto: {
-            /** Format: uuid */
-            id: string;
-            number: string;
-            customerName: string;
-            /** Format: date */
-            dueDate: string;
-            status: components["schemas"]["OrderStatus"];
-            /** Format: uuid */
-            createdById: string;
-            createdByName: string;
-            /** Format: date-time */
-            createdAtUtc: string;
-            /** Format: uuid */
-            updatedById: string;
-            updatedByName: string;
-            /** Format: date-time */
-            updatedAtUtc: string;
-            /** Format: date-time */
-            publishedAtUtc: null | string;
-            /** Format: int64 */
-            version: number | string;
-            pickingMode: components["schemas"]["PickingMode"];
-            assignees: components["schemas"]["OrderAssigneeDto"][];
-            items: components["schemas"]["OrderItemDto"][];
-        };
-        OrderItemDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: int32 */
-            productId: number | string;
-            productName: string;
-            productSymbol: null | string;
-            /** Format: double */
-            quantity: number | string;
-            unit: string;
-            /** Format: double */
-            unitWeightKg: null | number | string;
-            status: components["schemas"]["OrderItemStatus"];
-        };
-        OrderItemStatus: number;
-        OrderListItemDto: {
-            /** Format: uuid */
-            id: string;
-            number: string;
-            customerName: string;
-            /** Format: date */
-            dueDate: string;
-            status: components["schemas"]["OrderStatus"];
-            /** Format: int32 */
-            itemCount: number | string;
-            /** Format: date-time */
-            updatedAtUtc: string;
-            /** Format: int64 */
-            version: number | string;
-        };
-        OrderStatus: number;
         OrganizationDto: {
             /** Format: uuid */
             id: string;
@@ -2217,17 +2231,6 @@ export interface components {
         };
         PagedResponseOfProductListItemResponse: {
             items: components["schemas"]["ProductListItemResponse"][];
-            /** Format: int32 */
-            page: number | string;
-            /** Format: int32 */
-            pageSize: number | string;
-            /** Format: int32 */
-            totalCount: number | string;
-            /** Format: int32 */
-            totalPages: number | string;
-        };
-        PagedResultOfOrderListItemDto: {
-            items: components["schemas"]["OrderListItemDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -2259,8 +2262,19 @@ export interface components {
             /** Format: int32 */
             totalPages: number | string;
         };
-        PagedResultOfPickingOrderListItemDto: {
-            items: components["schemas"]["PickingOrderListItemDto"][];
+        PagedResultOfPickingWarehouseOrderListItemDto: {
+            items: components["schemas"]["PickingWarehouseOrderListItemDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PagedResultOfWarehouseOrderListItemDto: {
+            items: components["schemas"]["WarehouseOrderListItemDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -2272,7 +2286,7 @@ export interface components {
         };
         PalletCandidateItemDto: {
             /** Format: uuid */
-            orderItemId: string;
+            warehouseOrderItemId: string;
             /** Format: int32 */
             productId: number | string;
             productName: string;
@@ -2293,8 +2307,8 @@ export interface components {
         };
         PalletCandidatesDto: {
             /** Format: uuid */
-            orderId: string;
-            orderNumber: string;
+            warehouseOrderId: string;
+            warehouseOrderNumber: string;
             customerName: string;
             /** Format: date */
             dueDate: string;
@@ -2304,8 +2318,8 @@ export interface components {
             /** Format: uuid */
             id: string;
             /** Format: uuid */
-            orderId: string;
-            orderNumber: string;
+            warehouseOrderId: string;
+            warehouseOrderNumber: string;
             palletNumber: string;
             customerName: string;
             status: components["schemas"]["PalletStatus"];
@@ -2327,7 +2341,7 @@ export interface components {
         };
         PalletDetailsItemDto: {
             /** Format: uuid */
-            orderItemId: string;
+            warehouseOrderItemId: string;
             /** Format: int32 */
             productId: number | string;
             productName: string;
@@ -2340,12 +2354,6 @@ export interface components {
             /** Format: double */
             lineWeightKg: number | string;
         };
-        PalletLabelItemDto: {
-            productName: string;
-            /** Format: double */
-            quantity: number | string;
-            unit: string;
-        };
         PalletLabelIssueDto: {
             /** Format: int32 */
             number: number | string;
@@ -2355,14 +2363,20 @@ export interface components {
             /** Format: date-time */
             occurredAtUtc: string;
         };
-        PalletLabelIssueMode: "Print" | "Download";
-        PalletLabelLanguage: "Polish" | "English";
+        PalletLabelIssueMode: number;
         PalletLabelIssueRequest: {
             mode: components["schemas"]["PalletLabelIssueMode"];
             language?: components["schemas"]["PalletLabelLanguage"];
         };
+        PalletLabelItemDto: {
+            productName: string;
+            /** Format: double */
+            quantity: number | string;
+            unit: string;
+        };
+        PalletLabelLanguage: number;
         PalletLabelPreviewDto: {
-            orderNumber: string;
+            warehouseOrderNumber: string;
             palletNumber: string;
             customerName: string;
             /** Format: double */
@@ -2377,8 +2391,8 @@ export interface components {
             /** Format: uuid */
             id: string;
             /** Format: uuid */
-            orderId: string;
-            orderNumber: string;
+            warehouseOrderId: string;
+            warehouseOrderNumber: string;
             palletNumber: string;
             customerName: string;
             status: components["schemas"]["PalletStatus"];
@@ -2409,11 +2423,11 @@ export interface components {
             /** Format: uuid */
             operationId: string;
             /** Format: uuid */
-            orderItemId: string;
+            warehouseOrderItemId: string;
             productName: string;
             action: components["schemas"]["PickingAction"];
-            fromStatus: components["schemas"]["OrderItemStatus"];
-            toStatus: components["schemas"]["OrderItemStatus"];
+            fromStatus: components["schemas"]["WarehouseOrderItemStatus"];
+            toStatus: components["schemas"]["WarehouseOrderItemStatus"];
             /** Format: double */
             packedQuantity: null | number | string;
             actorKind: components["schemas"]["ActorKind"];
@@ -2441,7 +2455,7 @@ export interface components {
             /** Format: double */
             remainingQuantity: number | string;
             unit: string;
-            status: components["schemas"]["OrderItemStatus"];
+            status: components["schemas"]["WarehouseOrderItemStatus"];
             /** Format: int64 */
             version: number | string;
             reservedBy: null | components["schemas"]["PickingActorDto"];
@@ -2462,7 +2476,14 @@ export interface components {
             /** Format: int64 */
             itemVersion: number | string;
         };
-        PickingOrderDetailsDto: {
+        PickingPalletAssignmentDto: {
+            /** Format: uuid */
+            palletId: string;
+            palletNumber: string;
+            /** Format: double */
+            quantity: number | string;
+        };
+        PickingWarehouseOrderDetailsDto: {
             /** Format: uuid */
             id: string;
             number: string;
@@ -2470,7 +2491,7 @@ export interface components {
             /** Format: date */
             dueDate: string;
             pickingMode: components["schemas"]["PickingMode"];
-            pickingStatus: components["schemas"]["PickingOrderStatus"];
+            pickingStatus: components["schemas"]["PickingWarehouseOrderStatus"];
             /** Format: int32 */
             totalItemCount: number | string;
             /** Format: int32 */
@@ -2482,7 +2503,7 @@ export interface components {
             canCreatePallet: boolean;
             items: components["schemas"]["PickingItemDto"][];
         };
-        PickingOrderListItemDto: {
+        PickingWarehouseOrderListItemDto: {
             /** Format: uuid */
             id: string;
             number: string;
@@ -2490,7 +2511,7 @@ export interface components {
             /** Format: date */
             dueDate: string;
             pickingMode: components["schemas"]["PickingMode"];
-            pickingStatus: components["schemas"]["PickingOrderStatus"];
+            pickingStatus: components["schemas"]["PickingWarehouseOrderStatus"];
             /** Format: int32 */
             totalItemCount: number | string;
             /** Format: int32 */
@@ -2499,14 +2520,7 @@ export interface components {
             progressPercent: number | string;
             isAssignedToCurrentUser: boolean;
         };
-        PickingOrderStatus: number;
-        PickingPalletAssignmentDto: {
-            /** Format: uuid */
-            palletId: string;
-            palletNumber: string;
-            /** Format: double */
-            quantity: number | string;
-        };
+        PickingWarehouseOrderStatus: number;
         ProblemDetails: {
             type?: null | string;
             title?: null | string;
@@ -2621,16 +2635,16 @@ export interface components {
             code: string;
             displayName: string;
         };
-        UpdateOrderRequest: {
+        UpdateOrganizationRequest: {
+            code: string;
+            name: string;
+        };
+        UpdateWarehouseOrderRequest: {
             customerName: string;
             /** Format: date */
             dueDate: string;
             /** Format: int64 */
             version: number | string;
-        };
-        UpdateOrganizationRequest: {
-            code: string;
-            name: string;
         };
         ValidationProblemDetails: {
             type?: null | string;
@@ -2647,6 +2661,75 @@ export interface components {
             /** Format: int64 */
             version: number | string;
         };
+        WarehouseOrderAssigneeDto: {
+            /** Format: uuid */
+            employeeId: string;
+            /** Format: uuid */
+            organizationId: string;
+            employeeDisplayName: string;
+            /** Format: uuid */
+            assignedById: string;
+            assignedByName: string;
+            /** Format: date-time */
+            assignedAtUtc: string;
+        };
+        WarehouseOrderDto: {
+            /** Format: uuid */
+            id: string;
+            number: string;
+            customerName: string;
+            /** Format: date */
+            dueDate: string;
+            status: components["schemas"]["WarehouseOrderStatus"];
+            /** Format: uuid */
+            createdById: string;
+            createdByName: string;
+            /** Format: date-time */
+            createdAtUtc: string;
+            /** Format: uuid */
+            updatedById: string;
+            updatedByName: string;
+            /** Format: date-time */
+            updatedAtUtc: string;
+            /** Format: date-time */
+            publishedAtUtc: null | string;
+            /** Format: int64 */
+            version: number | string;
+            pickingMode: components["schemas"]["PickingMode"];
+            assignees: components["schemas"]["WarehouseOrderAssigneeDto"][];
+            items: components["schemas"]["WarehouseOrderItemDto"][];
+        };
+        WarehouseOrderItemDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int32 */
+            productId: number | string;
+            productName: string;
+            productSymbol: null | string;
+            /** Format: double */
+            quantity: number | string;
+            unit: string;
+            /** Format: double */
+            unitWeightKg: null | number | string;
+            status: components["schemas"]["WarehouseOrderItemStatus"];
+        };
+        WarehouseOrderItemStatus: number;
+        WarehouseOrderListItemDto: {
+            /** Format: uuid */
+            id: string;
+            number: string;
+            customerName: string;
+            /** Format: date */
+            dueDate: string;
+            status: components["schemas"]["WarehouseOrderStatus"];
+            /** Format: int32 */
+            itemCount: number | string;
+            /** Format: date-time */
+            updatedAtUtc: string;
+            /** Format: int64 */
+            version: number | string;
+        };
+        WarehouseOrderStatus: number;
     };
     responses: never;
     parameters: never;

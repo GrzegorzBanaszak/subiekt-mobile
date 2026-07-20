@@ -22,7 +22,7 @@ const emptyPalletCandidates: PalletCandidateItem[] = []
 export function NewPalletPage() {
   const { language, t } = useI18n()
   const locale = palletLocale(language)
-  const { orderId = '' } = useParams()
+  const { warehouseOrderId = '' } = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [selected, setSelected] = useState<Record<string, boolean>>({})
@@ -32,19 +32,19 @@ export function NewPalletPage() {
   const [confirmOpen, setConfirmOpen] = useState(false)
 
   const query = useQuery({
-    queryKey: ['pallets', 'candidates', orderId],
-    queryFn: () => getPalletCandidates(orderId),
-    enabled: Boolean(orderId),
+    queryKey: ['pallets', 'candidates', warehouseOrderId],
+    queryFn: () => getPalletCandidates(warehouseOrderId),
+    enabled: Boolean(warehouseOrderId),
     refetchOnMount: 'always',
   })
 
   const mutation = useMutation({
     mutationFn: (variables: CreateVariables) =>
-      createPallet(orderId, variables.emptyPalletWeightKg, variables.items),
+      createPallet(warehouseOrderId, variables.emptyPalletWeightKg, variables.items),
     onMutate: () => setMessage(null),
     onSuccess: (pallet) => {
-      void queryClient.invalidateQueries({ queryKey: ['pallets', 'candidates', orderId] })
-      void queryClient.invalidateQueries({ queryKey: ['picking', 'order', orderId] })
+      void queryClient.invalidateQueries({ queryKey: ['pallets', 'candidates', warehouseOrderId] })
+      void queryClient.invalidateQueries({ queryKey: ['picking', 'order', warehouseOrderId] })
       void queryClient.invalidateQueries({ queryKey: ['picking', 'orders'] })
       setConfirmOpen(false)
       navigate(`/pallets/${pallet.id}`)
@@ -64,7 +64,7 @@ export function NewPalletPage() {
 
   const candidates = query.data?.items ?? emptyPalletCandidates
   const selectedItems = useMemo(
-    () => candidates.filter((item) => selected[item.orderItemId]),
+    () => candidates.filter((item) => selected[item.warehouseOrderItemId]),
     [candidates, selected],
   )
   const goodsWeight = selectedItems.reduce((sum, item) => {
@@ -76,18 +76,18 @@ export function NewPalletPage() {
   const totalWeight = goodsWeight + (Number.isFinite(tare) ? tare : 0)
 
   function quantityFor(item: PalletCandidateItem) {
-    return Number(quantities[item.orderItemId] ?? item.availableForPalletQuantity)
+    return Number(quantities[item.warehouseOrderItemId] ?? item.availableForPalletQuantity)
   }
 
   function quantityText(item: PalletCandidateItem) {
-    return quantities[item.orderItemId] ?? String(item.availableForPalletQuantity)
+    return quantities[item.warehouseOrderItemId] ?? String(item.availableForPalletQuantity)
   }
 
   function toggleItem(item: PalletCandidateItem, checked: boolean) {
-    setSelected((current) => ({ ...current, [item.orderItemId]: checked }))
+    setSelected((current) => ({ ...current, [item.warehouseOrderItemId]: checked }))
     setQuantities((current) => ({
       ...current,
-      [item.orderItemId]: current[item.orderItemId] ?? String(item.availableForPalletQuantity),
+      [item.warehouseOrderItemId]: current[item.warehouseOrderItemId] ?? String(item.availableForPalletQuantity),
     }))
   }
 
@@ -96,8 +96,8 @@ export function NewPalletPage() {
     const nextQuantities = { ...quantities }
     for (const item of candidates) {
       if (Number(item.availableForPalletQuantity) > 0 && Number(item.unitWeightKg ?? 0) > 0) {
-        nextSelected[item.orderItemId] = true
-        nextQuantities[item.orderItemId] = nextQuantities[item.orderItemId] ?? String(item.availableForPalletQuantity)
+        nextSelected[item.warehouseOrderItemId] = true
+        nextQuantities[item.warehouseOrderItemId] = nextQuantities[item.warehouseOrderItemId] ?? String(item.availableForPalletQuantity)
       }
     }
     setSelected(nextSelected)
@@ -141,7 +141,7 @@ export function NewPalletPage() {
     mutation.mutate({
       emptyPalletWeightKg: tare,
       items: selectedItems.map((item) => ({
-        orderItemId: item.orderItemId,
+        warehouseOrderItemId: item.warehouseOrderItemId,
         quantity: quantityFor(item),
         itemVersion: Number(item.version),
       })),
@@ -156,11 +156,11 @@ export function NewPalletPage() {
   return <section className="mx-auto max-w-[1400px]" aria-labelledby="new-pallet-heading">
     <header className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div className="flex items-start gap-3">
-        <Link aria-label={t('pallets.create.back')} className="grid size-11 shrink-0 place-items-center rounded-full hover:bg-slate-200" to={`/picking/${orderId}`}><AppIcon name="arrowBack" /></Link>
+        <Link aria-label={t('pallets.create.back')} className="grid size-11 shrink-0 place-items-center rounded-full hover:bg-slate-200" to={`/picking/${warehouseOrderId}`}><AppIcon name="arrowBack" /></Link>
         <div>
           <p className="text-sm font-semibold text-slate-500">{t('pallets.create.eyebrow')}</p>
           <h2 className="text-2xl font-bold tracking-tight text-blue-950 sm:text-3xl" id="new-pallet-heading">{t('pallets.create.title')}</h2>
-          <p className="mt-1 text-slate-600">{query.data.orderNumber} · {query.data.customerName}</p>
+          <p className="mt-1 text-slate-600">{query.data.warehouseOrderNumber} · {query.data.customerName}</p>
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -192,8 +192,8 @@ export function NewPalletPage() {
             {candidates.map((item) => {
               const unitWeight = Number(item.unitWeightKg ?? 0)
               const unavailable = Number(item.availableForPalletQuantity) <= 0 || unitWeight <= 0
-              const checked = Boolean(selected[item.orderItemId])
-              return <article className={`grid gap-4 p-4 md:grid-cols-[auto_1fr_auto] md:items-center ${checked ? 'bg-emerald-50' : 'bg-white'}`} key={item.orderItemId}>
+              const checked = Boolean(selected[item.warehouseOrderItemId])
+              return <article className={`grid gap-4 p-4 md:grid-cols-[auto_1fr_auto] md:items-center ${checked ? 'bg-emerald-50' : 'bg-white'}`} key={item.warehouseOrderItemId}>
                 <label className="flex items-center gap-3 font-semibold text-blue-950">
                   <input checked={checked} className="size-5" disabled={unavailable} onChange={(event) => toggleItem(item, event.target.checked)} type="checkbox" />
                   <span className="sr-only">{item.productName}</span>
@@ -209,7 +209,7 @@ export function NewPalletPage() {
                 <label className="block md:w-48">
                   <span className="mb-1 block text-xs font-semibold text-slate-600">{t('pallets.create.selectedQuantity')}</span>
                   <div className="flex h-11 overflow-hidden rounded-lg border border-slate-300 bg-white">
-                    <input aria-label={`${t('pallets.create.selectedQuantity')} ${item.productName}`} className="w-full px-3 text-right" disabled={!checked} max={Number(item.availableForPalletQuantity)} min="0.0001" onChange={(event) => setQuantities((current) => ({ ...current, [item.orderItemId]: event.target.value }))} step="0.0001" type="number" value={quantityText(item)} />
+                    <input aria-label={`${t('pallets.create.selectedQuantity')} ${item.productName}`} className="w-full px-3 text-right" disabled={!checked} max={Number(item.availableForPalletQuantity)} min="0.0001" onChange={(event) => setQuantities((current) => ({ ...current, [item.warehouseOrderItemId]: event.target.value }))} step="0.0001" type="number" value={quantityText(item)} />
                     <span className="grid place-items-center border-l border-slate-300 bg-slate-50 px-3 text-sm">{item.unit}</span>
                   </div>
                 </label>

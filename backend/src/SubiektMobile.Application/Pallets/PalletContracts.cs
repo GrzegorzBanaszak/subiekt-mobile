@@ -1,31 +1,31 @@
 using SubiektMobile.Domain.Identity;
-using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
 using SubiektMobile.Application.Products;
 
 namespace SubiektMobile.Application.Pallets;
 
-public sealed record PalletCandidateItemDto(Guid OrderItemId, int ProductId,
+public sealed record PalletCandidateItemDto(Guid WarehouseOrderItemId, int ProductId,
     string ProductName, string? ProductSymbol, decimal OrderedQuantity,
     decimal PackedQuantity, decimal PalletizedQuantity, decimal AvailableForPalletQuantity,
     string Unit, decimal? UnitWeightKg, long Version);
 
-public sealed record PalletCandidatesDto(Guid OrderId, string OrderNumber,
+public sealed record PalletCandidatesDto(Guid WarehouseOrderId, string WarehouseOrderNumber,
     string CustomerName, DateOnly DueDate, IReadOnlyList<PalletCandidateItemDto> Items);
 
-public sealed record PalletListItemDto(Guid Id, Guid OrderId, string OrderNumber,
+public sealed record PalletListItemDto(Guid Id, Guid WarehouseOrderId, string WarehouseOrderNumber,
     string PalletNumber, string CustomerName, PalletStatus Status,
     decimal GoodsWeightKg, decimal EmptyPalletWeightKg, decimal TotalWeightKg,
     int ItemCount, DateTimeOffset ClosedAtUtc);
 
-public sealed record CreatePalletItemInput(Guid OrderItemId, decimal Quantity, long ItemVersion);
+public sealed record CreatePalletItemInput(Guid WarehouseOrderItemId, decimal Quantity, long ItemVersion);
 
-public sealed record PalletDetailsItemDto(Guid OrderItemId, int ProductId,
+public sealed record PalletDetailsItemDto(Guid WarehouseOrderItemId, int ProductId,
     string ProductName, string? ProductSymbol, decimal Quantity, string Unit,
     decimal UnitWeightKg, decimal LineWeightKg);
 
 public sealed record PalletLabelItemDto(string ProductName, decimal Quantity, string Unit);
 
-public sealed record PalletLabelPreviewDto(string OrderNumber, string PalletNumber,
+public sealed record PalletLabelPreviewDto(string WarehouseOrderNumber, string PalletNumber,
     string CustomerName, decimal GoodsWeightKg, decimal EmptyPalletWeightKg,
     decimal TotalWeightKg, IReadOnlyList<PalletLabelItemDto> Items);
 
@@ -46,20 +46,20 @@ public sealed record PalletLabelIssueDto(int Number, PalletLabelIssueMode Mode,
 
 public sealed record PalletLabelPdfDto(string FileName, byte[] Content);
 
-public sealed record PalletDetailsDto(Guid Id, Guid OrderId, string OrderNumber,
+public sealed record PalletDetailsDto(Guid Id, Guid WarehouseOrderId, string WarehouseOrderNumber,
     string PalletNumber, string CustomerName, PalletStatus Status,
     decimal EmptyPalletWeightKg, decimal GoodsWeightKg, decimal TotalWeightKg,
     ActorKind ClosedByKind, Guid ClosedById, string ClosedByName,
     DateTimeOffset ClosedAtUtc, IReadOnlyList<PalletDetailsItemDto> Items,
     PalletLabelPreviewDto Label, IReadOnlyList<PalletLabelIssueDto> LabelIssues);
 
-public sealed record PalletOperationItemSnapshot(Guid OrderItemId, decimal Quantity);
+public sealed record PalletOperationItemSnapshot(Guid WarehouseOrderItemId, decimal Quantity);
 
 public sealed record PalletOperationSnapshot(Guid PalletId, Guid OperationId,
-    Guid OrderId, decimal EmptyPalletWeightKg,
+    Guid WarehouseOrderId, decimal EmptyPalletWeightKg,
     IReadOnlyList<PalletOperationItemSnapshot> Items);
 
-public sealed record PalletItemVersion(Guid OrderItemId, long Version);
+public sealed record PalletItemVersion(Guid WarehouseOrderItemId, long Version);
 
 public enum PalletStoreMutationResult
 {
@@ -72,9 +72,9 @@ public interface IPalletStore
 {
     Task<PagedResult<PalletListItemDto>> ListAsync(int page, int pageSize,
         CancellationToken cancellationToken);
-    Task<Order?> FindOrderAsync(Guid orderId, bool tracking, CancellationToken cancellationToken);
+    Task<WarehouseOrder?> FindWarehouseOrderAsync(Guid warehouseOrderId, bool tracking, CancellationToken cancellationToken);
     Task<IReadOnlyDictionary<Guid, decimal>> GetPalletizedQuantitiesAsync(
-        Guid orderId, CancellationToken cancellationToken);
+        Guid warehouseOrderId, CancellationToken cancellationToken);
     Task<PalletOperationSnapshot?> FindOperationAsync(
         Guid operationId, CancellationToken cancellationToken);
     Task<PalletDetailsDto?> GetDetailsAsync(Guid palletId, CancellationToken cancellationToken);

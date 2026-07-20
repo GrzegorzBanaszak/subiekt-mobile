@@ -9,8 +9,15 @@ describe('translations', () => {
   })
 
   it('contains Spanish translations for order pages', () => {
-    expect(spanishTranslations['orders.list.title']).toBe('Lista de pedidos')
+    expect(spanishTranslations['orders.list.title']).toBe('Lista de pedidos de almacén')
     expect(spanishTranslations['orders.new.saveDraft']).toBe('Guardar borrador')
     expect(spanishTranslations['orders.details.publish']).toBe('Publicar para preparación')
+  })
+
+  it('distinguishes warehouse orders from future customer orders', () => {
+    expect(polishTranslations['navigation.orders']).toBe('Zamówienia magazynowe')
+    expect(polishTranslations['navigation.customerOrders']).toBe('Zamówienia klientów')
+    expect(spanishTranslations['navigation.orders']).toBe('Pedidos de almacén')
+    expect(spanishTranslations['navigation.customerOrders']).toBe('Pedidos de clientes')
   })
 })

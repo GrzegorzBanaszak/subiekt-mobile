@@ -1,5 +1,8 @@
 # Subiekt Mobile
 
+Instrukcja przygotowania środowiska lokalnego (zmienne, Docker PostgreSQL, migracje oraz start
+API i frontendu): [docs/local-development.md](docs/local-development.md).
+
 Aplikacja API + web wspierająca tworzenie i wieloosobowe kompletowanie zamówień na telefonie lub tablecie.
 
 Projekt odczytuje katalog towarów z bazy Subiekta GT. Zamówienia, stan kompletacji, palety i historia operacji należą do aplikacji i nie są zapisywane w tabelach Subiekta.
@@ -313,9 +316,11 @@ Trasa `/login` obsługuje logowanie administratora przez sesję zapisywaną w co
 `HttpOnly`. Interfejs jest dostępny po polsku i hiszpańsku, a wybór języka jest
 zapamiętywany lokalnie w przeglądarce.
 
-Widoki zarządzania zamówieniami są dostępne dla użytkowników z uprawnieniem
-`orders.manage` pod `/orders`, `/orders/new` oraz `/orders/{id}`. Obejmują listę,
-utworzenie wersji roboczej lub jej publikację oraz podgląd szczegółów zamówienia.
+Widoki zarządzania zamówieniami magazynowymi są dostępne dla użytkowników z uprawnieniem
+`warehouse-orders.manage` pod `/warehouse-orders`, `/warehouse-orders/new` oraz
+`/warehouse-orders/{id}`. Obejmują listę, utworzenie wersji roboczej lub jej publikację
+oraz podgląd szczegółów zamówienia. Stare adresy `/orders` są przekierowywane po stronie
+klienta wyłącznie dla zachowania istniejących zakładek.
 
 Typy klienta API można odświeżyć przy uruchomionym backendzie:
 
@@ -345,19 +350,21 @@ lub zablokowane nie są publikowane.
 Masa jednostkowa towaru jest odczytywana z masy brutto w Subiekcie GT i prezentowana
 w kilogramach. Wartość jest kopiowana do pozycji zamówienia jako migawka.
 
-## API zamówień
+## API zamówień magazynowych
 
-Endpointy Etapu 3 wymagają uprawnienia `orders.manage`:
+Endpointy zarządzania wymagają uprawnienia `warehouse-orders.manage`:
 
 ```text
-GET    /api/orders?page=1&pageSize=20
-GET    /api/orders/{id}
-POST   /api/orders
-PUT    /api/orders/{id}
-DELETE /api/orders/{id}?version={version}
-POST   /api/orders/{id}/items
-DELETE /api/orders/{id}/items/{itemId}?version={version}
-POST   /api/orders/{id}/publish
+GET    /api/warehouse-orders?page=1&pageSize=20
+GET    /api/warehouse-orders/{id}
+POST   /api/warehouse-orders
+PUT    /api/warehouse-orders/{id}
+DELETE /api/warehouse-orders/{id}?version={version}
+POST   /api/warehouse-orders/{id}/items
+DELETE /api/warehouse-orders/{id}/items/{itemId}?version={version}
+POST   /api/warehouse-orders/{id}/publish
+GET    /api/warehouse-orders/available-assignees
+PUT    /api/warehouse-orders/{id}/picking-configuration
 ```
 
 Każda mutacja wersji roboczej przyjmuje bieżące pole `version`. Nieaktualna wersja

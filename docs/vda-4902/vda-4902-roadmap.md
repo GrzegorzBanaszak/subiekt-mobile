@@ -45,13 +45,83 @@ Zakres:
 
 Zakres:
 
-- [ ] Zmienić nazwę obecnego modułu „Zamówienia” na „Zamówienia magazynowe”.
-- [ ] Dodać w nawigacji moduły „Klienci”, „Zamówienia klientów” i „Wysyłki”.
-- [ ] Ustalić statusy zamówienia klienta, zamówienia magazynowego, wysyłki, opakowania i palety.
-- [ ] Określić przejście istniejących zamówień do nowego procesu bez utraty danych.
-- [ ] Ujednolicić widoki list, szczegółów i historii dla nowych etapów procesu.
+- [x] Zmienić nazwę obecnego modułu „Zamówienia” na „Zamówienia magazynowe”.
+- [x] Dodać w nawigacji moduły „Klienci”, „Zamówienia klientów” i „Wysyłki”.
+- [x] Ustalić statusy zamówienia klienta, zamówienia magazynowego, wysyłki, opakowania i palety.
+- [x] Określić przejście istniejących zamówień do nowego procesu bez utraty danych.
+- [x] Ujednolicić widoki list, szczegółów i historii dla nowych etapów procesu.
 
 **Warunek przejścia:** użytkownik rozumie różnicę między zamówieniem klienta, zamówieniem magazynowym i wysyłką; obecny proces pozostaje dostępny.
+
+### Uzgodnienia Etapu 1
+
+- W interfejsie i kodzie **zamówienie magazynowe** jest `WarehouseOrder`. Etap 1.1
+  zastąpił przejściowe nazwy `Order` i `/api/orders` odpowiednio przez `WarehouseOrder`
+  i `/api/warehouse-orders`.
+- `CustomerOrder` jest dokumentem otrzymanym od odbiorcy, `WarehouseOrder` jest
+  instrukcją pracy magazynu utworzoną z tego dokumentu, a `Shipment` jest jednostką
+  dostawy zawierającą dane wysyłkowe, w tym numer dokumentu `N`.
+- Kolejne moduły stosują jeden wzorzec widoków: lista, szczegóły i historia. Historia
+  zawiera zdarzenia audytowe i nie zastępuje bieżącego statusu procesu.
+
+| Obiekt | Statusy docelowe | Dozwolone zakończenie alternatywne |
+|---|---|---|
+| Zamówienie klienta | `Draft -> ReadyForConversion -> Converted` | `Cancelled` przed konwersją |
+| Zamówienie magazynowe | `Draft -> ReadyForPicking -> Picking -> Completed` | `Cancelled` przed ukończeniem |
+| Wysyłka | `Draft -> ReadyForPacking -> Packing -> Dispatched` | `Cancelled` przed wysyłką |
+| Opakowanie Single | `Draft -> Sealed -> LabelIssued` | `Cancelled` przed zamknięciem |
+| Paleta Master | `Open -> Closed` | `Cancelled` przed zamknięciem |
+
+Statusy są kontraktem docelowego procesu; ich encje, przejścia i API są dodawane dopiero
+w etapach 2–7. Wydanie etykiety i reprint są osobnymi zdarzeniami audytowymi. Snapshot
+wydanej etykiety pozostaje niezmienny, a późniejsza korekta fizycznej jednostki nie może go
+nadpisać.
+
+### Przejście istniejących danych w Etapie 1.1
+
+Migracja technicznie zmienia wyłącznie nazwy tabel, kolumn i indeksów, bez kopiowania lub
+przekształcania danych. Każdy istniejący rekord jest `WarehouseOrder`: `Draft` pozostaje
+`Draft`, a `ReadyForPicking` pozostaje `ReadyForPicking`. Postęp `Waiting`, `InProgress`
+i `Completed` jest nadal wyliczany z pozycji kompletacji i nie jest nowym utrwalonym
+statusem zamówienia.
+
+## Etap 1.1 — techniczna konsolidacja zamówienia magazynowego
+
+**Cel:** usunąć techniczny typ `Order` bez przepisywania działającego procesu magazynowego
+oraz ustanowić `WarehouseOrder` jedynym modelem zlecenia kompletacji.
+
+Zakres:
+
+- [x] Zastąpić `Order`, `OrderItem`, `OrderAssignee`, `OrderPickingEvent`, `OrderStatus`,
+  `OrderItemStatus` i odpowiadające im kontrakty, komendy, zapytania, repozytoria oraz DTO
+  nazwami `WarehouseOrder*`; zachować reguły kompletacji, audyt i kontrolę współbieżności.
+- [x] Zmienić referencje `OrderId` na `WarehouseOrderId`, również w aktualnych paletach i
+  ich pozycjach. Bieżąca `Pallet` nie jest jeszcze paletą Master z procesu VDA i pozostaje
+  odrębnym, istniejącym agregatem do Etapu 6.
+- [x] Wykonać pojedynczą migrację EF Core, która wyłącznie zmienia nazwy tabel,
+  kolumn, kluczy obcych i indeksów: `orders`, `order_items`, `order_assignees` oraz
+  `order_picking_events` przechodzą na wariant `warehouse_orders*`. Migracja zachowuje
+  identyfikatory, ilości, statusy, wersje współbieżności, przypisania, palety i wpisy audytu;
+  nie tworzy kopii danych ani równoległego starego modelu.
+- [x] Zmienić publiczne endpointy na `/api/warehouse-orders`,
+  `/api/picking/warehouse-orders` oraz zagnieżdżone endpointy palet pod
+  `/api/warehouse-orders/{warehouseOrderId}/pallets`. Stare endpointy `/api/orders` nie
+  pozostają jako adaptery ani aliasy.
+- [x] Zmienić uprawnienia `orders.manage` i `orders.read-published` na
+  `warehouse-orders.manage` i `warehouse-orders.read-published`. Sesje wyliczają
+  uprawnienia przy każdym żądaniu, dlatego nie wymagają migracji rekordów sesji.
+- [x] Przenieść frontend do feature `warehouse-orders`, wygenerować typy OpenAPI od nowa
+  i używać tras `/warehouse-orders`. Dla istniejących zakładek dodać wyłącznie przekierowanie
+  klienckie z `/orders`, `/orders/new` i `/orders/{id}`; wszystkie nowe linki prowadzą do
+  tras `warehouse-orders`.
+- [x] Zmienić nazwy akcji i typów celu w nowych wpisach audytowych na `WarehouseOrder`.
+  Historyczne wpisy audytu zachowują istniejące wartości, aby nie modyfikować śladu historii.
+- [x] Nie dodawać jeszcze `CustomerOrder`, `Customer`, `CustomerSite` ani `Shipment`; ich
+  model i przypadki użycia pozostają własnością etapów 2, 4 i 5.
+
+**Warunek przejścia:** kod, baza, OpenAPI i frontend używają `WarehouseOrder`; aplikacja
+nie zawiera równoległego typu `Order` ani aktywnego API `/api/orders`, a wszystkie dane
+obecnego procesu pozostają dostępne po migracji.
 
 ## Etap 2 — klienci, zakłady i profile logistyczne
 
@@ -194,9 +264,11 @@ Zakres:
 ## Zależności między etapami
 
 ```text
-Etap 0 → Etap 1 → Etap 2 → Etap 3 → Etap 4 → Etap 5 → Etap 6 → Etap 7 → Etap 8 → Etap 9
+Etap 0 → Etap 1 → Etap 1.1 → Etap 2 → Etap 3 → Etap 4 → Etap 5 → Etap 6 → Etap 7 → Etap 8 → Etap 9
 ```
 
+- Etap 1.1 porządkuje techniczną nazwę istniejącego zamówienia magazynowego przed
+  dodaniem modelu klienta i wysyłki; nie wprowadza nowego procesu biznesowego.
 - Etap 3 wymaga skonfigurowanego klienta i zakładu z etapu 2.
 - Etap 4 wymaga mapowania towarów z etapu 3.
 - Etap 5 wymaga kompletnego zamówienia klienta z etapu 4.

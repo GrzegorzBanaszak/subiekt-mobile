@@ -2,11 +2,11 @@ using MediatR;
 using SubiektMobile.Application.Identity;
 using SubiektMobile.Application.Products;
 using SubiektMobile.Domain.Identity;
-using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
 
 namespace SubiektMobile.Application.Pallets;
 
-public sealed record ListPalletCandidatesQuery(Guid OrderId) : IRequest<PalletCandidatesDto>;
+public sealed record ListPalletCandidatesQuery(Guid WarehouseOrderId) : IRequest<PalletCandidatesDto>;
 
 public sealed record ListPalletsQuery(int Page, int PageSize) : IRequest<PagedResult<PalletListItemDto>>;
 
@@ -19,7 +19,7 @@ public sealed record IssuePalletLabelCommand(Guid PalletId, PalletLabelIssueMode
     PalletLabelLanguage Language)
     : IRequest<PalletLabelPdfDto>;
 
-public sealed record CreatePalletCommand(Guid OrderId, Guid OperationId,
+public sealed record CreatePalletCommand(Guid WarehouseOrderId, Guid OperationId,
     decimal EmptyPalletWeightKg, IReadOnlyCollection<CreatePalletItemInput> Items)
     : IRequest<PalletDetailsDto>;
 
@@ -41,36 +41,36 @@ public sealed class ListPalletCandidatesHandler(IPalletStore store,
     public async Task<PalletCandidatesDto> Handle(ListPalletCandidatesQuery request, CancellationToken ct)
     {
         var actor = authorization.Require(Permissions.PalletsManage);
-        var order = await FindPublished(request.OrderId, store, false, ct);
-        EnsureCanPalletize(order, actor);
-        var palletized = await store.GetPalletizedQuantitiesAsync(order.Id, ct);
-        var items = order.Items
+        var warehouseOrder = await FindPublished(request.WarehouseOrderId, store, false, ct);
+        EnsureCanPalletize(warehouseOrder, actor);
+        var palletized = await store.GetPalletizedQuantitiesAsync(warehouseOrder.Id, ct);
+        var items = warehouseOrder.Items
             .OrderBy(x => x.ProductName)
             .Select(x => Candidate(x, palletized.GetValueOrDefault(x.Id)))
             .Where(x => x.AvailableForPalletQuantity > 0)
             .ToList();
-        return new(order.Id, order.Number, order.CustomerName, order.DueDate, items);
+        return new(warehouseOrder.Id, warehouseOrder.Number, warehouseOrder.CustomerName, warehouseOrder.DueDate, items);
     }
 
-    internal static async Task<Order> FindPublished(Guid orderId, IPalletStore store, bool tracking,
+    internal static async Task<WarehouseOrder> FindPublished(Guid warehouseOrderId, IPalletStore store, bool tracking,
         CancellationToken ct)
     {
-        var order = await store.FindOrderAsync(orderId, tracking, ct)
-            ?? throw new ResourceNotFoundException("Order was not found.");
-        if (order.Status != OrderStatus.ReadyForPicking)
-            throw new ResourceNotFoundException("Order was not found.");
-        return order;
+        var warehouseOrder = await store.FindWarehouseOrderAsync(warehouseOrderId, tracking, ct)
+            ?? throw new ResourceNotFoundException("Warehouse order was not found.");
+        if (warehouseOrder.Status != WarehouseOrderStatus.ReadyForPicking)
+            throw new ResourceNotFoundException("Warehouse order was not found.");
+        return warehouseOrder;
     }
 
-    internal static void EnsureCanPalletize(Order order, CurrentActor actor)
+    internal static void EnsureCanPalletize(WarehouseOrder warehouseOrder, CurrentActor actor)
     {
         var isAssignedEmployee = actor.Kind == ActorKind.Employee &&
-            order.Assignees.Any(x => x.EmployeeId == actor.Id);
+            warehouseOrder.Assignees.Any(x => x.EmployeeId == actor.Id);
         if (actor.Kind != ActorKind.Administrator && !isAssignedEmployee)
             throw new AccessDeniedException("This employee is not assigned to the order.");
     }
 
-    private static PalletCandidateItemDto Candidate(OrderItem item, decimal palletizedQuantity)
+    private static PalletCandidateItemDto Candidate(WarehouseOrderItem item, decimal palletizedQuantity)
     {
         var packedQuantity = item.PackedQuantity ?? 0;
         var available = Math.Max(0, packedQuantity - palletizedQuantity);
@@ -148,17 +148,17 @@ public sealed class CreatePalletHandler(IPalletStore store, IPalletNumberGenerat
                 ?? throw new ResourceConflictException("The pallet operation could not be loaded.");
         }
 
-        var order = await ListPalletCandidatesHandler.FindPublished(request.OrderId, store, true, ct);
-        ListPalletCandidatesHandler.EnsureCanPalletize(order, actor);
-        var palletized = await store.GetPalletizedQuantitiesAsync(order.Id, ct);
-        var itemsById = order.Items.ToDictionary(x => x.Id);
+        var warehouseOrder = await ListPalletCandidatesHandler.FindPublished(request.WarehouseOrderId, store, true, ct);
+        ListPalletCandidatesHandler.EnsureCanPalletize(warehouseOrder, actor);
+        var palletized = await store.GetPalletizedQuantitiesAsync(warehouseOrder.Id, ct);
+        var itemsById = warehouseOrder.Items.ToDictionary(x => x.Id);
         var allocations = new List<PalletItemAllocation>();
         var expectedVersions = new List<PalletItemVersion>();
 
         foreach (var input in request.Items)
         {
-            if (!itemsById.TryGetValue(input.OrderItemId, out var item))
-                throw new ResourceNotFoundException("Order item was not found.");
+            if (!itemsById.TryGetValue(input.WarehouseOrderItemId, out var item))
+                throw new ResourceNotFoundException("Warehouse order item was not found.");
             if (input.ItemVersion <= 0 || item.Version != input.ItemVersion)
                 throw new ResourceConflictException("The item was modified by another request.");
 
@@ -172,12 +172,12 @@ public sealed class CreatePalletHandler(IPalletStore store, IPalletNumberGenerat
 
             allocations.Add(new(item.Id, input.Quantity, item.UnitWeightKg.Value));
             expectedVersions.Add(new(item.Id, input.ItemVersion));
-            order.AssignPackedQuantityToPallet(item.Id, alreadyPalletized + input.Quantity);
+            warehouseOrder.AssignPackedQuantityToPallet(item.Id, alreadyPalletized + input.Quantity);
         }
 
         var now = time.GetUtcNow();
         var palletId = Guid.NewGuid();
-        var pallet = Pallet.CreateClosed(palletId, request.OperationId, order.Id,
+        var pallet = Pallet.CreateClosed(palletId, request.OperationId, warehouseOrder.Id,
             numbers.Generate(palletId, now), request.EmptyPalletWeightKg, allocations,
             new PickingActor(actor.Kind, actor.Id, actor.DisplayName), now);
 
@@ -206,12 +206,12 @@ public sealed class CreatePalletHandler(IPalletStore store, IPalletNumberGenerat
             throw new RequestValidationException("Empty pallet weight cannot be negative.");
         if (request.Items.Count == 0)
             throw new RequestValidationException("At least one pallet item is required.");
-        if (request.Items.Select(x => x.OrderItemId).Distinct().Count() != request.Items.Count)
+        if (request.Items.Select(x => x.WarehouseOrderItemId).Distinct().Count() != request.Items.Count)
             throw new RequestValidationException("An order item can be selected only once.");
         foreach (var item in request.Items)
         {
-            if (item.OrderItemId == Guid.Empty || item.ItemVersion <= 0)
-                throw new RequestValidationException("Every item must include orderItemId and a positive itemVersion.");
+            if (item.WarehouseOrderItemId == Guid.Empty || item.ItemVersion <= 0)
+                throw new RequestValidationException("Every item must include warehouseOrderItemId and a positive itemVersion.");
             if (decimal.Round(item.Quantity, 4) != item.Quantity || item.Quantity <= 0)
                 throw new RequestValidationException(
                     "Every item quantity must contain at most four decimal places and be greater than zero.");
@@ -220,16 +220,16 @@ public sealed class CreatePalletHandler(IPalletStore store, IPalletNumberGenerat
 
     private static void EnsureSameOperation(PalletOperationSnapshot previous, CreatePalletCommand request)
     {
-        if (previous.OrderId != request.OrderId ||
+        if (previous.WarehouseOrderId != request.WarehouseOrderId ||
             previous.EmptyPalletWeightKg != Pallet.NormalizeWeight(request.EmptyPalletWeightKg) ||
             previous.Items.Count != request.Items.Count)
             throw new ResourceConflictException("operationId has already been used for another operation.");
 
-        var previousItems = previous.Items.OrderBy(x => x.OrderItemId).ToList();
-        var requestItems = request.Items.OrderBy(x => x.OrderItemId).ToList();
+        var previousItems = previous.Items.OrderBy(x => x.WarehouseOrderItemId).ToList();
+        var requestItems = request.Items.OrderBy(x => x.WarehouseOrderItemId).ToList();
         for (var i = 0; i < previousItems.Count; i++)
         {
-            if (previousItems[i].OrderItemId != requestItems[i].OrderItemId ||
+            if (previousItems[i].WarehouseOrderItemId != requestItems[i].WarehouseOrderItemId ||
                 previousItems[i].Quantity != requestItems[i].Quantity)
                 throw new ResourceConflictException("operationId has already been used for another operation.");
         }

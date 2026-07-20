@@ -7,8 +7,8 @@ using SubiektMobile.Infrastructure.Identity;
 using SubiektMobile.Infrastructure.Persistence;
 using SubiektMobile.Infrastructure.Persistence.Application;
 using SubiektMobile.Infrastructure.Products;
-using SubiektMobile.Application.Orders;
-using SubiektMobile.Infrastructure.Orders;
+using SubiektMobile.Application.WarehouseOrders;
+using SubiektMobile.Infrastructure.WarehouseOrders;
 using SubiektMobile.Application.Picking;
 using SubiektMobile.Infrastructure.Picking;
 using SubiektMobile.Application.Pallets;
@@ -37,8 +37,8 @@ public static class DependencyInjection
 
         services.AddScoped<IProductReadRepository, ProductReadRepository>();
         services.AddScoped<IIdentityAccessStore, IdentityAccessStore>();
-        services.AddScoped<IOrderStore, OrderStore>();
-        services.AddScoped<IOrderWorkforceDirectory, OrderWorkforceDirectory>();
+        services.AddScoped<IWarehouseOrderStore, WarehouseOrderStore>();
+        services.AddScoped<IWarehouseOrderWorkforceDirectory, WarehouseOrderWorkforceDirectory>();
         services.AddScoped<IPickingStore, PickingStore>();
         services.AddScoped<IPalletStore, PalletStore>();
         services.AddSingleton<IPalletLabelPdfRenderer, PalletLabelPdfRenderer>();

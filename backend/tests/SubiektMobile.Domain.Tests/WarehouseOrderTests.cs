@@ -1,11 +1,11 @@
-using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
 using SubiektMobile.Domain.Identity;
 using System.Globalization;
 using Xunit;
 
 namespace SubiektMobile.Domain.Tests;
 
-public sealed class OrderTests
+public sealed class WarehouseOrderTests
 {
     private static readonly DateTimeOffset Now = new(2026, 7, 5, 10, 0, 0, TimeSpan.Zero);
     private static readonly Guid ActorId = Guid.Parse("11111111-1111-1111-1111-111111111111");
@@ -43,7 +43,7 @@ public sealed class OrderTests
     [Fact]
     public void Single_assignee_order_requires_exactly_one_employee_when_published()
     {
-        var order = Order.Create(Guid.NewGuid(), "ZAM-2", "Customer",
+        var order = WarehouseOrder.Create(Guid.NewGuid(), "ZAM-2", "Customer",
             new DateOnly(2026, 7, 6), ActorId, "Admin", Now);
         order.AddItem(7, "Name", null, 1, "szt.", null, ActorId, "Admin", Now);
 
@@ -54,7 +54,7 @@ public sealed class OrderTests
     [Fact]
     public void Shared_order_accepts_multiple_distinct_employees()
     {
-        var order = Order.Create(Guid.NewGuid(), "ZAM-3", "Customer",
+        var order = WarehouseOrder.Create(Guid.NewGuid(), "ZAM-3", "Customer",
             new DateOnly(2026, 7, 6), ActorId, "Admin", Now, PickingMode.SharedTeam,
             [Candidate("22222222-2222-2222-2222-222222222222", "Employee One"),
              Candidate("44444444-4444-4444-4444-444444444444", "Employee Two")]);
@@ -62,7 +62,7 @@ public sealed class OrderTests
 
         order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
 
-        Assert.Equal(OrderStatus.ReadyForPicking, order.Status);
+        Assert.Equal(WarehouseOrderStatus.ReadyForPicking, order.Status);
         Assert.Equal(2, order.Assignees.Count);
     }
 
@@ -73,7 +73,7 @@ public sealed class OrderTests
         order.AddItem(7, "Name", null, 1, "szt.", null, ActorId, "Admin", Now);
         order.Publish(new DateOnly(2026, 7, 5), ActorId, "Admin", Now);
 
-        Assert.Equal(OrderStatus.ReadyForPicking, order.Status);
+        Assert.Equal(WarehouseOrderStatus.ReadyForPicking, order.Status);
         Assert.Throws<InvalidOperationException>(() =>
             order.UpdateHeader("Other", new DateOnly(2026, 7, 7), ActorId, "Admin", Now));
     }
@@ -111,7 +111,7 @@ public sealed class OrderTests
         order.ReserveItem(item.Id, employee, Now);
         order.PackItem(item.Id, 4, employee, false, Now.AddMinutes(1));
 
-        Assert.Equal(OrderItemStatus.Picking, item.Status);
+        Assert.Equal(WarehouseOrderItemStatus.Picking, item.Status);
         Assert.Equal(4, item.PackedQuantity);
         Assert.Equal(3, item.Version);
         Assert.Equal(employee.Id, item.ReservedById);
@@ -128,12 +128,12 @@ public sealed class OrderTests
 
         order.PackItem(item.Id, 4, employee, false, Now);
 
-        Assert.Equal(OrderItemStatus.ToPick, item.Status);
+        Assert.Equal(WarehouseOrderItemStatus.ToPick, item.Status);
         Assert.Equal(4, item.PackedQuantity);
 
         order.PackItem(item.Id, 6, employee, false, Now.AddMinutes(1));
 
-        Assert.Equal(OrderItemStatus.Packed, item.Status);
+        Assert.Equal(WarehouseOrderItemStatus.Packed, item.Status);
         Assert.Equal(10, item.PackedQuantity);
     }
 
@@ -170,7 +170,7 @@ public sealed class OrderTests
         order.ReserveItem(item.Id, second, Now.AddMinutes(3));
         order.PackItem(item.Id, 6, second, false, Now.AddMinutes(4));
 
-        Assert.Equal(OrderItemStatus.Packed, item.Status);
+        Assert.Equal(WarehouseOrderItemStatus.Packed, item.Status);
         Assert.Equal(10, item.PackedQuantity);
         Assert.Null(item.ReservedById);
         Assert.Equal(second.Id, item.PackedById);
@@ -191,7 +191,7 @@ public sealed class OrderTests
         Assert.Throws<InvalidOperationException>(() => order.ReleaseItem(item.Id, other, false, Now));
         order.ReleaseItem(item.Id, admin, true, Now);
 
-        Assert.Equal(OrderItemStatus.ToPick, item.Status);
+        Assert.Equal(WarehouseOrderItemStatus.ToPick, item.Status);
     }
 
     [Fact]
@@ -206,7 +206,7 @@ public sealed class OrderTests
 
         order.UndoPackedItem(item.Id, employee, false, Now.AddMinutes(1));
 
-        Assert.Equal(OrderItemStatus.ToPick, item.Status);
+        Assert.Equal(WarehouseOrderItemStatus.ToPick, item.Status);
         Assert.Null(item.PackedQuantity);
         Assert.Null(item.PackedById);
     }
@@ -223,13 +223,13 @@ public sealed class OrderTests
         order.PackItem(item.Id, 10, employee, false, Now);
         order.AssignPackedQuantityToPallet(item.Id, 10);
 
-        Assert.Equal(OrderItemStatus.ToPick, item.Status);
+        Assert.Equal(WarehouseOrderItemStatus.ToPick, item.Status);
         Assert.Equal(10, item.PackedQuantity);
 
         order.PackItem(item.Id, 10, employee, false, Now.AddMinutes(1));
         order.AssignPackedQuantityToPallet(item.Id, 20);
 
-        Assert.Equal(OrderItemStatus.AssignedToPallet, item.Status);
+        Assert.Equal(WarehouseOrderItemStatus.AssignedToPallet, item.Status);
     }
 
     [Fact]
@@ -295,14 +295,14 @@ public sealed class OrderTests
         Assert.Equal(48.5m, pallet.TotalWeightKg);
     }
 
-    private static Order Create() => Order.Create(Guid.NewGuid(), "ZAM-1", "Customer",
+    private static WarehouseOrder Create() => WarehouseOrder.Create(Guid.NewGuid(), "ZAM-1", "Customer",
         new DateOnly(2026, 7, 6), ActorId, "Admin", Now, PickingMode.SingleAssignee,
         [Candidate("22222222-2222-2222-2222-222222222222", "Employee")]);
 
-    private static Order Create(PickingMode mode) => Order.Create(Guid.NewGuid(), "ZAM-1", "Customer",
+    private static WarehouseOrder Create(PickingMode mode) => WarehouseOrder.Create(Guid.NewGuid(), "ZAM-1", "Customer",
         new DateOnly(2026, 7, 6), ActorId, "Admin", Now, mode,
         [Candidate("22222222-2222-2222-2222-222222222222", "Employee")]);
 
-    private static OrderAssigneeCandidate Candidate(string employeeId, string name) =>
+    private static WarehouseOrderAssigneeCandidate Candidate(string employeeId, string name) =>
         new(Guid.Parse(employeeId), Guid.Parse("33333333-3333-3333-3333-333333333333"), name);
 }

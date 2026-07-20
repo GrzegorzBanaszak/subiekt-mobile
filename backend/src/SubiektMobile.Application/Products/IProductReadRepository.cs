@@ -2,7 +2,7 @@ namespace SubiektMobile.Application.Products;
 
 public interface IProductReadRepository
 {
-    Task<Orders.ProductOrderSnapshot?> GetProductOrderSnapshotAsync(
+    Task<WarehouseOrders.ProductWarehouseOrderSnapshot?> GetProductWarehouseOrderSnapshotAsync(
         int id,
         CancellationToken cancellationToken);
 

@@ -3,7 +3,7 @@ using Npgsql;
 using SubiektMobile.Application.Pallets;
 using SubiektMobile.Application.Products;
 using SubiektMobile.Domain.Identity;
-using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
 using SubiektMobile.Infrastructure.Persistence.Application;
 
 namespace SubiektMobile.Infrastructure.Pallets;
@@ -15,10 +15,10 @@ public sealed class PalletStore(ApplicationDbContext dbContext) : IPalletStore
     {
         var query =
             from pallet in dbContext.Pallets.AsNoTracking()
-            join order in dbContext.Orders.AsNoTracking() on pallet.OrderId equals order.Id
+            join warehouseOrder in dbContext.WarehouseOrders.AsNoTracking() on pallet.WarehouseOrderId equals warehouseOrder.Id
             orderby pallet.ClosedAtUtc descending, pallet.Number descending
-            select new PalletListItemDto(pallet.Id, pallet.OrderId, order.Number,
-                pallet.Number, order.CustomerName, pallet.Status, pallet.GoodsWeightKg,
+            select new PalletListItemDto(pallet.Id, pallet.WarehouseOrderId, warehouseOrder.Number,
+                pallet.Number, warehouseOrder.CustomerName, pallet.Status, pallet.GoodsWeightKg,
                 pallet.EmptyPalletWeightKg, pallet.TotalWeightKg, pallet.Items.Count,
                 pallet.ClosedAtUtc);
 
@@ -28,31 +28,31 @@ public sealed class PalletStore(ApplicationDbContext dbContext) : IPalletStore
         return new PagedResult<PalletListItemDto>(items, page, pageSize, total, totalPages);
     }
 
-    public Task<Order?> FindOrderAsync(Guid orderId, bool tracking, CancellationToken ct)
+    public Task<WarehouseOrder?> FindWarehouseOrderAsync(Guid warehouseOrderId, bool tracking, CancellationToken ct)
     {
-        IQueryable<Order> query = dbContext.Orders.Include(x => x.Items).Include(x => x.Assignees);
+        IQueryable<WarehouseOrder> query = dbContext.WarehouseOrders.Include(x => x.Items).Include(x => x.Assignees);
         if (!tracking) query = query.AsNoTracking();
-        return query.SingleOrDefaultAsync(x => x.Id == orderId, ct);
+        return query.SingleOrDefaultAsync(x => x.Id == warehouseOrderId, ct);
     }
 
     public async Task<IReadOnlyDictionary<Guid, decimal>> GetPalletizedQuantitiesAsync(
-        Guid orderId, CancellationToken ct)
+        Guid warehouseOrderId, CancellationToken ct)
     {
         var rows = await dbContext.PalletItems.AsNoTracking()
-            .Where(x => x.OrderId == orderId)
-            .GroupBy(x => x.OrderItemId)
-            .Select(x => new { OrderItemId = x.Key, Quantity = x.Sum(item => item.Quantity) })
+            .Where(x => x.WarehouseOrderId == warehouseOrderId)
+            .GroupBy(x => x.WarehouseOrderItemId)
+            .Select(x => new { WarehouseOrderItemId = x.Key, Quantity = x.Sum(item => item.Quantity) })
             .ToListAsync(ct);
-        return rows.ToDictionary(x => x.OrderItemId, x => x.Quantity);
+        return rows.ToDictionary(x => x.WarehouseOrderItemId, x => x.Quantity);
     }
 
     public Task<PalletOperationSnapshot?> FindOperationAsync(Guid operationId, CancellationToken ct) =>
         dbContext.Pallets.AsNoTracking()
             .Where(x => x.OperationId == operationId)
-            .Select(x => new PalletOperationSnapshot(x.Id, x.OperationId, x.OrderId,
+            .Select(x => new PalletOperationSnapshot(x.Id, x.OperationId, x.WarehouseOrderId,
                 x.EmptyPalletWeightKg,
-                x.Items.OrderBy(item => item.OrderItemId)
-                    .Select(item => new PalletOperationItemSnapshot(item.OrderItemId, item.Quantity))
+                x.Items.OrderBy(item => item.WarehouseOrderItemId)
+                    .Select(item => new PalletOperationItemSnapshot(item.WarehouseOrderItemId, item.Quantity))
                     .ToList()))
             .SingleOrDefaultAsync(ct);
 
@@ -60,28 +60,28 @@ public sealed class PalletStore(ApplicationDbContext dbContext) : IPalletStore
     {
         var header = await (
             from pallet in dbContext.Pallets.AsNoTracking()
-            join order in dbContext.Orders.AsNoTracking() on pallet.OrderId equals order.Id
+            join warehouseOrder in dbContext.WarehouseOrders.AsNoTracking() on pallet.WarehouseOrderId equals warehouseOrder.Id
             where pallet.Id == palletId
             select new
             {
                 Pallet = pallet,
-                OrderNumber = order.Number,
-                order.CustomerName
+                WarehouseOrderNumber = warehouseOrder.Number,
+                warehouseOrder.CustomerName
             }).SingleOrDefaultAsync(ct);
         if (header is null) return null;
 
         var items = await (
             from palletItem in dbContext.PalletItems.AsNoTracking()
-            join orderItem in dbContext.OrderItems.AsNoTracking()
-                on palletItem.OrderItemId equals orderItem.Id
+            join warehouseOrderItem in dbContext.WarehouseOrderItems.AsNoTracking()
+                on palletItem.WarehouseOrderItemId equals warehouseOrderItem.Id
             where palletItem.PalletId == palletId
-            orderby orderItem.ProductName
-            select new PalletDetailsItemDto(orderItem.Id, orderItem.ProductId,
-                orderItem.ProductName, orderItem.ProductSymbol, palletItem.Quantity,
-                orderItem.Unit, palletItem.UnitWeightKg, palletItem.LineWeightKg))
+            orderby warehouseOrderItem.ProductName
+            select new PalletDetailsItemDto(warehouseOrderItem.Id, warehouseOrderItem.ProductId,
+                warehouseOrderItem.ProductName, warehouseOrderItem.ProductSymbol, palletItem.Quantity,
+                warehouseOrderItem.Unit, palletItem.UnitWeightKg, palletItem.LineWeightKg))
             .ToListAsync(ct);
 
-        var label = new PalletLabelPreviewDto(header.OrderNumber, header.Pallet.Number,
+        var label = new PalletLabelPreviewDto(header.WarehouseOrderNumber, header.Pallet.Number,
             header.CustomerName, header.Pallet.GoodsWeightKg, header.Pallet.EmptyPalletWeightKg,
             header.Pallet.TotalWeightKg,
             items.Select(x => new PalletLabelItemDto(x.ProductName, x.Quantity, x.Unit)).ToList());
@@ -104,7 +104,7 @@ public sealed class PalletStore(ApplicationDbContext dbContext) : IPalletStore
                 : PalletLabelIssueMode.Download,
             issue.ActorKind, issue.ActorDisplayName, issue.OccurredAtUtc)).ToList();
 
-        return new(header.Pallet.Id, header.Pallet.OrderId, header.OrderNumber,
+        return new(header.Pallet.Id, header.Pallet.WarehouseOrderId, header.WarehouseOrderNumber,
             header.Pallet.Number, header.CustomerName, header.Pallet.Status,
             header.Pallet.EmptyPalletWeightKg, header.Pallet.GoodsWeightKg,
             header.Pallet.TotalWeightKg, header.Pallet.ClosedByKind,
@@ -123,8 +123,8 @@ public sealed class PalletStore(ApplicationDbContext dbContext) : IPalletStore
     {
         foreach (var itemVersion in expectedItemVersions)
         {
-            var entry = dbContext.ChangeTracker.Entries<OrderItem>()
-                .SingleOrDefault(x => x.Entity.Id == itemVersion.OrderItemId);
+            var entry = dbContext.ChangeTracker.Entries<WarehouseOrderItem>()
+                .SingleOrDefault(x => x.Entity.Id == itemVersion.WarehouseOrderItemId);
             if (entry is null) return PalletStoreMutationResult.Conflict;
             entry.Property(x => x.Version).OriginalValue = itemVersion.Version;
         }

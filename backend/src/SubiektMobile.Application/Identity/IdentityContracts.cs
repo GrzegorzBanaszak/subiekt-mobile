@@ -7,8 +7,8 @@ public static class Permissions
     public const string IdentityManage = "identity.manage";
     public const string AdministratorsManage = "identity.administrators.manage";
     public const string CatalogRead = "catalog.read";
-    public const string OrdersReadPublished = "orders.read-published";
-    public const string OrdersManage = "orders.manage";
+    public const string WarehouseOrdersReadPublished = "warehouse-orders.read-published";
+    public const string WarehouseOrdersManage = "warehouse-orders.manage";
     public const string PickingExecute = "picking.execute";
     public const string PalletsManage = "pallets.manage";
 
@@ -17,8 +17,8 @@ public static class Permissions
         IdentityManage,
         AdministratorsManage,
         CatalogRead,
-        OrdersReadPublished,
-        OrdersManage,
+        WarehouseOrdersReadPublished,
+        WarehouseOrdersManage,
         PickingExecute,
         PalletsManage
     ];
@@ -29,12 +29,12 @@ public static class Permissions
     {
         ActorKind.Administrator =>
             isBootstrapAdministrator
-                ? [IdentityManage, AdministratorsManage, CatalogRead, OrdersReadPublished, OrdersManage, PickingExecute, PalletsManage]
-                : [IdentityManage, CatalogRead, OrdersReadPublished, OrdersManage, PickingExecute, PalletsManage],
+                ? [IdentityManage, AdministratorsManage, CatalogRead, WarehouseOrdersReadPublished, WarehouseOrdersManage, PickingExecute, PalletsManage]
+                : [IdentityManage, CatalogRead, WarehouseOrdersReadPublished, WarehouseOrdersManage, PickingExecute, PalletsManage],
         ActorKind.Employee =>
         [
             CatalogRead,
-            OrdersReadPublished,
+            WarehouseOrdersReadPublished,
             PickingExecute,
             PalletsManage
         ],

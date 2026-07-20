@@ -4,17 +4,17 @@ using SubiektMobile.Application.Picking;
 using SubiektMobile.Application.Products;
 using SubiektMobile.Application.Identity;
 using SubiektMobile.Domain.Identity;
-using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
 using SubiektMobile.Infrastructure.Persistence.Application;
 
 namespace SubiektMobile.Infrastructure.Picking;
 
 public sealed class PickingStore(ApplicationDbContext dbContext) : IPickingStore
 {
-    public async Task<PagedResult<PickingOrderListItemDto>> ListAsync(PickingOrderListFilter filter,
+    public async Task<PagedResult<PickingWarehouseOrderListItemDto>> ListAsync(PickingWarehouseOrderListFilter filter,
         CurrentActor actor, CancellationToken ct)
     {
-        var query = dbContext.Orders.AsNoTracking().Where(x => x.Status == OrderStatus.ReadyForPicking);
+        var query = dbContext.WarehouseOrders.AsNoTracking().Where(x => x.Status == WarehouseOrderStatus.ReadyForPicking);
         if (filter.Search is not null)
         {
             var pattern = $"%{filter.Search}%";
@@ -29,15 +29,15 @@ public sealed class PickingStore(ApplicationDbContext dbContext) : IPickingStore
         {
             query = filter.Status.Value switch
             {
-                PickingOrderStatus.Waiting => query.Where(x =>
-                    !x.Items.Any(item => item.Status != OrderItemStatus.ToPick || item.PackedQuantity > 0)),
-                PickingOrderStatus.Completed => query.Where(x =>
-                    !x.Items.Any(item => item.Status != OrderItemStatus.Packed &&
-                        item.Status != OrderItemStatus.AssignedToPallet)),
-                PickingOrderStatus.InProgress => query.Where(x =>
-                    x.Items.Any(item => item.Status != OrderItemStatus.ToPick || item.PackedQuantity > 0) &&
-                    x.Items.Any(item => item.Status != OrderItemStatus.Packed &&
-                        item.Status != OrderItemStatus.AssignedToPallet)),
+                PickingWarehouseOrderStatus.Waiting => query.Where(x =>
+                    !x.Items.Any(item => item.Status != WarehouseOrderItemStatus.ToPick || item.PackedQuantity > 0)),
+                PickingWarehouseOrderStatus.Completed => query.Where(x =>
+                    !x.Items.Any(item => item.Status != WarehouseOrderItemStatus.Packed &&
+                        item.Status != WarehouseOrderItemStatus.AssignedToPallet)),
+                PickingWarehouseOrderStatus.InProgress => query.Where(x =>
+                    x.Items.Any(item => item.Status != WarehouseOrderItemStatus.ToPick || item.PackedQuantity > 0) &&
+                    x.Items.Any(item => item.Status != WarehouseOrderItemStatus.Packed &&
+                        item.Status != WarehouseOrderItemStatus.AssignedToPallet)),
                 _ => query
             };
         }
@@ -49,36 +49,36 @@ public sealed class PickingStore(ApplicationDbContext dbContext) : IPickingStore
             {
                 x.Id, x.Number, x.CustomerName, x.DueDate, x.PickingMode,
                 Total = x.Items.Count,
-                Completed = x.Items.Count(item => item.Status == OrderItemStatus.Packed ||
-                    item.Status == OrderItemStatus.AssignedToPallet),
-                Started = x.Items.Count(item => item.Status != OrderItemStatus.ToPick || item.PackedQuantity > 0),
+                Completed = x.Items.Count(item => item.Status == WarehouseOrderItemStatus.Packed ||
+                    item.Status == WarehouseOrderItemStatus.AssignedToPallet),
+                Started = x.Items.Count(item => item.Status != WarehouseOrderItemStatus.ToPick || item.PackedQuantity > 0),
                 Assigned = actor.Kind == ActorKind.Employee && x.Assignees.Any(a => a.EmployeeId == actor.Id)
             }).ToListAsync(ct);
-        var items = rows.Select(x => new PickingOrderListItemDto(x.Id, x.Number, x.CustomerName,
+        var items = rows.Select(x => new PickingWarehouseOrderListItemDto(x.Id, x.Number, x.CustomerName,
             x.DueDate, x.PickingMode,
-            x.Completed == x.Total && x.Total > 0 ? PickingOrderStatus.Completed
-                : x.Started == 0 ? PickingOrderStatus.Waiting : PickingOrderStatus.InProgress,
+            x.Completed == x.Total && x.Total > 0 ? PickingWarehouseOrderStatus.Completed
+                : x.Started == 0 ? PickingWarehouseOrderStatus.Waiting : PickingWarehouseOrderStatus.InProgress,
             x.Total, x.Completed, x.Total == 0 ? 0 : (int)Math.Round(x.Completed * 100m / x.Total),
             x.Assigned)).ToList();
         return new(items, filter.Page, filter.PageSize, count,
             count == 0 ? 0 : (int)Math.Ceiling(count / (double)filter.PageSize));
     }
 
-    public Task<Order?> FindOrderAsync(Guid orderId, bool tracking, CancellationToken ct)
+    public Task<WarehouseOrder?> FindWarehouseOrderAsync(Guid warehouseOrderId, bool tracking, CancellationToken ct)
     {
-        IQueryable<Order> query = dbContext.Orders.Include(x => x.Items).Include(x => x.Assignees);
+        IQueryable<WarehouseOrder> query = dbContext.WarehouseOrders.Include(x => x.Items).Include(x => x.Assignees);
         if (!tracking) query = query.AsNoTracking();
-        return query.SingleOrDefaultAsync(x => x.Id == orderId && x.Status == OrderStatus.ReadyForPicking, ct);
+        return query.SingleOrDefaultAsync(x => x.Id == warehouseOrderId && x.Status == WarehouseOrderStatus.ReadyForPicking, ct);
     }
 
-    public async Task<PagedResult<PickingHistoryItemDto>> ListHistoryAsync(Guid orderId, int page,
+    public async Task<PagedResult<PickingHistoryItemDto>> ListHistoryAsync(Guid warehouseOrderId, int page,
         int pageSize, CancellationToken ct)
     {
-        var query = dbContext.OrderPickingEvents.AsNoTracking().Where(x => x.OrderId == orderId);
+        var query = dbContext.WarehouseOrderPickingEvents.AsNoTracking().Where(x => x.WarehouseOrderId == warehouseOrderId);
         var count = await query.CountAsync(ct);
         var items = await query.OrderByDescending(x => x.OccurredAtUtc).ThenByDescending(x => x.Id)
             .Skip((page - 1) * pageSize).Take(pageSize)
-            .Select(x => new PickingHistoryItemDto(x.Id, x.OperationId, x.OrderItemId, x.ProductName,
+            .Select(x => new PickingHistoryItemDto(x.Id, x.OperationId, x.WarehouseOrderItemId, x.ProductName,
                 x.Action, x.FromStatus, x.ToStatus, x.PackedQuantity, x.ActorKind, x.ActorId,
                 x.ActorDisplayName, x.OccurredAtUtc)).ToListAsync(ct);
         return new(items, page, pageSize, count,
@@ -86,35 +86,35 @@ public sealed class PickingStore(ApplicationDbContext dbContext) : IPickingStore
     }
 
     public async Task<IReadOnlyDictionary<Guid, IReadOnlyList<PickingPalletAssignmentDto>>> ListPalletAssignmentsAsync(
-        Guid orderId, CancellationToken ct)
+        Guid warehouseOrderId, CancellationToken ct)
     {
         var rows = await (
             from palletItem in dbContext.PalletItems.AsNoTracking()
             join pallet in dbContext.Pallets.AsNoTracking() on palletItem.PalletId equals pallet.Id
-            where pallet.OrderId == orderId
+            where pallet.WarehouseOrderId == warehouseOrderId
             orderby pallet.Number
             select new
             {
-                palletItem.OrderItemId,
+                palletItem.WarehouseOrderItemId,
                 Assignment = new PickingPalletAssignmentDto(pallet.Id, pallet.Number, palletItem.Quantity)
             }).ToListAsync(ct);
-        return rows.GroupBy(x => x.OrderItemId)
+        return rows.GroupBy(x => x.WarehouseOrderItemId)
             .ToDictionary(x => x.Key, x => (IReadOnlyList<PickingPalletAssignmentDto>)x.Select(row => row.Assignment).ToList());
     }
 
-    public Task<decimal> GetPalletizedQuantityAsync(Guid orderItemId, CancellationToken ct) =>
+    public Task<decimal> GetPalletizedQuantityAsync(Guid warehouseOrderItemId, CancellationToken ct) =>
         dbContext.PalletItems.AsNoTracking()
-            .Where(x => x.OrderItemId == orderItemId)
+            .Where(x => x.WarehouseOrderItemId == warehouseOrderItemId)
             .SumAsync(x => x.Quantity, ct);
 
-    public Task<OrderPickingEvent?> FindOperationAsync(Guid operationId, CancellationToken ct) =>
-        dbContext.OrderPickingEvents.AsNoTracking().SingleOrDefaultAsync(x => x.OperationId == operationId, ct);
+    public Task<WarehouseOrderPickingEvent?> FindOperationAsync(Guid operationId, CancellationToken ct) =>
+        dbContext.WarehouseOrderPickingEvents.AsNoTracking().SingleOrDefaultAsync(x => x.OperationId == operationId, ct);
 
-    public async Task<PickingStoreMutationResult> SaveMutationAsync(OrderItem item, long expectedVersion,
-        OrderPickingEvent pickingEvent, AuditEntry audit, CancellationToken ct)
+    public async Task<PickingStoreMutationResult> SaveMutationAsync(WarehouseOrderItem item, long expectedVersion,
+        WarehouseOrderPickingEvent pickingEvent, AuditEntry audit, CancellationToken ct)
     {
         dbContext.Entry(item).Property(x => x.Version).OriginalValue = expectedVersion;
-        dbContext.OrderPickingEvents.Add(pickingEvent);
+        dbContext.WarehouseOrderPickingEvents.Add(pickingEvent);
         dbContext.AuditEntries.Add(audit);
         try
         {

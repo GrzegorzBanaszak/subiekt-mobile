@@ -30,6 +30,25 @@ SubiektMobile.Infrastructure
     -> SubiektMobile.Domain
 ```
 
+## Proces dostaw VDA 4902
+
+Proces VDA rozdziela trzy dokumenty biznesowe:
+
+```text
+CustomerOrder -> WarehouseOrder -> Shipment
+```
+
+- `CustomerOrder` opisuje zapotrzebowanie przekazane przez klienta.
+- `WarehouseOrder` jest wewnętrzną instrukcją kompletacji i jedynym modelem obecnego
+  procesu magazynowego.
+- `Shipment` grupuje dane konkretnej dostawy, w tym numer dokumentu dostawy `N`, oraz
+  będzie właścicielem palet Master i opakowań Single.
+
+Etapy 1 i 1.1 definiują nazewnictwo oraz technicznie konsolidują `WarehouseOrder`.
+`CustomerOrder` powstaje w etapie 4, `Shipment` w etapie 5, opakowania Single w etapie 6,
+a zamknięcie palety Master i etykieta zbiorcza w etapie 7. Do tego czasu nie powstają
+równoległe encje ani endpointy tych dokumentów.
+
 ## Warstwy
 
 ### Domain
@@ -38,9 +57,10 @@ Warstwa domenowa zawiera pojęcia aplikacji, a nie nazwy tabel Subiekta.
 
 Przykładowe pojęcia domenowe:
 
-- `Order`,
-- `OrderItem`,
-- `OrderItemAssignment`,
+- `WarehouseOrder`,
+- `WarehouseOrderItem`,
+- `WarehouseOrderAssignee`,
+- `WarehouseOrderPickingEvent`,
 - `Pallet`,
 - `PalletItem`,
 - `PalletLabelData`.
@@ -163,12 +183,12 @@ Masa jednostkowa i masa pustej palety powinny używać typu dziesiętnego oraz j
 - wybór towaru do zamówienia,
 - sygnalizowanie brakującej masy jednostkowej.
 
-### Order Management
+### Warehouse Order Management
 
-- tworzenie i edycja wersji roboczej,
+- tworzenie i edycja wersji roboczej zamówienia magazynowego,
 - walidacja zamawiającego, terminu, pozycji i ilości,
 - udostępnianie zamówienia do kompletacji,
-- lista, szczegóły i historia zamówienia.
+- lista, szczegóły i historia zamówienia magazynowego.
 - usuwanie wyłącznie wersji roboczej z kontrolą wersji i wpisem audytowym.
 - wybór trybu kompletacji jednoosobowej albo współdzielonej oraz przypisanie aktywnych pracowników przed publikacją.
 

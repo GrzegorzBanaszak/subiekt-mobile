@@ -8,57 +8,57 @@ using SubiektMobile.Application.Products;
 namespace SubiektMobile.Api.Controllers;
 
 [ApiController]
-[Route("api/picking/orders")]
+[Route("api/picking/warehouse-orders")]
 public sealed class PickingController(ISender sender) : ControllerBase
 {
     [HttpGet]
-    [Authorize(Policy = Permissions.OrdersReadPublished)]
-    [ProducesResponseType(typeof(PagedResult<PickingOrderListItemDto>), StatusCodes.Status200OK)]
-    public Task<PagedResult<PickingOrderListItemDto>> List([FromQuery] int page = 1,
+    [Authorize(Policy = Permissions.WarehouseOrdersReadPublished)]
+    [ProducesResponseType(typeof(PagedResult<PickingWarehouseOrderListItemDto>), StatusCodes.Status200OK)]
+    public Task<PagedResult<PickingWarehouseOrderListItemDto>> List([FromQuery] int page = 1,
         [FromQuery] int pageSize = 20, [FromQuery] string? search = null,
-        [FromQuery] PickingOrderStatus? status = null, [FromQuery] DateOnly? dueDateFrom = null,
+        [FromQuery] PickingWarehouseOrderStatus? status = null, [FromQuery] DateOnly? dueDateFrom = null,
         [FromQuery] DateOnly? dueDateTo = null, [FromQuery] string? customer = null,
-        CancellationToken ct = default) => sender.Send(new ListPickingOrdersQuery(page, pageSize,
+        CancellationToken ct = default) => sender.Send(new ListPickingWarehouseOrdersQuery(page, pageSize,
             search, status, dueDateFrom, dueDateTo, customer), ct);
 
-    [HttpGet("{orderId:guid}")]
-    [Authorize(Policy = Permissions.OrdersReadPublished)]
-    [ProducesResponseType(typeof(PickingOrderDetailsDto), StatusCodes.Status200OK)]
+    [HttpGet("{warehouseOrderId:guid}")]
+    [Authorize(Policy = Permissions.WarehouseOrdersReadPublished)]
+    [ProducesResponseType(typeof(PickingWarehouseOrderDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<PickingOrderDetailsDto> Get(Guid orderId, CancellationToken ct) =>
-        sender.Send(new GetPickingOrderQuery(orderId), ct);
+    public Task<PickingWarehouseOrderDetailsDto> Get(Guid warehouseOrderId, CancellationToken ct) =>
+        sender.Send(new GetPickingWarehouseOrderQuery(warehouseOrderId), ct);
 
-    [HttpGet("{orderId:guid}/history")]
-    [Authorize(Policy = Permissions.OrdersReadPublished)]
+    [HttpGet("{warehouseOrderId:guid}/history")]
+    [Authorize(Policy = Permissions.WarehouseOrdersReadPublished)]
     [ProducesResponseType(typeof(PagedResult<PickingHistoryItemDto>), StatusCodes.Status200OK)]
-    public Task<PagedResult<PickingHistoryItemDto>> History(Guid orderId, [FromQuery] int page = 1,
+    public Task<PagedResult<PickingHistoryItemDto>> History(Guid warehouseOrderId, [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20, CancellationToken ct = default) =>
-        sender.Send(new ListPickingHistoryQuery(orderId, page, pageSize), ct);
+        sender.Send(new ListPickingHistoryQuery(warehouseOrderId, page, pageSize), ct);
 
-    [HttpPost("{orderId:guid}/items/{itemId:guid}/reserve")]
+    [HttpPost("{warehouseOrderId:guid}/items/{itemId:guid}/reserve")]
     [Authorize(Policy = Permissions.PickingExecute)]
-    public Task<PickingOrderDetailsDto> Reserve(Guid orderId, Guid itemId,
+    public Task<PickingWarehouseOrderDetailsDto> Reserve(Guid warehouseOrderId, Guid itemId,
         PickingMutationRequest request, CancellationToken ct) => sender.Send(
-            new ReservePickingItemCommand(orderId, itemId, request.OperationId, request.ItemVersion), ct);
+            new ReservePickingItemCommand(warehouseOrderId, itemId, request.OperationId, request.ItemVersion), ct);
 
-    [HttpPost("{orderId:guid}/items/{itemId:guid}/release")]
+    [HttpPost("{warehouseOrderId:guid}/items/{itemId:guid}/release")]
     [Authorize(Policy = Permissions.PickingExecute)]
-    public Task<PickingOrderDetailsDto> Release(Guid orderId, Guid itemId,
+    public Task<PickingWarehouseOrderDetailsDto> Release(Guid warehouseOrderId, Guid itemId,
         PickingMutationRequest request, CancellationToken ct) => sender.Send(
-            new ReleasePickingItemCommand(orderId, itemId, request.OperationId, request.ItemVersion), ct);
+            new ReleasePickingItemCommand(warehouseOrderId, itemId, request.OperationId, request.ItemVersion), ct);
 
-    [HttpPost("{orderId:guid}/items/{itemId:guid}/pack")]
+    [HttpPost("{warehouseOrderId:guid}/items/{itemId:guid}/pack")]
     [Authorize(Policy = Permissions.PickingExecute)]
-    public Task<PickingOrderDetailsDto> Pack(Guid orderId, Guid itemId,
+    public Task<PickingWarehouseOrderDetailsDto> Pack(Guid warehouseOrderId, Guid itemId,
         PackPickingItemRequest request, CancellationToken ct) => sender.Send(
-            new PackPickingItemCommand(orderId, itemId, request.OperationId, request.ItemVersion,
+            new PackPickingItemCommand(warehouseOrderId, itemId, request.OperationId, request.ItemVersion,
                 request.PackedQuantity), ct);
 
-    [HttpPost("{orderId:guid}/items/{itemId:guid}/undo-pack")]
+    [HttpPost("{warehouseOrderId:guid}/items/{itemId:guid}/undo-pack")]
     [Authorize(Policy = Permissions.PickingExecute)]
-    public Task<PickingOrderDetailsDto> UndoPack(Guid orderId, Guid itemId,
+    public Task<PickingWarehouseOrderDetailsDto> UndoPack(Guid warehouseOrderId, Guid itemId,
         PickingMutationRequest request, CancellationToken ct) => sender.Send(
-            new UndoPackedPickingItemCommand(orderId, itemId, request.OperationId, request.ItemVersion), ct);
+            new UndoPackedPickingItemCommand(warehouseOrderId, itemId, request.OperationId, request.ItemVersion), ct);
 }
 
 public sealed record PickingMutationRequest(Guid OperationId, long ItemVersion);

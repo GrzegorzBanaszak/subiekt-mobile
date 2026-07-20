@@ -1,13 +1,13 @@
 using SubiektMobile.Application.Identity;
-using SubiektMobile.Application.Orders;
+using SubiektMobile.Application.WarehouseOrders;
 using SubiektMobile.Application.Products;
 using SubiektMobile.Domain.Identity;
-using SubiektMobile.Domain.Orders;
+using SubiektMobile.Domain.WarehouseOrders;
 using Xunit;
 
 namespace SubiektMobile.Application.Tests;
 
-public sealed class CreateOrderUseCaseTests
+public sealed class CreateWarehouseOrderUseCaseTests
 {
     [Fact]
     public async Task New_order_and_all_items_are_saved_in_one_store_operation()
@@ -17,8 +17,8 @@ public sealed class CreateOrderUseCaseTests
         var organizationId = Guid.NewGuid();
         var actor = new CurrentActor(ActorKind.Administrator, actorId, null, "Admin",
             Permissions.For(ActorKind.Administrator), Guid.NewGuid());
-        var store = new OrderStoreStub();
-        var handler = new CreateOrderHandler(
+        var store = new WarehouseOrderStoreStub();
+        var handler = new CreateWarehouseOrderHandler(
             store,
             new NumberGeneratorStub(),
             new WorkforceStub(employeeId, organizationId),
@@ -27,12 +27,12 @@ public sealed class CreateOrderUseCaseTests
             new AuditEntryFactory(),
             TimeProvider.System);
 
-        var result = await handler.Handle(new CreateOrderCommand(
+        var result = await handler.Handle(new CreateWarehouseOrderCommand(
             "Klient",
             new DateOnly(2026, 7, 20),
             PickingMode.SingleAssignee,
             [employeeId],
-            [new CreateOrderItemInput(10, 2m), new CreateOrderItemInput(20, 3.5m)]),
+            [new CreateWarehouseOrderItemInput(10, 2m), new CreateWarehouseOrderItemInput(20, 3.5m)]),
             CancellationToken.None);
 
         Assert.Equal(2, result.Items.Count);
@@ -42,49 +42,49 @@ public sealed class CreateOrderUseCaseTests
         Assert.Equal(1, store.AddCalls);
     }
 
-    private sealed class OrderStoreStub : IOrderStore
+    private sealed class WarehouseOrderStoreStub : IWarehouseOrderStore
     {
-        public Order? AddedOrder { get; private set; }
+        public WarehouseOrder? AddedOrder { get; private set; }
         public int AddCalls { get; private set; }
 
-        public Task<OrderStoreResult> AddAsync(Order order, AuditEntry audit, CancellationToken cancellationToken)
+        public Task<WarehouseOrderStoreResult> AddAsync(WarehouseOrder order, AuditEntry audit, CancellationToken cancellationToken)
         {
             AddedOrder = order;
             AddCalls++;
-            return Task.FromResult(OrderStoreResult.Success);
+            return Task.FromResult(WarehouseOrderStoreResult.Success);
         }
 
-        public Task<PagedResult<OrderListItemDto>> ListAsync(int page, int pageSize, CancellationToken cancellationToken) =>
+        public Task<PagedResult<WarehouseOrderListItemDto>> ListAsync(int page, int pageSize, CancellationToken cancellationToken) =>
             throw new NotImplementedException();
-        public Task<Order?> FindAsync(Guid id, bool tracking, CancellationToken cancellationToken) =>
+        public Task<WarehouseOrder?> FindAsync(Guid id, bool tracking, CancellationToken cancellationToken) =>
             throw new NotImplementedException();
-        public Task<OrderStoreResult> SaveAsync(Order order, long expectedVersion, AuditEntry audit,
+        public Task<WarehouseOrderStoreResult> SaveAsync(WarehouseOrder order, long expectedVersion, AuditEntry audit,
             CancellationToken cancellationToken) => throw new NotImplementedException();
-        public Task<OrderStoreResult> DeleteAsync(Order order, long expectedVersion, AuditEntry audit,
+        public Task<WarehouseOrderStoreResult> DeleteAsync(WarehouseOrder order, long expectedVersion, AuditEntry audit,
             CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
-    private sealed class NumberGeneratorStub : IOrderNumberGenerator
+    private sealed class NumberGeneratorStub : IWarehouseOrderNumberGenerator
     {
         public string Generate(Guid orderId, DateTimeOffset now) => "ZAM-TEST";
     }
 
-    private sealed class WorkforceStub(Guid employeeId, Guid organizationId) : IOrderWorkforceDirectory
+    private sealed class WorkforceStub(Guid employeeId, Guid organizationId) : IWarehouseOrderWorkforceDirectory
     {
-        public Task<IReadOnlyList<OrderAssigneeCandidate>> ResolveActiveAsync(
+        public Task<IReadOnlyList<WarehouseOrderAssigneeCandidate>> ResolveActiveAsync(
             IReadOnlyCollection<Guid> employeeIds, CancellationToken cancellationToken) =>
-            Task.FromResult<IReadOnlyList<OrderAssigneeCandidate>>(
-                [new OrderAssigneeCandidate(employeeId, organizationId, "Magazynier")]);
+            Task.FromResult<IReadOnlyList<WarehouseOrderAssigneeCandidate>>(
+                [new WarehouseOrderAssigneeCandidate(employeeId, organizationId, "Magazynier")]);
 
-        public Task<IReadOnlyList<AvailableOrderAssigneeDto>> ListAvailableAsync(
+        public Task<IReadOnlyList<AvailableWarehouseOrderAssigneeDto>> ListAvailableAsync(
             CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     private sealed class ProductRepositoryStub : IProductReadRepository
     {
-        public Task<ProductOrderSnapshot?> GetProductOrderSnapshotAsync(int id,
-            CancellationToken cancellationToken) => Task.FromResult<ProductOrderSnapshot?>(
-                new ProductOrderSnapshot(id, $"Towar {id}", $"T-{id}", "szt.", 1m));
+        public Task<ProductWarehouseOrderSnapshot?> GetProductWarehouseOrderSnapshotAsync(int id,
+            CancellationToken cancellationToken) => Task.FromResult<ProductWarehouseOrderSnapshot?>(
+                new ProductWarehouseOrderSnapshot(id, $"Towar {id}", $"T-{id}", "szt.", 1m));
         public Task<PagedResult<ProductListItemDto>> GetProductsAsync(string? search, int page, int pageSize,
             CancellationToken cancellationToken) => throw new NotImplementedException();
         public Task<ProductDetailsDto?> GetProductDetailsAsync(int id, CancellationToken cancellationToken) =>

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useI18n } from '../../../app/i18n/i18nContext'
 import { AppIcon } from '../../../shared/components/AppIcon'
-import { getPickingOrders, type PickingFilters, type PickingOrderListItem } from '../api/pickingApi'
+import { getPickingWarehouseOrders, type PickingFilters, type PickingWarehouseOrderListItem } from '../api/pickingApi'
 import { enumIs, formatDate, pickingLocale, pickingStatusClass, pickingStatusKey } from '../pickingFormat'
 
 const pageSize = 20
@@ -27,8 +27,8 @@ export function PickingOrdersPage() {
     dueDateTo: dueDateTo || undefined,
   }
   const query = useQuery({
-    queryKey: ['picking', 'orders', filters],
-    queryFn: () => getPickingOrders(filters),
+    queryKey: ['picking', 'warehouse-orders', filters],
+    queryFn: () => getPickingWarehouseOrders(filters),
     placeholderData: keepPreviousData,
     refetchOnMount: 'always',
   })
@@ -69,7 +69,7 @@ export function PickingOrdersPage() {
   </section>
 }
 
-function OrderRow({ order, open }: { order: PickingOrderListItem; open: () => void }) {
+function OrderRow({ order, open }: { order: PickingWarehouseOrderListItem; open: () => void }) {
   const { language, t } = useI18n()
   const overdue = isOverdue(order)
   return <tr tabIndex={0} onClick={open} onKeyDown={(e) => e.key === 'Enter' && open()} className={`cursor-pointer hover:bg-slate-50 ${overdue ? 'bg-red-50/60' : ''}`}>
@@ -78,13 +78,13 @@ function OrderRow({ order, open }: { order: PickingOrderListItem; open: () => vo
   </tr>
 }
 
-function OrderCard({ order, open }: { order: PickingOrderListItem; open: () => void }) {
+function OrderCard({ order, open }: { order: PickingWarehouseOrderListItem; open: () => void }) {
   const { language, t } = useI18n()
   const overdue = isOverdue(order)
   return <button onClick={open} className={`rounded-xl border p-4 text-left shadow-sm ${overdue ? 'border-red-300 bg-red-50' : 'border-slate-300 bg-white'}`}><div className="flex items-start justify-between gap-3"><div><strong className="inline-flex items-center gap-2">{order.number}{order.isAssignedToCurrentUser && <span aria-label={t('picking.list.assigned')} className="text-blue-900"><AppIcon className="size-5" name="personCheck" /></span>}</strong><p className="mt-1 text-sm text-slate-600">{order.customerName}</p></div><Status value={order.pickingStatus} /></div><div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-200 pt-3 text-sm"><div><span className="block text-slate-500">{t('picking.list.dueDate')}</span><span className={overdue ? 'font-semibold text-red-700' : ''}>{formatDate(order.dueDate, pickingLocale(language))} {overdue && `— ${t('picking.list.overdueSuffix')}`}</span></div><div><span className="block text-slate-500">{t('picking.list.progress')}</span>{order.completedItemCount}/{order.totalItemCount}</div></div><div className="mt-3"><Progress order={order} /></div></button>
 }
 
 function Status({ value }: { value: number | string }) { const { t } = useI18n(); return <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${pickingStatusClass(value)}`}>{t(pickingStatusKey(value))}</span> }
-function Progress({ order }: { order: PickingOrderListItem }) { return <div className="flex min-w-32 items-center gap-3"><div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200"><span className={`block h-full ${enumIs(order.pickingStatus, 2, 'Completed') ? 'bg-emerald-700' : 'bg-blue-900'}`} style={{ width: `${order.progressPercent}%` }} /></div><span className="text-sm">{order.progressPercent}%</span></div> }
-function isOverdue(order: PickingOrderListItem) { return order.dueDate < new Date().toISOString().slice(0, 10) && !enumIs(order.pickingStatus, 2, 'Completed') }
+function Progress({ order }: { order: PickingWarehouseOrderListItem }) { return <div className="flex min-w-32 items-center gap-3"><div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200"><span className={`block h-full ${enumIs(order.pickingStatus, 2, 'Completed') ? 'bg-emerald-700' : 'bg-blue-900'}`} style={{ width: `${order.progressPercent}%` }} /></div><span className="text-sm">{order.progressPercent}%</span></div> }
+function isOverdue(order: PickingWarehouseOrderListItem) { return order.dueDate < new Date().toISOString().slice(0, 10) && !enumIs(order.pickingStatus, 2, 'Completed') }
 function ListState({ text, error, retry }: { text: string; error?: boolean; retry?: () => void }) { const { t } = useI18n(); return <div role={error ? 'alert' : 'status'} className={`grid min-h-64 place-items-center rounded-xl border p-6 text-center ${error ? 'border-red-300 bg-red-50 text-red-900' : 'border-slate-300 bg-white text-slate-600'}`}><div><p className="font-semibold">{text}</p>{retry && <button className="mt-4 rounded-lg bg-red-800 px-4 py-2 font-semibold text-white" onClick={retry}>{t('picking.retry')}</button>}</div></div> }

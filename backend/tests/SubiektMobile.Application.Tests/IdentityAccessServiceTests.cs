@@ -18,7 +18,7 @@ public sealed class IdentityAccessServiceTests
         Assert.Contains(Permissions.PalletsManage, permissions);
         Assert.DoesNotContain(Permissions.IdentityManage, permissions);
         Assert.DoesNotContain(Permissions.AdministratorsManage, permissions);
-        Assert.DoesNotContain(Permissions.OrdersManage, permissions);
+        Assert.DoesNotContain(Permissions.WarehouseOrdersManage, permissions);
     }
 
     [Fact]
