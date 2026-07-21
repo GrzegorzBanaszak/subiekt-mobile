@@ -92,3 +92,21 @@ public sealed class SlStawkaVat
     public decimal? Stawka { get; set; }
     public string? Symbol { get; set; }
 }
+
+public sealed class KhKontrahent
+{
+    public int Id { get; set; }
+    public string? Symbol { get; set; }
+    public int? Rodzaj { get; set; }
+    public bool? Zablokowany { get; set; }
+}
+
+public sealed class AdrEwid
+{
+    public int Id { get; set; }
+    public int ObjectId { get; set; }
+    public int AddressType { get; set; }
+    public string? Name { get; set; }
+    public string? FullName { get; set; }
+    public string? Nip { get; set; }
+}

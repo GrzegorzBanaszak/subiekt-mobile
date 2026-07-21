@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SubiektMobile.Domain.Identity;
 using SubiektMobile.Domain.WarehouseOrders;
+using SubiektMobile.Domain.Customers;
 using SubiektMobile.Infrastructure.Persistence.Application.Entities;
 
 namespace SubiektMobile.Infrastructure.Persistence.Application;
@@ -23,6 +24,9 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<WarehouseOrderPickingEvent> WarehouseOrderPickingEvents => Set<WarehouseOrderPickingEvent>();
     public DbSet<Pallet> Pallets => Set<Pallet>();
     public DbSet<PalletItem> PalletItems => Set<PalletItem>();
+    public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<CustomerSite> CustomerSites => Set<CustomerSite>();
+    public DbSet<CustomerLogisticsProfile> CustomerLogisticsProfiles => Set<CustomerLogisticsProfile>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

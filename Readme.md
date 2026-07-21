@@ -322,6 +322,12 @@ Widoki zarządzania zamówieniami magazynowymi są dostępne dla użytkowników 
 oraz podgląd szczegółów zamówienia. Stare adresy `/orders` są przekierowywane po stronie
 klienta wyłącznie dla zachowania istniejących zakładek.
 
+Moduł klientów VDA 4902 jest dostępny dla administratorów z uprawnieniem
+`customers.manage` pod `/customers`. Pozwala tworzyć i aktywować klientów, wiązać ich
+z kontrahentem wyszukanym w Subiekcie GT oraz prowadzić wiele zakładów odbiorczych z
+profilem logistycznym (adres, dock, numer dostawcy V, wymagania pakowania i VDA 4902).
+Odczyt kontrahentów z Subiekta jest wyłącznie odczytem.
+
 Typy klienta API można odświeżyć przy uruchomionym backendzie:
 
 ```powershell

@@ -13,6 +13,8 @@ using SubiektMobile.Application.Picking;
 using SubiektMobile.Infrastructure.Picking;
 using SubiektMobile.Application.Pallets;
 using SubiektMobile.Infrastructure.Pallets;
+using SubiektMobile.Application.Customers;
+using SubiektMobile.Infrastructure.Customers;
 
 namespace SubiektMobile.Infrastructure;
 
@@ -41,6 +43,8 @@ public static class DependencyInjection
         services.AddScoped<IWarehouseOrderWorkforceDirectory, WarehouseOrderWorkforceDirectory>();
         services.AddScoped<IPickingStore, PickingStore>();
         services.AddScoped<IPalletStore, PalletStore>();
+        services.AddScoped<ICustomerStore, CustomerStore>();
+        services.AddScoped<ICustomerContractorDirectory, CustomerContractorDirectory>();
         services.AddSingleton<IPalletLabelPdfRenderer, PalletLabelPdfRenderer>();
         services.AddSingleton<IPasswordService, IdentityPasswordService>();
         services.AddSingleton<ITemporaryPasswordGenerator, TemporaryPasswordGenerator>();

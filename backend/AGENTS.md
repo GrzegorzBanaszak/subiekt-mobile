@@ -6,7 +6,7 @@ Instrukcje dotyczą wszystkich zmian w katalogu `backend/`.
 
 Backend jest aplikacją ASP.NET Core opartą o Clean Architecture i integrację odczytową z bazą Subiekta GT.
 
-Z Subiekta pobierany jest katalog towarów. Zamówienia, rezerwacje pozycji, palety i audyt są danymi aplikacji i są przechowywane w osobnej bazie PostgreSQL.
+Z Subiekta pobierany jest katalog towarów oraz — wyłącznie dla opcjonalnego powiązania klienta — minimalny katalog kontrahentów. Zamówienia, rezerwacje pozycji, palety i audyt są danymi aplikacji i są przechowywane w osobnej bazie PostgreSQL.
 
 ## Warstwy
 
@@ -63,7 +63,7 @@ Odpowiada za:
 
 - Domyślnie baza Subiekta GT jest źródłem odczytu.
 - Nie zapisuj do tabel Subiekta bez zaakceptowanej decyzji architektonicznej.
-- W aktualnym zakresie z Subiekta odczytuj wyłącznie dane towarowe wymagane przez aplikację.
+- W aktualnym zakresie z Subiekta odczytuj wyłącznie dane towarowe oraz minimalne dane kontrahenta potrzebne do opcjonalnego powiązania klienta.
 - Zamówienia i przebieg kompletacji zapisuj przez `ApplicationDbContext` w PostgreSQL.
 - Encje EF Core powinny odwzorowywać strukturę bazy, ale nie powinny być modelem domenowym aplikacji.
 - Nie zwracaj encji Subiekta bezpośrednio z API.

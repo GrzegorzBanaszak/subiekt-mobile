@@ -854,6 +854,505 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/customers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    isActive?: boolean;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfCustomerListItemDto"];
+                        "application/json": components["schemas"]["PagedResultOfCustomerListItemDto"];
+                        "text/json": components["schemas"]["PagedResultOfCustomerListItemDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateCustomerRequest"];
+                    "text/json": components["schemas"]["CreateCustomerRequest"];
+                    "application/*+json": components["schemas"]["CreateCustomerRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerDto"];
+                        "application/json": components["schemas"]["CustomerDto"];
+                        "text/json": components["schemas"]["CustomerDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerDto"];
+                        "application/json": components["schemas"]["CustomerDto"];
+                        "text/json": components["schemas"]["CustomerDto"];
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateCustomerRequest"];
+                    "text/json": components["schemas"]["UpdateCustomerRequest"];
+                    "application/*+json": components["schemas"]["UpdateCustomerRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerDto"];
+                        "application/json": components["schemas"]["CustomerDto"];
+                        "text/json": components["schemas"]["CustomerDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SetCustomerActiveRequest"];
+                    "text/json": components["schemas"]["SetCustomerActiveRequest"];
+                    "application/*+json": components["schemas"]["SetCustomerActiveRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerDto"];
+                        "application/json": components["schemas"]["CustomerDto"];
+                        "text/json": components["schemas"]["CustomerDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/sites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfCustomerSiteListItemDto"];
+                        "application/json": components["schemas"]["PagedResultOfCustomerSiteListItemDto"];
+                        "text/json": components["schemas"]["PagedResultOfCustomerSiteListItemDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateCustomerSiteRequest"];
+                    "text/json": components["schemas"]["CreateCustomerSiteRequest"];
+                    "application/*+json": components["schemas"]["CreateCustomerSiteRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerSiteDto"];
+                        "application/json": components["schemas"]["CustomerSiteDto"];
+                        "text/json": components["schemas"]["CustomerSiteDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/sites/{siteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                    siteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerSiteDto"];
+                        "application/json": components["schemas"]["CustomerSiteDto"];
+                        "text/json": components["schemas"]["CustomerSiteDto"];
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                    siteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateCustomerSiteRequest"];
+                    "text/json": components["schemas"]["UpdateCustomerSiteRequest"];
+                    "application/*+json": components["schemas"]["UpdateCustomerSiteRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerSiteDto"];
+                        "application/json": components["schemas"]["CustomerSiteDto"];
+                        "text/json": components["schemas"]["CustomerSiteDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/sites/{siteId}/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                    siteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SetCustomerSiteActiveRequest"];
+                    "text/json": components["schemas"]["SetCustomerSiteActiveRequest"];
+                    "application/*+json": components["schemas"]["SetCustomerSiteActiveRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerSiteDto"];
+                        "application/json": components["schemas"]["CustomerSiteDto"];
+                        "text/json": components["schemas"]["CustomerSiteDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/sites/{siteId}/logistics-profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                    siteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ConfigureCustomerSiteLogisticsProfileRequest"];
+                    "text/json": components["schemas"]["ConfigureCustomerSiteLogisticsProfileRequest"];
+                    "application/*+json": components["schemas"]["ConfigureCustomerSiteLogisticsProfileRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerSiteDto"];
+                        "application/json": components["schemas"]["CustomerSiteDto"];
+                        "text/json": components["schemas"]["CustomerSiteDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfCustomerActivityDto"];
+                        "application/json": components["schemas"]["PagedResultOfCustomerActivityDto"];
+                        "text/json": components["schemas"]["PagedResultOfCustomerActivityDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customer-contractors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfCustomerContractorDto"];
+                        "application/json": components["schemas"]["PagedResultOfCustomerContractorDto"];
+                        "text/json": components["schemas"]["PagedResultOfCustomerContractorDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/Diagnostics/db-debug": {
         parameters: {
             query?: never;
@@ -880,387 +1379,6 @@ export interface paths {
             };
         };
         put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/warehouse-orders": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: {
-            parameters: {
-                query?: {
-                    page?: number | string;
-                    pageSize?: number | string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["PagedResultOfWarehouseOrderListItemDto"];
-                        "application/json": components["schemas"]["PagedResultOfWarehouseOrderListItemDto"];
-                        "text/json": components["schemas"]["PagedResultOfWarehouseOrderListItemDto"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["CreateWarehouseOrderRequest"];
-                    "text/json": components["schemas"]["CreateWarehouseOrderRequest"];
-                    "application/*+json": components["schemas"]["CreateWarehouseOrderRequest"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["WarehouseOrderDto"];
-                        "application/json": components["schemas"]["WarehouseOrderDto"];
-                        "text/json": components["schemas"]["WarehouseOrderDto"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/warehouse-orders/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["WarehouseOrderDto"];
-                        "application/json": components["schemas"]["WarehouseOrderDto"];
-                        "text/json": components["schemas"]["WarehouseOrderDto"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["ProblemDetails"];
-                        "application/json": components["schemas"]["ProblemDetails"];
-                        "text/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdateWarehouseOrderRequest"];
-                    "text/json": components["schemas"]["UpdateWarehouseOrderRequest"];
-                    "application/*+json": components["schemas"]["UpdateWarehouseOrderRequest"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["WarehouseOrderDto"];
-                        "application/json": components["schemas"]["WarehouseOrderDto"];
-                        "text/json": components["schemas"]["WarehouseOrderDto"];
-                    };
-                };
-            };
-        };
-        post?: never;
-        delete: {
-            parameters: {
-                query?: {
-                    version?: number | string;
-                };
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/warehouse-orders/{id}/items": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["AddWarehouseOrderItemRequest"];
-                    "text/json": components["schemas"]["AddWarehouseOrderItemRequest"];
-                    "application/*+json": components["schemas"]["AddWarehouseOrderItemRequest"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["WarehouseOrderDto"];
-                        "application/json": components["schemas"]["WarehouseOrderDto"];
-                        "text/json": components["schemas"]["WarehouseOrderDto"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/warehouse-orders/{id}/items/{itemId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: {
-                    version?: number | string;
-                };
-                header?: never;
-                path: {
-                    id: string;
-                    itemId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["WarehouseOrderDto"];
-                        "application/json": components["schemas"]["WarehouseOrderDto"];
-                        "text/json": components["schemas"]["WarehouseOrderDto"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/warehouse-orders/{id}/publish": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["VersionRequest"];
-                    "text/json": components["schemas"]["VersionRequest"];
-                    "application/*+json": components["schemas"]["VersionRequest"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["WarehouseOrderDto"];
-                        "application/json": components["schemas"]["WarehouseOrderDto"];
-                        "text/json": components["schemas"]["WarehouseOrderDto"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/warehouse-orders/available-assignees": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["AvailableWarehouseOrderAssigneeDto"][];
-                        "application/json": components["schemas"]["AvailableWarehouseOrderAssigneeDto"][];
-                        "text/json": components["schemas"]["AvailableWarehouseOrderAssigneeDto"][];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/warehouse-orders/{id}/picking-configuration": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["ConfigureWarehouseOrderPickingRequest"];
-                    "text/json": components["schemas"]["ConfigureWarehouseOrderPickingRequest"];
-                    "application/*+json": components["schemas"]["ConfigureWarehouseOrderPickingRequest"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["WarehouseOrderDto"];
-                        "application/json": components["schemas"]["WarehouseOrderDto"];
-                        "text/json": components["schemas"]["WarehouseOrderDto"];
-                    };
-                };
-            };
-        };
         post?: never;
         delete?: never;
         options?: never;
@@ -2063,6 +2181,387 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/warehouse-orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfWarehouseOrderListItemDto"];
+                        "application/json": components["schemas"]["PagedResultOfWarehouseOrderListItemDto"];
+                        "text/json": components["schemas"]["PagedResultOfWarehouseOrderListItemDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateWarehouseOrderRequest"];
+                    "text/json": components["schemas"]["CreateWarehouseOrderRequest"];
+                    "application/*+json": components["schemas"]["CreateWarehouseOrderRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/warehouse-orders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateWarehouseOrderRequest"];
+                    "text/json": components["schemas"]["UpdateWarehouseOrderRequest"];
+                    "application/*+json": components["schemas"]["UpdateWarehouseOrderRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete: {
+            parameters: {
+                query?: {
+                    version?: number | string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/warehouse-orders/{id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AddWarehouseOrderItemRequest"];
+                    "text/json": components["schemas"]["AddWarehouseOrderItemRequest"];
+                    "application/*+json": components["schemas"]["AddWarehouseOrderItemRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/warehouse-orders/{id}/items/{itemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: {
+                    version?: number | string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                    itemId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/warehouse-orders/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["VersionRequest"];
+                    "text/json": components["schemas"]["VersionRequest"];
+                    "application/*+json": components["schemas"]["VersionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/warehouse-orders/available-assignees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AvailableWarehouseOrderAssigneeDto"][];
+                        "application/json": components["schemas"]["AvailableWarehouseOrderAssigneeDto"][];
+                        "text/json": components["schemas"]["AvailableWarehouseOrderAssigneeDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/warehouse-orders/{id}/picking-configuration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ConfigureWarehouseOrderPickingRequest"];
+                    "text/json": components["schemas"]["ConfigureWarehouseOrderPickingRequest"];
+                    "application/*+json": components["schemas"]["ConfigureWarehouseOrderPickingRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["WarehouseOrderDto"];
+                        "application/json": components["schemas"]["WarehouseOrderDto"];
+                        "text/json": components["schemas"]["WarehouseOrderDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2110,6 +2609,25 @@ export interface components {
             currentPassword: string;
             newPassword: string;
         };
+        ConfigureCustomerSiteLogisticsProfileRequest: {
+            recipientName: null | string;
+            street: null | string;
+            postalCode: null | string;
+            city: null | string;
+            defaultDock: null | string;
+            receivingHours: null | string;
+            supplierNumber: null | string;
+            defaultPalletType: null | string;
+            /** Format: double */
+            maximumPalletHeightCm: null | number | string;
+            requiresStretchFilm: boolean;
+            requiresStraps: boolean;
+            requiresCornerProtectors: boolean;
+            loadSecuringNotes: null | string;
+            labelProfile: null | components["schemas"]["VdaLabelProfile"];
+            /** Format: int64 */
+            version: number | string;
+        };
         ConfigureWarehouseOrderPickingRequest: {
             pickingMode: components["schemas"]["PickingMode"];
             employeeIds: string[];
@@ -2119,6 +2637,24 @@ export interface components {
         CreateAdministratorRequest: {
             username: string;
             displayName: string;
+        };
+        CreateCustomerRequest: {
+            code: string;
+            name: string;
+            taxId: null | string;
+            /** Format: int32 */
+            subiektContractorId: null | number | string;
+            internalNotes: null | string;
+            /** @default true */
+            isActive: boolean;
+        };
+        CreateCustomerSiteRequest: {
+            code: string;
+            name: string;
+            countryCode: string;
+            isActive: boolean;
+            /** Format: int64 */
+            customerVersion: number | string;
         };
         CreatedAdministratorDto: {
             administrator: components["schemas"]["AdministratorDto"];
@@ -2183,6 +2719,108 @@ export interface components {
             expiresAtUtc: string;
             actor: components["schemas"]["CurrentActor"];
         };
+        CustomerActivityDto: {
+            /** Format: uuid */
+            id: string;
+            action: string;
+            targetType: string;
+            /** Format: uuid */
+            targetId: null | string;
+            actorKind: components["schemas"]["ActorKind"];
+            actorDisplayName: string;
+            /** Format: date-time */
+            occurredAtUtc: string;
+        };
+        CustomerContractorDto: {
+            /** Format: int32 */
+            id: number | string;
+            symbol: string;
+            name: string;
+            taxId: null | string;
+        };
+        CustomerDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            taxId: null | string;
+            /** Format: int32 */
+            subiektContractorId: null | number | string;
+            isActive: boolean;
+            internalNotes: null | string;
+            /** Format: date-time */
+            createdAtUtc: string;
+            /** Format: date-time */
+            updatedAtUtc: string;
+            /** Format: int64 */
+            version: number | string;
+            sites: components["schemas"]["CustomerSiteListItemDto"][];
+        };
+        CustomerListItemDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            taxId: null | string;
+            isActive: boolean;
+            /** Format: int32 */
+            siteCount: number | string;
+            /** Format: int32 */
+            completeProfileCount: number | string;
+            /** Format: date-time */
+            updatedAtUtc: string;
+            /** Format: int64 */
+            version: number | string;
+        };
+        CustomerSiteDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            customerId: string;
+            code: string;
+            name: string;
+            countryCode: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAtUtc: string;
+            /** Format: date-time */
+            updatedAtUtc: string;
+            /** Format: int64 */
+            version: number | string;
+            logisticsProfile: null | components["schemas"]["CustomerSiteLogisticsProfileDto"];
+        };
+        CustomerSiteListItemDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            countryCode: string;
+            isActive: boolean;
+            defaultDock: null | string;
+            supplierNumber: null | string;
+            labelProfile: null | components["schemas"]["VdaLabelProfile"];
+            hasCompleteProfile: boolean;
+            /** Format: int64 */
+            version: number | string;
+        };
+        CustomerSiteLogisticsProfileDto: {
+            recipientName: null | string;
+            street: null | string;
+            postalCode: null | string;
+            city: null | string;
+            defaultDock: null | string;
+            receivingHours: null | string;
+            supplierNumber: null | string;
+            defaultPalletType: null | string;
+            /** Format: double */
+            maximumPalletHeightCm: null | number | string;
+            requiresStretchFilm: boolean;
+            requiresStraps: boolean;
+            requiresCornerProtectors: boolean;
+            loadSecuringNotes: null | string;
+            labelProfile: null | components["schemas"]["VdaLabelProfile"];
+            isComplete: boolean;
+        };
         EmployeeDto: {
             /** Format: uuid */
             id: string;
@@ -2231,6 +2869,50 @@ export interface components {
         };
         PagedResponseOfProductListItemResponse: {
             items: components["schemas"]["ProductListItemResponse"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PagedResultOfCustomerActivityDto: {
+            items: components["schemas"]["CustomerActivityDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PagedResultOfCustomerContractorDto: {
+            items: components["schemas"]["CustomerContractorDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PagedResultOfCustomerListItemDto: {
+            items: components["schemas"]["CustomerListItemDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PagedResultOfCustomerSiteListItemDto: {
+            items: components["schemas"]["CustomerSiteListItemDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -2618,6 +3300,16 @@ export interface components {
         SetActiveRequest: {
             isActive: boolean;
         };
+        SetCustomerActiveRequest: {
+            isActive: boolean;
+            /** Format: int64 */
+            version: number | string;
+        };
+        SetCustomerSiteActiveRequest: {
+            isActive: boolean;
+            /** Format: int64 */
+            version: number | string;
+        };
         StringSegment: {
             buffer?: null | string;
             /** Format: int32 */
@@ -2630,6 +3322,23 @@ export interface components {
         UpdateAdministratorRequest: {
             username: string;
             displayName: string;
+        };
+        UpdateCustomerRequest: {
+            code: string;
+            name: string;
+            taxId: null | string;
+            /** Format: int32 */
+            subiektContractorId: null | number | string;
+            internalNotes: null | string;
+            /** Format: int64 */
+            version: number | string;
+        };
+        UpdateCustomerSiteRequest: {
+            code: string;
+            name: string;
+            countryCode: string;
+            /** Format: int64 */
+            version: number | string;
         };
         UpdateEmployeeRequest: {
             code: string;
@@ -2657,6 +3366,7 @@ export interface components {
                 [key: string]: string[];
             };
         };
+        VdaLabelProfile: number;
         VersionRequest: {
             /** Format: int64 */
             version: number | string;

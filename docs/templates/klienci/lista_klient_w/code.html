@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lista klientów</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#b5c4ff",
+                      "surface": "#f8f9fa",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#444651",
+                      "surface-container": "#efedf4",
+                      "primary-container": "#00236f",
+                      "secondary-container": "#9af1c6",
+                      "tertiary-container": "#442100",
+                      "inverse-surface": "#2f3035",
+                      "primary": "#001142",
+                      "surface-tint": "#425aa6",
+                      "on-primary-fixed": "#00164e",
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#778ede",
+                      "on-surface": "#1a1b20",
+                      "secondary-fixed-dim": "#81d8ae",
+                      "inverse-primary": "#b5c4ff",
+                      "tertiary-fixed-dim": "#f7ba8a",
+                      "secondary-fixed": "#9df4c9",
+                      "secondary": "#006c4a",
+                      "tertiary-fixed": "#ffdcc3",
+                      "outline": "#757682",
+                      "surface-container-high": "#e9e7ee",
+                      "tertiary": "#442100",
+                      "on-background": "#1a1b20",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c5c5d3",
+                      "surface-dim": "#dad9e0",
+                      "surface-bright": "#faf8ff",
+                      "on-primary-fixed-variant": "#29428c",
+                      "on-error-container": "#93000a",
+                      "inverse-on-surface": "#f1f0f7",
+                      "background": "#faf8ff",
+                      "on-tertiary-fixed-variant": "#663d17",
+                      "on-secondary-container": "#0b714e",
+                      "primary-fixed": "#dce1ff",
+                      "surface-container-highest": "#e3e1e9",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed": "#2f1500",
+                      "on-secondary-fixed": "#002114",
+                      "on-secondary-fixed-variant": "#005237",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#bc865a",
+                      "error": "#ba1a1a",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#e3e1e9",
+                      "surface-container-low": "#f4f3fa"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "sm": "12px",
+                      "md": "16px",
+                      "base": "4px",
+                      "lg": "24px",
+                      "xs": "8px",
+                      "xl": "32px",
+                      "touch-target": "48px"
+              },
+              "fontFamily": {
+                      "headline-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased">
+<!-- SideNavBar -->
+<nav aria-label="Główna nawigacja" class="hidden md:flex bg-surface-container fixed left-0 top-0 h-full w-[280px] flex-col py-lg gap-base z-20">
+<div class="px-lg pb-md mb-sm flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden flex-shrink-0">
+<img alt="Administrator Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a system administrator in a well-lit, modern corporate office environment. Bright, even lighting. The background features subtle, out-of-focus glass partitions and neutral corporate tones. The overall aesthetic is clean, modern, and reliable, suitable for a corporate application avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAd9g2zAEglW67o5F9lcxHt-pjvZwGg453SlTr-zCKyS3AeDKqAETnXU7W-bxVo8sk6VvXjEKvBPexushhQn6bFo-tAOzybtgR80aNfUWPq9TF0aybS9pGnNWvx2bv_o0Z1TU7TKdYnAdOm5rPg3CZmaJdRmnqyXD4Elg_LW8-gN8-X6aUyCF36CJPTj1ZOglhofOaG7hPe8nwMFaQA0Tf5LW3dUH2oN6_bWhl3qRGuJuOAU8f-MvZ1g"/>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">Administrator</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Administrator</p>
+</div>
+</div>
+<ul class="flex-1 flex flex-col gap-base overflow-y-auto w-full">
+<li>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-md font-label-md">Towary</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">shopping_cart</span>
+<span class="text-label-md font-label-md">Zamówienia magazynowe</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">checklist</span>
+<span class="text-label-md font-label-md">Kompletacja</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">pallet</span>
+<span class="text-label-md font-label-md">Palety</span>
+</a>
+</li>
+<!-- Active State: Klienci -->
+<li>
+<a aria-current="page" class="bg-secondary-container text-on-secondary-container rounded-xl font-bold flex items-center px-md py-sm mx-xs transition-colors duration-200 gap-sm" href="#">
+<span aria-hidden="true" class="material-symbols-outlined fill">groups</span>
+<span class="text-label-md font-label-md">Klienci</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">receipt_long</span>
+<span class="text-label-md font-label-md">Zamówienia klientów</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">local_shipping</span>
+<span class="text-label-md font-label-md">Wysyłki</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Administracja</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- TopNavBar -->
+<header class="hidden md:flex bg-surface fixed top-0 right-0 left-[280px] h-touch-target border-b border-outline-variant justify-between items-center px-xl ml-[280px] w-[calc(100%-280px)] z-10">
+<div class="flex items-center gap-md">
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface">Klienci</h1>
+</div>
+<div class="flex items-center gap-sm">
+<button aria-label="Język" class="flex items-center justify-center w-touch-target h-touch-target rounded-full hover:bg-surface-container transition-colors duration-200 text-on-surface-variant">
+<span aria-hidden="true" class="material-symbols-outlined">language</span>
+</button>
+<span class="text-label-md font-label-md text-on-surface-variant pr-md">Polski</span>
+<button class="flex items-center gap-xs px-md h-[40px] rounded-lg hover:bg-surface-container transition-colors duration-200 text-on-surface-variant">
+<span aria-hidden="true" class="material-symbols-outlined">logout</span>
+<span class="text-label-md font-label-md">Wyloguj</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="md:ml-[280px] md:pt-[48px] p-md md:p-lg min-h-screen">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg mt-md">
+<div>
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-on-surface mb-xs">Lista klientów</h1>
+<p class="text-body-md font-body-md text-on-surface-variant">Zarządzaj bazą klientów i ich zakładami odbiorczymi.</p>
+</div>
+<div class="flex items-center gap-sm mt-md md:mt-0 w-full md:w-auto">
+<div class="relative flex-1 md:w-[320px]">
+<span aria-hidden="true" class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full h-touch-target pl-[40px] pr-md rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder-on-surface-variant transition-colors" placeholder="Szukaj klienta po nazwie, kodzie lub NIP..." type="text"/>
+</div>
+<button class="flex items-center justify-center h-touch-target px-md rounded-lg bg-surface-container-low text-primary border border-outline-variant hover:bg-surface-container transition-colors gap-xs flex-shrink-0">
+<span aria-hidden="true" class="material-symbols-outlined">filter_list</span>
+<span class="text-label-md font-label-md hidden sm:inline">Filtruj</span>
+</button>
+<button class="flex items-center justify-center h-touch-target px-md rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors gap-xs flex-shrink-0">
+<span aria-hidden="true" class="material-symbols-outlined">add</span>
+<span class="text-label-md font-label-md whitespace-nowrap">Dodaj klienta</span>
+</button>
+</div>
+</div>
+<!-- Data Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<div class="px-lg py-md border-b border-surface-variant bg-surface-container-low flex justify-between items-center">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Wyniki (4)</span>
+<div class="flex gap-sm">
+<button aria-label="Odśwież" class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+</button>
+<button aria-label="Więcej opcji" class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-variant text-label-md font-label-md text-on-surface-variant bg-surface-bright">
+<th class="py-sm px-lg font-semibold w-[120px]">Kod</th>
+<th class="py-sm px-lg font-semibold">Nazwa klienta</th>
+<th class="py-sm px-lg font-semibold text-right w-[150px]">Zakłady odbiorcze</th>
+<th class="py-sm px-lg font-semibold text-right w-[150px]">Profile kompletne</th>
+<th class="py-sm px-lg font-semibold w-[180px]">Status</th>
+<th class="py-sm px-lg font-semibold w-[80px] text-center">Akcje</th>
+</tr>
+</thead>
+<tbody class="text-body-md font-body-md divide-y divide-surface-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-md px-lg font-medium text-on-surface">CLI-001</td>
+<td class="py-md px-lg">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim flex items-center justify-center text-on-primary-fixed text-label-sm font-bold">AG</div>
+<span class="text-on-surface">Agro-Max Sp. z o.o.</span>
+</div>
+</td>
+<td class="py-md px-lg text-right text-on-surface-variant">3</td>
+<td class="py-md px-lg text-right">
+<span class="inline-flex items-center px-xs py-1 rounded bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">3/3</span>
+</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-label-sm font-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                    Aktywny
+                                </span>
+</td>
+<td class="py-md px-lg text-center">
+<button aria-label="Edytuj CLI-001" class="p-xs rounded-full hover:bg-surface-container-highest text-on-surface-variant transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-md px-lg font-medium text-on-surface">CLI-002</td>
+<td class="py-md px-lg">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed-dim flex items-center justify-center text-on-tertiary-fixed text-label-sm font-bold">KR</div>
+<span class="text-on-surface">Kramp</span>
+</div>
+</td>
+<td class="py-md px-lg text-right text-on-surface-variant">15</td>
+<td class="py-md px-lg text-right">
+<span class="inline-flex items-center px-xs py-1 rounded bg-error-container text-on-error-container text-label-sm font-label-sm">14/15</span>
+</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-label-sm font-label-sm">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+                                    Wymaga uwagi
+                                </span>
+</td>
+<td class="py-md px-lg text-center">
+<button aria-label="Edytuj CLI-002" class="p-xs rounded-full hover:bg-surface-container-highest text-on-surface-variant transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group bg-surface-bright/50">
+<td class="py-md px-lg font-medium text-on-surface-variant">CLI-003</td>
+<td class="py-md px-lg">
+<div class="flex items-center gap-sm opacity-70">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant text-label-sm font-bold">BJ</div>
+<span class="text-on-surface-variant">Bud-Trans Jan Kowalski</span>
+</div>
+</td>
+<td class="py-md px-lg text-right text-on-surface-variant opacity-70">1</td>
+<td class="py-md px-lg text-right opacity-70">
+<span class="inline-flex items-center px-xs py-1 rounded bg-surface-variant text-on-surface-variant text-label-sm font-label-sm">0/1</span>
+</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-variant text-on-surface-variant text-label-sm font-label-sm">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                                    Nieaktywny
+                                </span>
+</td>
+<td class="py-md px-lg text-center">
+<button aria-label="Edytuj CLI-003" class="p-xs rounded-full hover:bg-surface-container-highest text-on-surface-variant transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-md px-lg font-medium text-on-surface">CLI-004</td>
+<td class="py-md px-lg">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim flex items-center justify-center text-on-primary-fixed text-label-sm font-bold">TM</div>
+<span class="text-on-surface">Tech-Masz S.A.</span>
+</div>
+</td>
+<td class="py-md px-lg text-right text-on-surface-variant">8</td>
+<td class="py-md px-lg text-right">
+<span class="inline-flex items-center px-xs py-1 rounded bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">8/8</span>
+</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-label-sm font-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                    Aktywny
+                                </span>
+</td>
+<td class="py-md px-lg text-center">
+<button aria-label="Edytuj CLI-004" class="p-xs rounded-full hover:bg-surface-container-highest text-on-surface-variant transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-lg py-sm border-t border-surface-variant bg-surface-bright flex items-center justify-between">
+<span class="text-body-sm font-body-sm text-on-surface-variant hidden sm:block">Wierszy na stronę: 10</span>
+<div class="flex items-center gap-md">
+<span class="text-body-sm font-body-sm text-on-surface-variant">1-4 z 4</span>
+<div class="flex items-center gap-xs">
+<button aria-label="Poprzednia strona" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container text-outline transition-colors" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button aria-label="Następna strona" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container text-outline transition-colors" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

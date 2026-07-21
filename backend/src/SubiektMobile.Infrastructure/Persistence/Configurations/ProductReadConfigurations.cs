@@ -139,3 +139,32 @@ public sealed class SlStawkaVatConfiguration : IEntityTypeConfiguration<SlStawka
         entity.Property(vat => vat.Symbol).HasColumnName("vat_Symbol").HasMaxLength(20).IsUnicode(false);
     }
 }
+
+public sealed class KhKontrahentConfiguration : IEntityTypeConfiguration<KhKontrahent>
+{
+    public void Configure(EntityTypeBuilder<KhKontrahent> entity)
+    {
+        entity.ToTable("kh__Kontrahent");
+        entity.HasKey(contractor => contractor.Id).HasName("PK_kh__Kontrahent");
+        entity.Property(contractor => contractor.Id).HasColumnName("kh_Id");
+        entity.Property(contractor => contractor.Symbol).HasColumnName("kh_Symbol").HasMaxLength(20).IsUnicode(false);
+        entity.Property(contractor => contractor.Rodzaj).HasColumnName("kh_Rodzaj");
+        entity.Property(contractor => contractor.Zablokowany).HasColumnName("kh_Zablokowany");
+    }
+}
+
+public sealed class AdrEwidConfiguration : IEntityTypeConfiguration<AdrEwid>
+{
+    public void Configure(EntityTypeBuilder<AdrEwid> entity)
+    {
+        entity.ToTable("adr__Ewid");
+        entity.HasKey(address => address.Id).HasName("PK_adr__Ewid");
+        entity.Property(address => address.Id).HasColumnName("adr_Id");
+        entity.Property(address => address.ObjectId).HasColumnName("adr_IdObiektu");
+        entity.Property(address => address.AddressType).HasColumnName("adr_TypAdresu");
+        entity.Property(address => address.Name).HasColumnName("adr_Nazwa").HasMaxLength(53);
+        entity.Property(address => address.FullName).HasColumnName("adr_NazwaPelna").HasMaxLength(255);
+        entity.Property(address => address.Nip).HasColumnName("adr_NIP").HasMaxLength(20).IsUnicode(false);
+        entity.HasIndex(address => new { address.ObjectId, address.AddressType }).IsUnique().HasDatabaseName("IX_adr__Ewid");
+    }
+}

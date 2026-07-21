@@ -129,12 +129,12 @@ obecnego procesu pozostają dostępne po migracji.
 
 Zakres:
 
-- [ ] Utworzyć listę klientów z aktywnością i liczbą zakładów odbiorczych.
-- [ ] Dodać szczegóły klienta oraz historię jego zamówień.
-- [ ] Dodać wiele zakładów odbiorczych dla jednego klienta.
-- [ ] Zdefiniować profil logistyczny zakładu: adres, dock, godziny przyjęć, numer dostawcy `V`, wymagania pakowania i profil etykiety VDA.
-- [ ] Dodać domyślny typ palety, limity i wymagania zabezpieczenia ładunku, jeżeli są wymagane przez odbiorcę.
-- [ ] Umożliwić wybór profilu zakładu zamiast ręcznego przepisywania jego danych.
+- [x] Utworzyć listę klientów z aktywnością i liczbą zakładów odbiorczych.
+- [x] Dodać szczegóły klienta oraz historię zmian; historia zamówień jest celowo pusta do Etapu 4.
+- [x] Dodać wiele zakładów odbiorczych dla jednego klienta.
+- [x] Zdefiniować profil logistyczny zakładu: adres, dock, godziny przyjęć, numer dostawcy `V`, wymagania pakowania i profil etykiety VDA.
+- [x] Dodać domyślny typ palety, limity i wymagania zabezpieczenia ładunku, jeżeli są wymagane przez odbiorcę.
+- [ ] Umożliwić wybór profilu zakładu zamiast ręcznego przepisywania jego danych (wymaga encji zamówienia klienta z Etapu 4).
 
 **Warunek przejścia:** można skonfigurować klienta z co najmniej dwoma zakładami, a wybór zakładu podpowiada dane logistyczne.
 

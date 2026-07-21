@@ -4,11 +4,11 @@
 
 Subiekt Mobile to aplikacja API + web wspierająca tworzenie i wieloosobowe kompletowanie zamówień na telefonie lub tablecie.
 
-Źródłem danych o towarach jest baza SQL programu Subiekt GT. Zamówienia, przydziały pozycji, palety i historia kompletacji należą do modelu aplikacji i nie są dokumentami Subiekta GT.
+Źródłem danych o towarach oraz opcjonalnych powiązaniach klientów z kontrahentami jest baza SQL programu Subiekt GT. Zamówienia, przydziały pozycji, palety i historia kompletacji należą do modelu aplikacji i nie są dokumentami Subiekta GT.
 
 Główny proces biznesowy:
 
-1. Aplikacja pobiera towary z bazy Subiekta GT w trybie tylko do odczytu.
+1. Aplikacja pobiera towary i minimalny katalog kontrahentów z bazy Subiekta GT w trybie tylko do odczytu.
 2. Uprawniony użytkownik tworzy zamówienie z towarów dostępnych w katalogu.
 3. Wielu użytkowników równolegle kompletuje pozycje jednego zamówienia.
 4. Skompletowane pozycje są przypisywane do palet.
@@ -91,7 +91,7 @@ Wstępny opis interfejsu znajduje się w `docs/zarys-ekranow.md`.
 ## Najważniejsze zasady
 
 - Nie zapisuj bezpośrednio do bazy danych Subiekta GT, jeżeli zadanie nie mówi o tym jednoznacznie i nie ma zaakceptowanej decyzji architektonicznej.
-- Integracja z Subiektem służy w tym zakresie wyłącznie do odczytu katalogu towarów.
+- Integracja z Subiektem służy w tym zakresie wyłącznie do odczytu katalogu towarów oraz minimalnego katalogu kontrahentów do powiązania klienta.
 - Zamówienia, kompletacja, palety i audyt są przechowywane w PostgreSQL, w bazie aplikacji oddzielonej od bazy Subiekta.
 - Nie mieszaj logiki biznesowej z kontrolerami HTTP ani z EF Core.
 - Nie twórz skrótów typu „byle działało”, które omijają warstwy projektu.

@@ -19,6 +19,8 @@ public class SubiektDbContext : DbContext
     public DbSet<TwKodKreskowy> KodyKreskowe => Set<TwKodKreskowy>();
     public DbSet<TwZdjecieTw> ZdjeciaTowarow => Set<TwZdjecieTw>();
     public DbSet<SlStawkaVat> StawkiVat => Set<SlStawkaVat>();
+    public DbSet<KhKontrahent> Kontrahenci => Set<KhKontrahent>();
+    public DbSet<AdrEwid> Adresy => Set<AdrEwid>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

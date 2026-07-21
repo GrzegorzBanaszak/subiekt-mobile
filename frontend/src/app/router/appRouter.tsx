@@ -16,6 +16,7 @@ import {
 } from '../../features/administration/components/AdministrationRoutes'
 import {
   administratorsManagePermission,
+  customersManagePermission,
   identityManagePermission,
 } from '../../features/administration/permissions'
 import { AppShell } from '../../shared/components/AppShell'
@@ -27,6 +28,10 @@ import { PickingOrderPage } from '../../features/picking/pages/PickingOrderPage'
 import { PalletsPage } from '../../features/pallets/pages/PalletsPage'
 import { NewPalletPage } from '../../features/pallets/pages/NewPalletPage'
 import { PalletDetailsPage } from '../../features/pallets/pages/PalletDetailsPage'
+import { CustomersPage } from '../../features/customers/pages/CustomersPage'
+import { CustomerFormPage } from '../../features/customers/pages/CustomerFormPage'
+import { CustomerDetailsPage } from '../../features/customers/pages/CustomerDetailsPage'
+import { CustomerSiteProfilePage } from '../../features/customers/pages/CustomerSiteProfilePage'
 
 export const appRouter = createBrowserRouter([
   {
@@ -55,6 +60,30 @@ export const appRouter = createBrowserRouter([
           {
             path: '/products',
             element: <ProductsPage />,
+          },
+          {
+            path: '/customers',
+            element: <AdministrationGuard permission={customersManagePermission}><CustomersPage /></AdministrationGuard>,
+          },
+          {
+            path: '/customers/new',
+            element: <AdministrationGuard permission={customersManagePermission}><CustomerFormPage /></AdministrationGuard>,
+          },
+          {
+            path: '/customers/:customerId',
+            element: <AdministrationGuard permission={customersManagePermission}><CustomerDetailsPage /></AdministrationGuard>,
+          },
+          {
+            path: '/customers/:customerId/edit',
+            element: <AdministrationGuard permission={customersManagePermission}><CustomerFormPage /></AdministrationGuard>,
+          },
+          {
+            path: '/customers/:customerId/sites/new',
+            element: <AdministrationGuard permission={customersManagePermission}><CustomerSiteProfilePage /></AdministrationGuard>,
+          },
+          {
+            path: '/customers/:customerId/sites/:siteId',
+            element: <AdministrationGuard permission={customersManagePermission}><CustomerSiteProfilePage /></AdministrationGuard>,
           },
           {
             path: '/warehouse-orders',

@@ -101,7 +101,7 @@ Application definiuje kontrakty, które Infrastructure implementuje. Przypadki u
 Warstwa infrastruktury odpowiada za techniczne szczegóły:
 
 - kontekst odczytowy i encje EF Core odwzorowujące wymagane tabele Subiekta,
-- implementacje projekcji towarów,
+- implementacje projekcji towarów oraz katalogu kontrahentów używanego wyłącznie do opcjonalnego powiązania klienta,
 - osobny kontekst lub adapter trwałości danych aplikacji,
 - transakcje i kontrolę współbieżności,
 - implementację audytu,
@@ -126,7 +126,7 @@ API nie powinno budować zapytań EF Core, znać szczegółów tabel Subiekta an
 
 ### Baza Subiekta GT
 
-- Jest używana wyłącznie do odczytu danych towarowych wymaganych przez aplikację.
+- Jest używana wyłącznie do odczytu danych towarowych oraz minimalnego katalogu kontrahentów potrzebnego do opcjonalnego powiązania klienta.
 - Zapytania powinny być projekcjami bez śledzenia encji, jeśli nie ma technicznej potrzeby śledzenia.
 - Uprawnienia połączenia powinny być ograniczone do odczytu, o ile środowisko na to pozwala.
 - Connection string nie może być zapisany w repozytorium ani logowany.
@@ -182,6 +182,12 @@ Masa jednostkowa i masa pustej palety powinny używać typu dziesiętnego oraz j
 - szczegóły towaru,
 - wybór towaru do zamówienia,
 - sygnalizowanie brakującej masy jednostkowej.
+
+### Customer Directory
+
+- opcjonalne wyszukiwanie kontrahentów Subiekta GT podczas konfiguracji klienta,
+- odczyt ograniczony do identyfikatora, symbolu, nazwy i NIP; bez zapisu lub synchronizacji danych kontrahenta,
+- zapis powiązania klienta wyłącznie w PostgreSQL.
 
 ### Warehouse Order Management
 

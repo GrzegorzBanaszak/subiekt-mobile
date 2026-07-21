@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kramp — Leipzig: profil logistyczny</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#b5c4ff",
+                        "surface": "#f8f9fa",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#444651",
+                        "surface-container": "#efedf4",
+                        "primary-container": "#00236f",
+                        "secondary-container": "#9af1c6",
+                        "tertiary-container": "#442100",
+                        "inverse-surface": "#2f3035",
+                        "primary": "#001142",
+                        "surface-tint": "#425aa6",
+                        "on-primary-fixed": "#00164e",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#778ede",
+                        "on-surface": "#1a1b20",
+                        "secondary-fixed-dim": "#81d8ae",
+                        "inverse-primary": "#b5c4ff",
+                        "tertiary-fixed-dim": "#f7ba8a",
+                        "secondary-fixed": "#9df4c9",
+                        "secondary": "#006c4a",
+                        "tertiary-fixed": "#ffdcc3",
+                        "outline": "#757682",
+                        "surface-container-high": "#e9e7ee",
+                        "tertiary": "#442100",
+                        "on-background": "#1a1b20",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c5c5d3",
+                        "surface-dim": "#dad9e0",
+                        "surface-bright": "#faf8ff",
+                        "on-primary-fixed-variant": "#29428c",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f1f0f7",
+                        "background": "#faf8ff",
+                        "on-tertiary-fixed-variant": "#663d17",
+                        "on-secondary-container": "#0b714e",
+                        "primary-fixed": "#dce1ff",
+                        "surface-container-highest": "#e3e1e9",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#2f1500",
+                        "on-secondary-fixed": "#002114",
+                        "on-secondary-fixed-variant": "#005237",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#bc865a",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e3e1e9",
+                        "surface-container-low": "#f4f3fa"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "md": "16px",
+                        "base": "4px",
+                        "lg": "24px",
+                        "xs": "8px",
+                        "xl": "32px",
+                        "touch-target": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[style*="'FILL' 1"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-sans antialiased overflow-x-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container fixed left-0 top-0 h-full w-[280px] flex-col h-full py-lg gap-base z-50">
+<div class="px-md mb-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center overflow-hidden">
+<img alt="Administrator Avatar" class="w-full h-full object-cover" data-alt="Professional avatar of an administrator in a corporate setting, clean lighting, modern office background, subtle corporate colors, high resolution, 8k, photorealistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUOBNT2n12g-B1BBURfx5YKrMlqk2ljRSkijETLcoAkEHhYqM7Clfc18kYZeB3VhEoptob7rVDAOg4rwFcMJribbOvRECkaN1qaUmzHfWSKDAOW4NPyyMsmFsEY8nmz9bcyun4UyuYj_5Cp7iZCYcRwxldiYmufbZRjrEZVlpri3uocWCQxAcEETjlbY0dcmlQ6KhUk5HH3B3Bd-gS95ncARyC7gN5BnW21JLaZbsvmcbKdm6Uawd9Tw"/>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">Administrator</h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Administrator</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-xs flex flex-col gap-1">
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-md">inventory_2</span>
+<span class="text-label-md font-label-md">Towary</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-md">shopping_cart</span>
+<span class="text-label-md font-label-md">Zamówienia magazynowe</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-md">checklist</span>
+<span class="text-label-md font-label-md">Kompletacja</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-md">pallet</span>
+<span class="text-label-md font-label-md">Palety</span>
+</a>
+<a class="bg-secondary-container text-on-secondary-container rounded-xl font-bold flex items-center px-md py-sm mx-xs" href="#">
+<span class="material-symbols-outlined mr-md" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="text-label-md font-label-md">Klienci</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-md">receipt_long</span>
+<span class="text-label-md font-label-md">Zamówienia klientów</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-md">local_shipping</span>
+<span class="text-label-md font-label-md">Wysyłki</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest transition-colors duration-200 rounded-xl mt-auto" href="#">
+<span class="material-symbols-outlined mr-md">settings</span>
+<span class="text-label-md font-label-md">Administracja</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="hidden md:flex bg-surface fixed top-0 right-0 left-[280px] h-touch-target justify-between items-center px-xl ml-[280px] w-[calc(100%-280px)] z-40 transition-all duration-200 ease-in-out">
+<div class="flex items-center">
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface">Klienci</h1>
+</div>
+<div class="flex items-center gap-md">
+<button class="flex items-center text-on-surface-variant hover:bg-surface-container rounded-lg px-sm py-xs transition-colors duration-200">
+<span class="material-symbols-outlined mr-xs text-[20px]">language</span>
+<span class="text-label-md font-label-md">Polski</span>
+</button>
+<button class="flex items-center text-primary hover:bg-surface-container rounded-lg px-sm py-xs transition-colors duration-200">
+<span class="text-label-md font-label-md mr-xs">Wyloguj</span>
+<span class="material-symbols-outlined text-[20px]">logout</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="md:ml-[280px] md:pt-[48px] p-lg md:p-xl min-h-screen">
+<!-- Breadcrumb & Header Area -->
+<div class="mb-lg flex flex-col md:flex-row md:justify-between md:items-end gap-md">
+<div>
+<nav class="flex items-center text-body-sm font-body-sm text-on-surface-variant mb-xs">
+<a class="hover:text-primary transition-colors" href="#">Klienci</a>
+<span class="material-symbols-outlined text-[16px] mx-xs">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Kramp</a>
+<span class="material-symbols-outlined text-[16px] mx-xs">chevron_right</span>
+<span class="text-on-surface">Kramp — Leipzig</span>
+</nav>
+<div class="flex items-center gap-md mt-sm">
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Kramp — Leipzig</h2>
+<span class="bg-secondary-fixed text-on-secondary-fixed text-label-sm font-label-sm px-sm py-xs rounded-full flex items-center">
+<span class="material-symbols-outlined text-[16px] mr-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Profil kompletny
+                    </span>
+</div>
+</div>
+<button class="bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container transition-colors duration-200 px-md py-sm rounded-lg text-label-md font-label-md flex items-center justify-center shadow-sm h-touch-target">
+<span class="material-symbols-outlined mr-sm">edit</span>
+                Edytuj profil logistyczny
+            </button>
+</div>
+<!-- Bento Grid Layout -->
+<div class="bento-grid mt-xl">
+<!-- Adres zakładu & Map (Large Card) -->
+<div class="col-span-12 md:col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden flex flex-col relative group">
+<div class="absolute top-0 right-0 p-md opacity-20 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[48px] text-surface-tint">factory</span>
+</div>
+<div class="p-lg flex-1">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined">location_on</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Adres zakładu</h3>
+</div>
+<div class="text-body-lg font-body-lg text-on-surface mb-md">
+<p class="font-medium">Kramp GmbH</p>
+<p class="text-on-surface-variant">Siemensstraße 1</p>
+<p class="text-on-surface-variant">04420 Markranstädt</p>
+<p class="text-on-surface-variant font-medium mt-xs">Niemcy</p>
+</div>
+</div>
+<!-- Stylized Map Placeholder -->
+<div class="h-48 w-full bg-surface-container-high relative overflow-hidden">
+<img class="w-full h-full object-cover opacity-80" data-alt="A highly detailed, modern isometric digital map rendering of Markranstädt, Germany. The style is clean, corporate, and minimalist using a palette of soft greys, crisp whites, and subtle primary blue accents to indicate roads and logistics routes. The lighting is bright and even, creating a professional light-mode aesthetic suitable for an enterprise dashboard. 8k resolution, crisp vector-like quality." data-location="Markranstädt, Germany" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnU_nOLEiZe9apcTQC3-lieNor2XG7PUQohYnKFrvjV6bnOUZwKEq_GlSSVfOGNRCxDNgQDuLFRvrOuu5z1Zo-6jxadqnTD7t8dGQA_bFkOKbv5_jGfHRBVoxBKFGMPYgPta83VPDMBwt9rl70h4LpEX8kMlA9q10PBr7LFFQOUO-dCWyIyVIrIANGcQCENZ849g5iCzDNroZZwhxvOjQjPvo66ZzDkfhRTmhWSvJpiWPwyh16TIIHFg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent"></div>
+<div class="absolute bottom-md left-md bg-surface text-on-surface text-label-sm font-label-sm px-sm py-xs rounded-lg shadow-sm border border-outline-variant flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-xs text-primary">directions</span>
+                         Pokaż na mapie
+                     </div>
+</div>
+</div>
+<!-- Numer dostawcy (Small Card) -->
+<div class="col-span-12 md:col-span-4 bg-surface-container-lowest rounded-xl border border-outline-variant p-lg flex flex-col justify-center items-center text-center relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 bg-primary-fixed-dim rounded-full opacity-20 blur-2xl"></div>
+<span class="material-symbols-outlined text-[32px] text-primary mb-sm">badge</span>
+<p class="text-label-md font-label-md text-on-surface-variant mb-xs">Numer dostawcy</p>
+<p class="text-headline-lg font-headline-lg text-on-surface font-bold tracking-tight">88942-DE</p>
+</div>
+<!-- Punkt rozładunku (Medium Card) -->
+<div class="col-span-12 md:col-span-6 bg-surface-container-lowest rounded-xl border border-outline-variant p-lg relative glass-card">
+<div class="flex items-start gap-md mb-md">
+<div class="w-12 h-12 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">local_shipping</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-xs">Punkt rozładunku</h3>
+<div class="flex items-center gap-sm mt-sm">
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-xs py-1 rounded">Domyślny dock</span>
+<span class="text-body-md font-body-md font-medium text-on-surface">Halle 3 / Tor 12</span>
+</div>
+</div>
+</div>
+<div class="mt-auto border-t border-surface-variant pt-md flex items-center text-body-sm font-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] mr-sm">schedule</span>
+                    Godziny przyjęć: <span class="font-medium text-on-surface ml-xs">06:00–14:00 (Pon–Pt)</span>
+</div>
+</div>
+<!-- Wymagania pakowania (Medium Card) -->
+<div class="col-span-12 md:col-span-6 bg-surface-container-lowest rounded-xl border border-outline-variant p-lg">
+<div class="flex items-start justify-between mb-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined">inventory</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Wymagania pakowania</h3>
+</div>
+<span class="material-symbols-outlined text-outline-variant">info</span>
+</div>
+<div class="flex flex-wrap gap-sm mt-md">
+<div class="bg-surface text-on-surface border border-outline-variant rounded-lg px-md py-sm flex items-center flex-1 min-w-[140px]">
+<span class="material-symbols-outlined text-[20px] text-primary mr-sm">square_foot</span>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Paleta</p>
+<p class="text-body-md font-body-md font-medium">EUR 1200×800</p>
+</div>
+</div>
+<div class="bg-surface text-on-surface border border-outline-variant rounded-lg px-md py-sm flex items-center flex-1 min-w-[140px]">
+<span class="material-symbols-outlined text-[20px] text-primary mr-sm">height</span>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Wysokość</p>
+<p class="text-body-md font-body-md font-medium">Max 1050 mm</p>
+</div>
+</div>
+</div>
+<div class="mt-sm bg-surface-container-low rounded-lg p-sm flex items-center">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant mr-sm">layers</span>
+<p class="text-body-sm font-body-sm text-on-surface">Zabezpieczenie: <strong class="font-medium">Folia stretch + taśmy PP</strong></p>
+</div>
+</div>
+<!-- Profil etykiety (Full Width Spanning) -->
+<div class="col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant p-md flex flex-col md:flex-row items-center justify-between gap-md relative overflow-hidden">
+<!-- Subtle background pattern -->
+<div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, black 1px, transparent 0); background-size: 16px 16px;"></div>
+<div class="flex items-center gap-md z-10 w-full md:w-auto">
+<div class="w-12 h-16 bg-surface-container border-2 border-dashed border-outline-variant rounded-md flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-outline">qr_code_scanner</span>
+</div>
+<div>
+<div class="flex items-center gap-sm mb-xs">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Profil etykiety</h3>
+<span class="bg-secondary-fixed-dim text-on-secondary-fixed-variant text-label-sm font-label-sm px-2 py-0.5 rounded text-[10px] uppercase tracking-wider font-bold">Aktywny</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant">
+                            Format: <strong class="text-on-surface">VDA 4902</strong> <span class="mx-xs">•</span> Wymiary: <strong class="text-on-surface">210 × 148 mm (A5)</strong>
+</p>
+</div>
+</div>
+<a class="z-10 flex items-center gap-xs text-primary hover:text-primary-container text-label-md font-label-md transition-colors w-full md:w-auto justify-center md:justify-end py-sm md:py-0 border md:border-none border-outline-variant rounded-lg md:rounded-none" href="#">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+                    Podgląd etykiety
+                </a>
+</div>
+</div>
+<!-- Footer Note -->
+<div class="mt-xl flex justify-center">
+<div class="bg-surface-container-high rounded-full px-lg py-sm flex items-center text-body-sm font-body-sm text-on-surface shadow-sm border border-outline-variant/50 max-w-2xl text-center">
+<span class="material-symbols-outlined text-[18px] text-primary mr-sm" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+                Dane z profilu będą podpowiadane podczas tworzenia wysyłki.
+            </div>
+</div>
+</main>
+</body></html>

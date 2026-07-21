@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edytuj profil logistyczny zakładu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#b5c4ff",
+                      "surface": "#f8f9fa",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#444651",
+                      "surface-container": "#efedf4",
+                      "primary-container": "#00236f",
+                      "secondary-container": "#9af1c6",
+                      "tertiary-container": "#442100",
+                      "inverse-surface": "#2f3035",
+                      "primary": "#001142",
+                      "surface-tint": "#425aa6",
+                      "on-primary-fixed": "#00164e",
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#778ede",
+                      "on-surface": "#1a1b20",
+                      "secondary-fixed-dim": "#81d8ae",
+                      "inverse-primary": "#b5c4ff",
+                      "tertiary-fixed-dim": "#f7ba8a",
+                      "secondary-fixed": "#9df4c9",
+                      "secondary": "#006c4a",
+                      "tertiary-fixed": "#ffdcc3",
+                      "outline": "#757682",
+                      "surface-container-high": "#e9e7ee",
+                      "tertiary": "#442100",
+                      "on-background": "#1a1b20",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c5c5d3",
+                      "surface-dim": "#dad9e0",
+                      "surface-bright": "#faf8ff",
+                      "on-primary-fixed-variant": "#29428c",
+                      "on-error-container": "#93000a",
+                      "inverse-on-surface": "#f1f0f7",
+                      "background": "#faf8ff",
+                      "on-tertiary-fixed-variant": "#663d17",
+                      "on-secondary-container": "#0b714e",
+                      "primary-fixed": "#dce1ff",
+                      "surface-container-highest": "#e3e1e9",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed": "#2f1500",
+                      "on-secondary-fixed": "#002114",
+                      "on-secondary-fixed-variant": "#005237",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#bc865a",
+                      "error": "#ba1a1a",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#e3e1e9",
+                      "surface-container-low": "#f4f3fa"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "sm": "12px",
+                      "md": "16px",
+                      "base": "4px",
+                      "lg": "24px",
+                      "xs": "8px",
+                      "xl": "32px",
+                      "touch-target": "48px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="bg-surface-container dark:bg-surface-container-high fixed left-0 top-0 h-full w-[280px] hidden md:flex flex-col py-lg gap-base z-20">
+<div class="px-xl mb-lg">
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface flex items-center gap-sm">
+<img class="w-8 h-8 rounded-md object-cover" data-alt="A small, stylized corporate logo for a logistics company. Minimalist geometric design in dark blue and grey tones on a white background. Clean lines, modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC03Bjt-rIqWLjgBQbw2XHgJpyHdiJh4Y4BBLQrkBcR8_ivk0xf6VLfFZ5qmtybSUMZMxdQ1vP6PrPMw07ex-uZOrv64feHjypNS9H4pPsVjjztLJuq8dv49tEDniT71vXd7ceZjq9y_YsULfla7OwKkyuCIGw_8N-81RmJfcwhRy9kAL7ERU6ttoTT_H_8zaueRY8Hfh3zjfEeam8uQGw8F7ESS_3VI0aJLfkbHQ63V8Ky_z6WjyKaMw"/>
+                Administrator
+            </h1>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-xs">Administrator</p>
+</div>
+<div class="flex-1 overflow-y-auto w-full">
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest dark:hover:bg-surface-dim transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
+<span class="text-label-md font-label-md">Towary</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest dark:hover:bg-surface-dim transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+<span class="text-label-md font-label-md">Zamówienia magazynowe</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest dark:hover:bg-surface-dim transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">checklist</span>
+<span class="text-label-md font-label-md">Kompletacja</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest dark:hover:bg-surface-dim transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">pallet</span>
+<span class="text-label-md font-label-md">Palety</span>
+</a>
+<a class="bg-secondary-container text-on-secondary-container dark:bg-secondary dark:text-on-secondary rounded-xl font-bold flex items-center px-md py-sm mx-xs gap-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="text-label-md font-label-md">Klienci</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest dark:hover:bg-surface-dim transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+<span class="text-label-md font-label-md">Zamówienia klientów</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest dark:hover:bg-surface-dim transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">local_shipping</span>
+<span class="text-label-md font-label-md">Wysyłki</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center px-md py-sm mx-xs hover:bg-surface-container-highest dark:hover:bg-surface-dim transition-colors duration-200 rounded-xl gap-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-label-md font-label-md">Administracja</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-[280px] h-screen w-full relative">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-surface-container-low fixed top-0 right-0 left-0 md:left-[280px] h-touch-target border-b border-outline-variant dark:border-outline flex justify-between items-center px-xl z-10">
+<div class="flex items-center gap-sm">
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface dark:text-inverse-on-surface">Klienci</h1>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface rounded-lg p-xs transition-all duration-200 flex items-center gap-xs">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">language</span>
+<span class="text-label-md font-label-md hidden lg:block">Polski</span>
+</button>
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface rounded-lg p-xs transition-all duration-200 flex items-center gap-xs">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">logout</span>
+<span class="text-label-md font-label-md hidden lg:block">Wyloguj</span>
+</button>
+</div>
+</header>
+<!-- Main Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto pt-[48px] pb-[80px] bg-background">
+<div class="max-w-7xl mx-auto p-md lg:p-lg w-full">
+<!-- Breadcrumb -->
+<nav class="flex items-center text-body-sm font-body-sm text-on-surface-variant mb-lg">
+<a class="hover:text-primary transition-colors" href="#">Klienci</a>
+<span class="material-symbols-outlined text-[16px] mx-xs">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Kramp Leipzig</a>
+<span class="material-symbols-outlined text-[16px] mx-xs">chevron_right</span>
+<span class="text-on-surface font-medium">Edytuj profil logistyczny</span>
+</nav>
+<div class="flex flex-col lg:flex-row gap-lg">
+<!-- Form Area (Left) -->
+<div class="flex-1 flex flex-col gap-lg">
+<!-- A. Dane zakładu -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">factory</span>
+                                Dane zakładu
+                            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Kod zakładu <span class="text-error">*</span></label>
+<input class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="text" value="LEJ01"/>
+</div>
+<div class="flex flex-col gap-base md:col-span-2 lg:col-span-1">
+<label class="text-label-md font-label-md text-on-surface-variant">Nazwa zakładu <span class="text-error">*</span></label>
+<input class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="text" value="Kramp Leipzig Logistics Center"/>
+</div>
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Kraj <span class="text-error">*</span></label>
+<select class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none">
+<option>Niemcy (DE)</option>
+<option>Polska (PL)</option>
+<option>Holandia (NL)</option>
+</select>
+</div>
+</div>
+</section>
+<!-- B. Adres odbiorcy -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">location_on</span>
+                                Adres odbiorcy
+                            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="flex flex-col gap-base md:col-span-2">
+<label class="text-label-md font-label-md text-on-surface-variant">Nazwa odbiorcy</label>
+<input class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="text" value="Kramp GmbH - Recepcja Magazynu"/>
+</div>
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Ulica i numer</label>
+<input class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="text" value="Industriestrasse 14"/>
+</div>
+<div class="grid grid-cols-3 gap-md">
+<div class="flex flex-col gap-base col-span-1">
+<label class="text-label-md font-label-md text-on-surface-variant">Kod pocztowy</label>
+<input class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="text" value="04229"/>
+</div>
+<div class="flex flex-col gap-base col-span-2">
+<label class="text-label-md font-label-md text-on-surface-variant">Miasto</label>
+<input class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="text" value="Leipzig"/>
+</div>
+</div>
+</div>
+</section>
+<!-- C. Logistyka dostawy -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+                                Logistyka dostawy
+                            </h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Domyślny Dock <span class="text-error">*</span></label>
+<select class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none">
+<option>Dock A (Palety)</option>
+<option>Dock B (Paczki)</option>
+<option>Dock C (Gabaryty)</option>
+</select>
+</div>
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Godziny przyjęć</label>
+<div class="flex items-center h-touch-target rounded-lg border border-outline-variant bg-surface px-md focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-colors">
+<input class="w-full bg-transparent border-none p-0 outline-none text-body-md font-body-md" type="text" value="06:00 - 14:00"/>
+<span class="material-symbols-outlined text-on-surface-variant">schedule</span>
+</div>
+</div>
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Numer dostawcy <span class="text-error">*</span></label>
+<input class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="text" value="SUP-992-01A"/>
+</div>
+</div>
+</section>
+<!-- D. Wymagania pakowania -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">inventory</span>
+                                Wymagania pakowania
+                            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Standardowa paleta</label>
+<select class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none">
+<option>EPAL (120x80)</option>
+<option>Przemysłowa (120x100)</option>
+<option>Półpaleta (80x60)</option>
+</select>
+</div>
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Max wysokość (cm)</label>
+<input class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" value="180"/>
+</div>
+<div class="flex flex-col gap-base md:col-span-2">
+<label class="text-label-md font-label-md text-on-surface-variant">Zabezpieczenie</label>
+<div class="flex gap-md mt-xs">
+<label class="flex items-center gap-xs cursor-pointer">
+<input checked="" class="w-5 h-5 text-primary border-outline-variant rounded focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md">Folia stretch</span>
+</label>
+<label class="flex items-center gap-xs cursor-pointer">
+<input checked="" class="w-5 h-5 text-primary border-outline-variant rounded focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md">Taśmy bindujące</span>
+</label>
+<label class="flex items-center gap-xs cursor-pointer">
+<input class="w-5 h-5 text-primary border-outline-variant rounded focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md">Narożniki tekturowe</span>
+</label>
+</div>
+</div>
+<div class="flex flex-col gap-base md:col-span-2">
+<label class="text-label-md font-label-md text-on-surface-variant">Uwagi dodatkowe</label>
+<textarea class="rounded-lg border-outline-variant bg-surface p-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none" rows="3">Wymagane etykiety zbiorcze na każdej palecie.</textarea>
+</div>
+</div>
+</section>
+<!-- E. Etykieta VDA -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm border-l-4 border-l-tertiary-container">
+<h2 class="text-headline-sm font-headline-sm text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary-container">qr_code_scanner</span>
+                                Etykieta VDA (Wymaga akcji)
+                            </h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md items-end">
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Profil VDA <span class="text-error">*</span></label>
+<select class="h-touch-target rounded-lg border-outline-variant bg-surface px-md text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none">
+<option value="">Wybierz profil...</option>
+<option value="vda4902">VDA 4902 (Standard)</option>
+<option value="vda4994">VDA 4994 (Global)</option>
+</select>
+</div>
+<div class="flex flex-col gap-base">
+<label class="text-label-md font-label-md text-on-surface-variant">Format</label>
+<select class="h-touch-target rounded-lg border-outline-variant bg-surface-dim px-md text-body-md font-body-md outline-none appearance-none opacity-70 cursor-not-allowed" disabled="">
+<option>A5 Landscape</option>
+</select>
+</div>
+<div class="flex flex-col gap-base">
+<div class="h-touch-target rounded-lg bg-error-container text-on-error-container flex items-center justify-center px-md font-label-md gap-sm">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+                                        Brak profilu
+                                    </div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Sticky Panel -->
+<div class="w-full lg:w-[320px] shrink-0">
+<div class="sticky top-[80px] bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-md border-b border-surface-variant pb-sm">Status konfiguracji</h3>
+<ul class="flex flex-col gap-md">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-[2px]">check_circle</span>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-on-surface">Dane zakładu</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Wypełnione poprawnie</span>
+</div>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-[2px]">check_circle</span>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-on-surface">Adres odbiorcy</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Wypełnione poprawnie</span>
+</div>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-[2px]">check_circle</span>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-on-surface">Logistyka dostawy</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Wypełnione poprawnie</span>
+</div>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-[2px]">check_circle</span>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-on-surface">Wymagania pakowania</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Wypełnione poprawnie</span>
+</div>
+</li>
+<li class="flex items-start gap-sm p-sm bg-tertiary-fixed rounded-lg border border-tertiary-container mt-sm">
+<span class="material-symbols-outlined text-tertiary-container text-[20px] mt-[2px]">error</span>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-on-tertiary-container">Etykieta VDA</span>
+<span class="text-body-sm font-body-sm text-on-tertiary-container opacity-90">Wymagany wybór profilu, aby aktywować druk etykiet dla tego zakładu.</span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Actions Bar -->
+<div class="absolute bottom-0 right-0 left-0 bg-surface-container-lowest border-t border-outline-variant p-md px-lg flex items-center justify-between md:justify-end gap-md shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 h-[80px]">
+<button class="h-touch-target px-lg text-primary font-label-md text-label-md hover:bg-surface-container rounded-lg transition-colors mr-auto md:mr-0">Anuluj</button>
+<button class="h-touch-target px-lg bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-surface-container-highest rounded-lg transition-colors border border-outline-variant">Zapisz szkic</button>
+<button class="h-touch-target px-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container rounded-lg transition-colors shadow-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px]">save</span>
+                Zapisz profil
+            </button>
+</div>
+</div>
+</body></html>
