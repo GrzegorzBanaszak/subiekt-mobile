@@ -29,6 +29,23 @@ public sealed class WarehouseOrderStore(ApplicationDbContext dbContext) : IWareh
         return query.SingleOrDefaultAsync(x => x.Id == id, ct);
     }
 
+    public async Task<(Guid Id, string Number)?> FindBySubiektSourceDocumentIdAsync(int sourceDocumentId, CancellationToken ct)
+    {
+        var result = await dbContext.WarehouseOrders.AsNoTracking()
+            .Where(x => x.SubiektSourceDocumentId == sourceDocumentId)
+            .Select(x => new { x.Id, x.Number }).SingleOrDefaultAsync(ct);
+        return result is null ? null : (result.Id, result.Number);
+    }
+
+    public async Task<IReadOnlyDictionary<int, Guid>> FindBySubiektSourceDocumentIdsAsync(
+        IReadOnlyCollection<int> sourceDocumentIds, CancellationToken ct)
+    {
+        if (sourceDocumentIds.Count == 0) return new Dictionary<int, Guid>();
+        return await dbContext.WarehouseOrders.AsNoTracking()
+            .Where(x => x.SubiektSourceDocumentId != null && sourceDocumentIds.Contains(x.SubiektSourceDocumentId.Value))
+            .ToDictionaryAsync(x => x.SubiektSourceDocumentId!.Value, x => x.Id, ct);
+    }
+
     public async Task<WarehouseOrderStoreResult> AddAsync(WarehouseOrder warehouseOrder, AuditEntry audit, CancellationToken ct)
     {
         dbContext.WarehouseOrders.Add(warehouseOrder);

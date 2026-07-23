@@ -21,6 +21,8 @@ public class SubiektDbContext : DbContext
     public DbSet<SlStawkaVat> StawkiVat => Set<SlStawkaVat>();
     public DbSet<KhKontrahent> Kontrahenci => Set<KhKontrahent>();
     public DbSet<AdrEwid> Adresy => Set<AdrEwid>();
+    public DbSet<DokDokument> DokumentyHandlowe => Set<DokDokument>();
+    public DbSet<DokPozycja> PozycjeDokumentow => Set<DokPozycja>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -854,6 +854,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/customer-orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    includeCompleted?: boolean;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfSubiektCustomerOrderListItemDto"];
+                        "application/json": components["schemas"]["PagedResultOfSubiektCustomerOrderListItemDto"];
+                        "text/json": components["schemas"]["PagedResultOfSubiektCustomerOrderListItemDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customer-orders/{sourceDocumentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    sourceDocumentId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["SubiektCustomerOrderDto"];
+                        "application/json": components["schemas"]["SubiektCustomerOrderDto"];
+                        "text/json": components["schemas"]["SubiektCustomerOrderDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customer-orders/{sourceDocumentId}/convert": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    sourceDocumentId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["SubiektCustomerOrderConversionDto"];
+                        "application/json": components["schemas"]["SubiektCustomerOrderConversionDto"];
+                        "text/json": components["schemas"]["SubiektCustomerOrderConversionDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/customers": {
         parameters: {
             query?: never;
@@ -1375,6 +1495,536 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/packaging-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    isActive?: boolean;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfPackagingTypeDto"];
+                        "application/json": components["schemas"]["PagedResultOfPackagingTypeDto"];
+                        "text/json": components["schemas"]["PagedResultOfPackagingTypeDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PackagingTypeRequest"];
+                    "text/json": components["schemas"]["PackagingTypeRequest"];
+                    "application/*+json": components["schemas"]["PackagingTypeRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PackagingTypeDto"];
+                        "application/json": components["schemas"]["PackagingTypeDto"];
+                        "text/json": components["schemas"]["PackagingTypeDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/packaging-types/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PackagingTypeUpdateRequest"];
+                    "text/json": components["schemas"]["PackagingTypeUpdateRequest"];
+                    "application/*+json": components["schemas"]["PackagingTypeUpdateRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PackagingTypeDto"];
+                        "application/json": components["schemas"]["PackagingTypeDto"];
+                        "text/json": components["schemas"]["PackagingTypeDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/packaging-types/{id}/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ActiveRequest"];
+                    "text/json": components["schemas"]["ActiveRequest"];
+                    "application/*+json": components["schemas"]["ActiveRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PackagingTypeDto"];
+                        "application/json": components["schemas"]["PackagingTypeDto"];
+                        "text/json": components["schemas"]["PackagingTypeDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/packaging/codes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    siteId?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfCustomerPackagingCodeDto"];
+                        "application/json": components["schemas"]["PagedResultOfCustomerPackagingCodeDto"];
+                        "text/json": components["schemas"]["PagedResultOfCustomerPackagingCodeDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CustomerPackagingCodeRequest"];
+                    "text/json": components["schemas"]["CustomerPackagingCodeRequest"];
+                    "application/*+json": components["schemas"]["CustomerPackagingCodeRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerPackagingCodeDto"];
+                        "application/json": components["schemas"]["CustomerPackagingCodeDto"];
+                        "text/json": components["schemas"]["CustomerPackagingCodeDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/packaging/codes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CustomerPackagingCodeUpdateRequest"];
+                    "text/json": components["schemas"]["CustomerPackagingCodeUpdateRequest"];
+                    "application/*+json": components["schemas"]["CustomerPackagingCodeUpdateRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerPackagingCodeDto"];
+                        "application/json": components["schemas"]["CustomerPackagingCodeDto"];
+                        "text/json": components["schemas"]["CustomerPackagingCodeDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/packaging/codes/{id}/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CustomerPackagingCodeActiveRequest"];
+                    "text/json": components["schemas"]["CustomerPackagingCodeActiveRequest"];
+                    "application/*+json": components["schemas"]["CustomerPackagingCodeActiveRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerPackagingCodeDto"];
+                        "application/json": components["schemas"]["CustomerPackagingCodeDto"];
+                        "text/json": components["schemas"]["CustomerPackagingCodeDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/packaging/parts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    siteId?: string;
+                    search?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfCustomerPartMappingDto"];
+                        "application/json": components["schemas"]["PagedResultOfCustomerPartMappingDto"];
+                        "text/json": components["schemas"]["PagedResultOfCustomerPartMappingDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CustomerPartMappingRequest"];
+                    "text/json": components["schemas"]["CustomerPartMappingRequest"];
+                    "application/*+json": components["schemas"]["CustomerPartMappingRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerPartMappingDto"];
+                        "application/json": components["schemas"]["CustomerPartMappingDto"];
+                        "text/json": components["schemas"]["CustomerPartMappingDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/packaging/parts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CustomerPartMappingUpdateRequest"];
+                    "text/json": components["schemas"]["CustomerPartMappingUpdateRequest"];
+                    "application/*+json": components["schemas"]["CustomerPartMappingUpdateRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerPartMappingDto"];
+                        "application/json": components["schemas"]["CustomerPartMappingDto"];
+                        "text/json": components["schemas"]["CustomerPartMappingDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/packaging/parts/{id}/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CustomerPartMappingActiveRequest"];
+                    "text/json": components["schemas"]["CustomerPartMappingActiveRequest"];
+                    "application/*+json": components["schemas"]["CustomerPartMappingActiveRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerPartMappingDto"];
+                        "application/json": components["schemas"]["CustomerPartMappingDto"];
+                        "text/json": components["schemas"]["CustomerPartMappingDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/packaging/parts/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    siteId?: string;
+                    partNumber?: string;
+                };
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CustomerPartResolutionDto"];
+                        "application/json": components["schemas"]["CustomerPartResolutionDto"];
+                        "text/json": components["schemas"]["CustomerPartResolutionDto"];
+                    };
                 };
             };
         };
@@ -2566,6 +3216,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ActiveRequest: {
+            isActive: boolean;
+            /** Format: int64 */
+            version: number | string;
+        };
         ActorKind: number;
         AddWarehouseOrderItemRequest: {
             /** Format: int32 */
@@ -2772,6 +3427,104 @@ export interface components {
             /** Format: int64 */
             version: number | string;
         };
+        CustomerPackagingCodeActiveRequest: {
+            /** Format: uuid */
+            siteId: null | string;
+            isActive: boolean;
+            /** Format: int64 */
+            version: number | string;
+        };
+        CustomerPackagingCodeDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            customerId: string;
+            /** Format: uuid */
+            customerSiteId: null | string;
+            /** Format: uuid */
+            packagingTypeId: string;
+            packagingTypeCode: string;
+            packagingTypeName: string;
+            code: string;
+            isActive: boolean;
+            /** Format: int64 */
+            version: number | string;
+        };
+        CustomerPackagingCodeRequest: {
+            /** Format: uuid */
+            siteId: null | string;
+            /** Format: uuid */
+            packagingTypeId: string;
+            code: string;
+            /** @default true */
+            isActive: boolean;
+        };
+        CustomerPackagingCodeUpdateRequest: {
+            /** Format: uuid */
+            siteId: null | string;
+            /** Format: uuid */
+            packagingTypeId: string;
+            code: string;
+            /** Format: int64 */
+            version: number | string;
+        };
+        CustomerPartMappingActiveRequest: {
+            /** Format: uuid */
+            siteId: null | string;
+            isActive: boolean;
+            /** Format: int64 */
+            version: number | string;
+        };
+        CustomerPartMappingDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            customerId: string;
+            /** Format: uuid */
+            customerSiteId: null | string;
+            customerPartNumber: string;
+            /** Format: int32 */
+            productId: number | string;
+            productSymbol: null | string;
+            productName: null | string;
+            /** Format: uuid */
+            defaultPackagingTypeId: null | string;
+            engineeringChange: null | string;
+            isActive: boolean;
+            /** Format: int64 */
+            version: number | string;
+        };
+        CustomerPartMappingRequest: {
+            /** Format: uuid */
+            siteId: null | string;
+            partNumber: string;
+            /** Format: int32 */
+            productId: number | string;
+            /** Format: uuid */
+            defaultPackagingTypeId: null | string;
+            engineeringChange: null | string;
+            /** @default true */
+            isActive: boolean;
+        };
+        CustomerPartMappingUpdateRequest: {
+            /** Format: uuid */
+            siteId: null | string;
+            partNumber: string;
+            /** Format: int32 */
+            productId: number | string;
+            /** Format: uuid */
+            defaultPackagingTypeId: null | string;
+            engineeringChange: null | string;
+            /** Format: int64 */
+            version: number | string;
+        };
+        CustomerPartReadiness: number;
+        CustomerPartResolutionDto: {
+            customerPartNumber: string;
+            readiness: components["schemas"]["CustomerPartReadiness"];
+            mapping: null | components["schemas"]["CustomerPartMappingDto"];
+            packagingCode: null | components["schemas"]["CustomerPackagingCodeDto"];
+        };
         CustomerSiteDto: {
             /** Format: uuid */
             id: string;
@@ -2859,6 +3612,41 @@ export interface components {
             /** Format: date-time */
             updatedAtUtc: string;
         };
+        PackagingTypeDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            /** Format: double */
+            tareWeightKg: number | string;
+            /** Format: double */
+            defaultCapacity: null | number | string;
+            isActive: boolean;
+            /** Format: date-time */
+            updatedAtUtc: string;
+            /** Format: int64 */
+            version: number | string;
+        };
+        PackagingTypeRequest: {
+            code: string;
+            name: string;
+            /** Format: double */
+            tareWeightKg: number | string;
+            /** Format: double */
+            defaultCapacity: null | number | string;
+            /** @default true */
+            isActive: boolean;
+        };
+        PackagingTypeUpdateRequest: {
+            code: string;
+            name: string;
+            /** Format: double */
+            tareWeightKg: number | string;
+            /** Format: double */
+            defaultCapacity: null | number | string;
+            /** Format: int64 */
+            version: number | string;
+        };
         PackPickingItemRequest: {
             /** Format: uuid */
             operationId: string;
@@ -2911,8 +3699,41 @@ export interface components {
             /** Format: int32 */
             totalPages: number | string;
         };
+        PagedResultOfCustomerPackagingCodeDto: {
+            items: components["schemas"]["CustomerPackagingCodeDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PagedResultOfCustomerPartMappingDto: {
+            items: components["schemas"]["CustomerPartMappingDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
         PagedResultOfCustomerSiteListItemDto: {
             items: components["schemas"]["CustomerSiteListItemDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PagedResultOfPackagingTypeDto: {
+            items: components["schemas"]["PackagingTypeDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -2946,6 +3767,17 @@ export interface components {
         };
         PagedResultOfPickingWarehouseOrderListItemDto: {
             items: components["schemas"]["PickingWarehouseOrderListItemDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages: number | string;
+        };
+        PagedResultOfSubiektCustomerOrderListItemDto: {
+            items: components["schemas"]["SubiektCustomerOrderListItemDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -3319,6 +4151,53 @@ export interface components {
             value?: null | string;
             hasValue?: boolean;
         };
+        SubiektCustomerOrderConversionDto: {
+            /** Format: uuid */
+            warehouseOrderId: string;
+            warehouseOrderNumber: string;
+            wasAlreadyConverted: boolean;
+        };
+        SubiektCustomerOrderDto: {
+            /** Format: int32 */
+            sourceDocumentId: number | string;
+            number: string;
+            customerName: string;
+            /** Format: date */
+            requestedDeliveryDate: string;
+            /** Format: date */
+            issuedDate: string;
+            /** Format: int32 */
+            sourceStatus: number | string;
+            notes: null | string;
+            /** Format: uuid */
+            warehouseOrderId: null | string;
+            items: components["schemas"]["SubiektCustomerOrderItemDto"][];
+        };
+        SubiektCustomerOrderItemDto: {
+            /** Format: int32 */
+            sourceItemId: number | string;
+            /** Format: int32 */
+            productId: number | string;
+            productName: string;
+            productSymbol: null | string;
+            /** Format: double */
+            quantity: number | string;
+            unit: string;
+        };
+        SubiektCustomerOrderListItemDto: {
+            /** Format: int32 */
+            sourceDocumentId: number | string;
+            number: string;
+            customerName: string;
+            /** Format: date */
+            requestedDeliveryDate: string;
+            /** Format: int32 */
+            sourceStatus: number | string;
+            /** Format: int32 */
+            itemCount: number | string;
+            /** Format: uuid */
+            warehouseOrderId: null | string;
+        };
         UpdateAdministratorRequest: {
             username: string;
             displayName: string;
@@ -3406,6 +4285,12 @@ export interface components {
             /** Format: int64 */
             version: number | string;
             pickingMode: components["schemas"]["PickingMode"];
+            /** Format: uuid */
+            customerOrderId: null | string;
+            customerDeliveryNoteNumber: null | string;
+            /** Format: int32 */
+            subiektSourceDocumentId: null | number | string;
+            subiektSourceDocumentNumber: null | string;
             assignees: components["schemas"]["WarehouseOrderAssigneeDto"][];
             items: components["schemas"]["WarehouseOrderItemDto"][];
         };
@@ -3422,6 +4307,15 @@ export interface components {
             /** Format: double */
             unitWeightKg: null | number | string;
             status: components["schemas"]["WarehouseOrderItemStatus"];
+            /** Format: uuid */
+            customerOrderItemId: null | string;
+            customerPartNumber: null | string;
+            engineeringChange: null | string;
+            /** Format: uuid */
+            defaultPackagingTypeId: null | string;
+            customerPackagingCode: null | string;
+            /** Format: int32 */
+            subiektSourceItemId: null | number | string;
         };
         WarehouseOrderItemStatus: number;
         WarehouseOrderListItemDto: {

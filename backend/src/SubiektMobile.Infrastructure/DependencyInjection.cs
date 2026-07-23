@@ -15,6 +15,8 @@ using SubiektMobile.Application.Pallets;
 using SubiektMobile.Infrastructure.Pallets;
 using SubiektMobile.Application.Customers;
 using SubiektMobile.Infrastructure.Customers;
+using SubiektMobile.Application.CustomerOrders;
+using SubiektMobile.Infrastructure.CustomerOrders;
 
 namespace SubiektMobile.Infrastructure;
 
@@ -45,6 +47,9 @@ public static class DependencyInjection
         services.AddScoped<IPalletStore, PalletStore>();
         services.AddScoped<ICustomerStore, CustomerStore>();
         services.AddScoped<ICustomerContractorDirectory, CustomerContractorDirectory>();
+        services.AddScoped<IPackagingStore, PackagingStore>();
+        services.AddScoped<ICustomerOrderStore, CustomerOrderStore>();
+        services.AddScoped<ISubiektCustomerOrderReadRepository, SubiektCustomerOrderReadRepository>();
         services.AddSingleton<IPalletLabelPdfRenderer, PalletLabelPdfRenderer>();
         services.AddSingleton<IPasswordService, IdentityPasswordService>();
         services.AddSingleton<ITemporaryPasswordGenerator, TemporaryPasswordGenerator>();

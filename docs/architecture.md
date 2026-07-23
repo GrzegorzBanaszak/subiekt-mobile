@@ -38,14 +38,16 @@ Proces VDA rozdziela trzy dokumenty biznesowe:
 CustomerOrder -> WarehouseOrder -> Shipment
 ```
 
-- `CustomerOrder` opisuje zapotrzebowanie przekazane przez klienta.
+- `CustomerOrder` jest widokiem dokumentu `ZK` (zamówienia od klienta) pobranym z Subiekta GT
+  w trybie tylko do odczytu. Nie jest ręcznie tworzony ani zapisywany przez aplikację.
 - `WarehouseOrder` jest wewnętrzną instrukcją kompletacji i jedynym modelem obecnego
-  procesu magazynowego.
-- `Shipment` grupuje dane konkretnej dostawy, w tym numer dokumentu dostawy `N`, oraz
+  procesu magazynowego. Powstaje atomowo z wybranego dokumentu `ZK` i zachowuje jego
+  identyfikator oraz identyfikatory pozycji źródłowych.
+- `Shipment` grupuje dane konkretnej dostawy, w tym potwierdzony numer dokumentu dostawy `N`, oraz
   będzie właścicielem palet Master i opakowań Single.
 
 Etapy 1 i 1.1 definiują nazewnictwo oraz technicznie konsolidują `WarehouseOrder`.
-`CustomerOrder` powstaje w etapie 4, `Shipment` w etapie 5, opakowania Single w etapie 6,
+Odczyt `CustomerOrder` z Subiekta GT jest dostępny w etapie 4, `Shipment` w etapie 5, opakowania Single w etapie 6,
 a zamknięcie palety Master i etykieta zbiorcza w etapie 7. Do tego czasu nie powstają
 równoległe encje ani endpointy tych dokumentów.
 
@@ -126,7 +128,8 @@ API nie powinno budować zapytań EF Core, znać szczegółów tabel Subiekta an
 
 ### Baza Subiekta GT
 
-- Jest używana wyłącznie do odczytu danych towarowych oraz minimalnego katalogu kontrahentów potrzebnego do opcjonalnego powiązania klienta.
+- Jest używana wyłącznie do odczytu danych towarowych, minimalnego katalogu kontrahentów oraz
+  dokumentów `ZK` i ich pozycji wykorzystywanych jako źródło zamówień od klientów.
 - Zapytania powinny być projekcjami bez śledzenia encji, jeśli nie ma technicznej potrzeby śledzenia.
 - Uprawnienia połączenia powinny być ograniczone do odczytu, o ile środowisko na to pozwala.
 - Connection string nie może być zapisany w repozytorium ani logowany.

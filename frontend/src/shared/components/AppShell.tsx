@@ -5,7 +5,7 @@ import { AppIcon, type AppIconName } from './AppIcon'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { UserIdentity } from './UserIdentity'
 import { useAuth } from '../../features/auth/authContext'
-import { customersManagePermission, identityManagePermission } from '../../features/administration/permissions'
+import { customerOrdersManagePermission, customersManagePermission, identityManagePermission } from '../../features/administration/permissions'
 import { SignOutButton } from '../../features/auth/components/SignOutButton'
 
 type NavigationLabelKey =
@@ -15,6 +15,7 @@ type NavigationLabelKey =
     | 'navigation.pallets'
     | 'navigation.administration'
     | 'navigation.customers'
+    | 'navigation.packaging'
     | 'navigation.customerOrders'
     | 'navigation.shipments'
 
@@ -33,7 +34,8 @@ const navigationItems: NavigationItem[] = [
   { labelKey: 'navigation.picking', icon: 'clipboard', to: '/picking', permission: 'warehouse-orders.read-published', mobilePrimary: true },
   { labelKey: 'navigation.pallets', icon: 'pallet', to: '/pallets', permission: 'pallets.manage', mobilePrimary: true },
   { labelKey: 'navigation.customers', icon: 'organization', to: '/customers', permission: customersManagePermission },
-  { labelKey: 'navigation.customerOrders', icon: 'cart', planned: true },
+  { labelKey: 'navigation.packaging', icon: 'box', to: '/packaging-types', permission: customersManagePermission },
+  { labelKey: 'navigation.customerOrders', icon: 'cart', to: '/customer-orders', permission: customerOrdersManagePermission },
   { labelKey: 'navigation.shipments', icon: 'truck', planned: true },
   { labelKey: 'navigation.administration', icon: 'settings', to: '/administration', permission: identityManagePermission },
 ]

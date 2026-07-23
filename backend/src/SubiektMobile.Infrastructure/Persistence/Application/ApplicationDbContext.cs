@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SubiektMobile.Domain.Identity;
 using SubiektMobile.Domain.WarehouseOrders;
 using SubiektMobile.Domain.Customers;
+using SubiektMobile.Domain.CustomerOrders;
 using SubiektMobile.Infrastructure.Persistence.Application.Entities;
 
 namespace SubiektMobile.Infrastructure.Persistence.Application;
@@ -27,6 +28,11 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<CustomerSite> CustomerSites => Set<CustomerSite>();
     public DbSet<CustomerLogisticsProfile> CustomerLogisticsProfiles => Set<CustomerLogisticsProfile>();
+    public DbSet<PackagingType> PackagingTypes => Set<PackagingType>();
+    public DbSet<CustomerPackagingCode> CustomerPackagingCodes => Set<CustomerPackagingCode>();
+    public DbSet<CustomerPartMapping> CustomerPartMappings => Set<CustomerPartMapping>();
+    public DbSet<CustomerOrder> CustomerOrders => Set<CustomerOrder>();
+    public DbSet<CustomerOrderItem> CustomerOrderItems => Set<CustomerOrderItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

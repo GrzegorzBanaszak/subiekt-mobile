@@ -14,10 +14,10 @@ describe('translations', () => {
     expect(spanishTranslations['orders.details.publish']).toBe('Publicar para preparación')
   })
 
-  it('distinguishes warehouse orders from future customer orders', () => {
+  it('distinguishes warehouse orders from Subiekt customer orders', () => {
     expect(polishTranslations['navigation.orders']).toBe('Zamówienia magazynowe')
-    expect(polishTranslations['navigation.customerOrders']).toBe('Zamówienia klientów')
+    expect(polishTranslations['navigation.customerOrders']).toBe('Zamówienia od klientów')
     expect(spanishTranslations['navigation.orders']).toBe('Pedidos de almacén')
-    expect(spanishTranslations['navigation.customerOrders']).toBe('Pedidos de clientes')
+    expect(spanishTranslations['navigation.customerOrders']).toBe('Pedidos de clientes de Subiekt')
   })
 })

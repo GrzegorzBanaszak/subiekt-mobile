@@ -144,30 +144,34 @@ Zakres:
 
 Zakres:
 
-- [ ] Dodać słownik typów opakowań: kod, nazwa, tara, pojemność i kod klienta.
-- [ ] Dodać mapowanie numeru części klienta `P` na towar/symbol wewnętrzny.
-- [ ] Umożliwić mapowanie w kontekście klienta lub konkretnego zakładu.
-- [ ] Pokazać na zamówieniu status: zmapowane / wymaga uwagi.
-- [ ] Oznaczać brak mapowania przed utworzeniem zamówienia magazynowego.
-- [ ] Obsłużyć opcjonalną zmianę konstrukcyjną, jeżeli wymaga jej profil odbiorcy.
+- [x] Dodać słownik typów opakowań: kod, nazwa, tara, pojemność i kod klienta.
+- [x] Dodać mapowanie numeru części klienta `P` na towar/symbol wewnętrzny.
+- [x] Umożliwić mapowanie w kontekście klienta lub konkretnego zakładu.
+- [x] Pokazać na zamówieniu status: zmapowane / wymaga uwagi (Etap 4; gotowy jest resolver).
+- [x] Oznaczać brak mapowania przed utworzeniem zamówienia magazynowego (Etap 4; gotowy jest resolver).
+- [x] Obsłużyć opcjonalną zmianę konstrukcyjną, jeżeli wymaga jej profil odbiorcy.
+
+### Uzgodnienia Etapu 3
+
+- Typ opakowania jest globalny, a kod `B` jest definiowany dla klienta i może zostać nadpisany dla jego zakładu.
+- Mapowanie `P` dla zakładu ma pierwszeństwo przed mapowaniem klienta; oba poziomy przechowują wyłącznie identyfikator produktu z katalogu Subiekta.
+- Zmiana konstrukcyjna `E` i domyślny typ opakowania są opcjonalne. Brak lub dezaktywacja zależnego wpisu jest zwracana przez resolver jako stan wymagający uwagi.
+- Konfiguracje są dezaktywowane, nigdy fizycznie usuwane. Statusy na `CustomerOrder` zostają celowo odroczone do Etapu 4.
 
 **Warunek przejścia:** numer części klienta jednoznacznie wskazuje produkt magazynowy, a brak mapowania jest widoczny przed realizacją.
 
 ## Etap 4 — zamówienia klientów
 
-**Cel:** wprowadzić dokument źródłowy, z którego powstaje praca magazynowa.
+**Cel:** udostępnić dokument źródłowy z Subiekta GT, z którego powstaje praca magazynowa.
 
 Zakres:
 
-- [ ] Dodać listę, filtrowanie, szczegóły i statusy zamówień klientów.
-- [ ] Umożliwić wybór klienta oraz zakładu odbiorczego.
-- [ ] Dodać pozycje z numerem części klienta, towarem z mapowania, ilością i wymaganym opakowaniem.
-- [ ] Dodać termin realizacji oraz uwagi klienta.
-- [ ] Dodać osobne pole numeru dokumentu dostawy `N`, a nie wyłącznie uwagi lub podtytuł.
-- [ ] Pokazać kontrolę kompletności mapowań, danych zakładu i wymagań pakowania.
-- [ ] Udostępnić akcję „Utwórz zamówienie magazynowe”.
+- [x] Dodać listę i filtrowanie dokumentów `ZK` („Zamówienie od klienta”) z Subiekta GT.
+- [x] Udostępnić podgląd odbiorcy, terminu realizacji, uwag oraz pozycji źródłowych.
+- [x] Nie tworzyć ani nie edytować zamówienia klienta w aplikacji.
+- [x] Udostępnić akcję „Utwórz zamówienie magazynowe” z atomową ochroną przed podwójną konwersją.
 
-**Warunek przejścia:** kompletne zamówienie klienta można przetworzyć tylko raz na zamówienie magazynowe; `N` i wymagania odbiorcy są przekazane dalej.
+**Warunek przejścia:** wybrany dokument `ZK` można przetworzyć tylko raz na zamówienie magazynowe; zachowane są identyfikatory dokumentu i pozycji źródłowych.
 
 ## Etap 5 — zamówienie magazynowe i wysyłka
 
@@ -175,8 +179,8 @@ Zakres:
 
 Zakres:
 
-- [ ] Tworzyć zamówienie magazynowe z pozycji zamówienia klienta.
-- [ ] Zachować powiązanie z klientem, zakładem, numerem `N` i pozycjami źródłowymi.
+- [x] Tworzyć zamówienie magazynowe z pozycji zamówienia klienta (zrealizowane atomowo w Etapie 4).
+- [x] Zachować powiązanie z dokumentem i pozycjami źródłowymi Subiekta (zrealizowane w Etapie 4).
 - [ ] Wykorzystać dostępność oraz dane towaru z Subiekt GT.
 - [ ] Utworzyć wysyłkę powiązaną z zamówieniem magazynowym.
 - [ ] Na wysyłce potwierdzić datę wysyłki, `N`, `V`, dock oraz profil etykiety.

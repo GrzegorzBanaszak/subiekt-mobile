@@ -13,6 +13,8 @@ public sealed class WarehouseOrderConfiguration : IEntityTypeConfiguration<Wareh
         builder.Property(x => x.Number).HasMaxLength(40).IsRequired();
         builder.HasIndex(x => x.Number).IsUnique();
         builder.Property(x => x.CustomerName).HasMaxLength(200).IsRequired();
+        builder.Property(x => x.SubiektSourceDocumentNumber).HasMaxLength(40);
+        builder.HasIndex(x => x.SubiektSourceDocumentId).IsUnique().HasFilter("\"SubiektSourceDocumentId\" IS NOT NULL");
         builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(32).IsRequired();
         builder.Property(x => x.CreatedByName).HasMaxLength(120).IsRequired();
         builder.Property(x => x.UpdatedByName).HasMaxLength(120).IsRequired();
@@ -54,6 +56,7 @@ public sealed class WarehouseOrderItemConfiguration : IEntityTypeConfiguration<W
         builder.Property(x => x.Quantity).HasPrecision(18, 4).IsRequired();
         builder.Property(x => x.Unit).HasMaxLength(20).IsRequired();
         builder.Property(x => x.UnitWeightKg).HasPrecision(18, 4);
+        builder.HasIndex(x => x.SubiektSourceItemId).IsUnique().HasFilter("\"SubiektSourceItemId\" IS NOT NULL");
         builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(32).IsRequired();
         builder.Property(x => x.Version).IsConcurrencyToken();
         builder.Property(x => x.ReservedByKind).HasConversion<string>().HasMaxLength(32);
@@ -61,7 +64,7 @@ public sealed class WarehouseOrderItemConfiguration : IEntityTypeConfiguration<W
         builder.Property(x => x.PackedQuantity).HasPrecision(18, 4);
         builder.Property(x => x.PackedByKind).HasConversion<string>().HasMaxLength(32);
         builder.Property(x => x.PackedByName).HasMaxLength(120);
-        builder.HasIndex(x => new { x.WarehouseOrderId, x.ProductId }).IsUnique();
+        builder.HasIndex(x => new { x.WarehouseOrderId, x.ProductId });
         builder.HasIndex(x => new { x.WarehouseOrderId, x.Status });
     }
 }

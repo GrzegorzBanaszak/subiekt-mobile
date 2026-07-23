@@ -51,11 +51,15 @@ public sealed class GetWarehouseOrderHandler(IWarehouseOrderStore store, IApplic
     internal static WarehouseOrderDto Map(WarehouseOrder warehouseOrder) => new(warehouseOrder.Id, warehouseOrder.Number, warehouseOrder.CustomerName, warehouseOrder.DueDate,
         warehouseOrder.Status, warehouseOrder.CreatedById, warehouseOrder.CreatedByName, warehouseOrder.CreatedAtUtc, warehouseOrder.UpdatedById,
         warehouseOrder.UpdatedByName, warehouseOrder.UpdatedAtUtc, warehouseOrder.PublishedAtUtc, warehouseOrder.Version, warehouseOrder.PickingMode,
+        warehouseOrder.CustomerOrderId, warehouseOrder.CustomerDeliveryNoteNumber, warehouseOrder.SubiektSourceDocumentId,
+        warehouseOrder.SubiektSourceDocumentNumber,
         warehouseOrder.Assignees.OrderBy(x => x.EmployeeDisplayName).Select(x => new WarehouseOrderAssigneeDto(
             x.EmployeeId, x.OrganizationId, x.EmployeeDisplayName, x.AssignedById,
             x.AssignedByName, x.AssignedAtUtc)).ToList(),
         warehouseOrder.Items.OrderBy(x => x.ProductName).Select(x => new WarehouseOrderItemDto(x.Id, x.ProductId,
-            x.ProductName, x.ProductSymbol, x.Quantity, x.Unit, x.UnitWeightKg, x.Status)).ToList());
+            x.ProductName, x.ProductSymbol, x.Quantity, x.Unit, x.UnitWeightKg, x.Status, x.CustomerOrderItemId,
+            x.CustomerPartNumber, x.EngineeringChange, x.DefaultPackagingTypeId, x.CustomerPackagingCode,
+            x.SubiektSourceItemId)).ToList());
 }
 
 public sealed class ListAvailableWarehouseOrderAssigneesHandler(IWarehouseOrderWorkforceDirectory workforce,

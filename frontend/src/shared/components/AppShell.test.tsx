@@ -14,7 +14,7 @@ const actor = {
   id: 'admin-1',
   organizationId: null,
   displayName: 'Admin',
-  permissions: ['warehouse-orders.manage', 'warehouse-orders.read-published', 'pallets.manage', 'identity.manage', 'customers.manage'],
+  permissions: ['warehouse-orders.manage', 'warehouse-orders.read-published', 'pallets.manage', 'identity.manage', 'customers.manage', 'customer-orders.manage'],
   sessionId: 'session-1',
   requiresPasswordChange: false,
 }
@@ -49,7 +49,7 @@ function renderAppShell() {
 }
 
 describe('AppShell', () => {
-  it('links the available customers module and leaves later VDA modules planned', async () => {
+  it('links the available customer modules and leaves shipments planned', async () => {
     const user = userEvent.setup()
     renderAppShell()
 
@@ -59,7 +59,9 @@ describe('AppShell', () => {
     screen.getAllByRole('link', { name: 'Klienci' }).forEach((link) => {
       expect(link).toHaveAttribute('href', '/customers')
     })
-    expect(screen.getByTestId('planned-navigation-navigation.customerOrders')).toHaveTextContent('Zamówienia klientów')
+    screen.getAllByRole('link', { name: 'Zamówienia od klientów' }).forEach((link) => {
+      expect(link).toHaveAttribute('href', '/customer-orders')
+    })
     expect(screen.getByTestId('planned-navigation-navigation.shipments')).toHaveTextContent('Wysyłki')
 
     await user.click(screen.getByRole('button', { name: 'Więcej' }))

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SubiektMobile.Infrastructure.Persistence.Application;
@@ -11,9 +12,11 @@ using SubiektMobile.Infrastructure.Persistence.Application;
 namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260722181040_AddPackagingConfiguration")]
+    partial class AddPackagingConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,105 +25,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("SubiektMobile.Domain.CustomerOrders.CustomerOrder", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CreatedByName")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CustomerNotes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<string>("CustomerOrderNumber")
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
-                    b.Property<Guid>("CustomerSiteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("DeliveryNoteNumber")
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
-                    b.Property<DateOnly>("RequestedDeliveryDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<DateTimeOffset>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UpdatedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("UpdatedByName")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
-
-                    b.Property<long>("Version")
-                        .IsConcurrencyToken()
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId", "RequestedDeliveryDate");
-
-                    b.HasIndex("CustomerSiteId", "RequestedDeliveryDate");
-
-                    b.HasIndex("Status", "UpdatedAtUtc");
-
-                    b.ToTable("customer_orders", "app");
-                });
-
-            modelBuilder.Entity("SubiektMobile.Domain.CustomerOrders.CustomerOrderItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CustomerOrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CustomerPartNumber")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
-                    b.Property<string>("NormalizedCustomerPartNumber")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("numeric(18,4)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerOrderId", "NormalizedCustomerPartNumber");
-
-                    b.ToTable("customer_order_items", "app");
-                });
 
             modelBuilder.Entity("SubiektMobile.Domain.Customers.Customer", b =>
                 {
@@ -777,17 +681,10 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)");
 
-                    b.Property<string>("CustomerDeliveryNoteNumber")
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
-
-                    b.Property<Guid?>("CustomerOrderId")
-                        .HasColumnType("uuid");
 
                     b.Property<DateOnly>("DueDate")
                         .HasColumnType("date");
@@ -810,13 +707,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<int?>("SubiektSourceDocumentId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("SubiektSourceDocumentNumber")
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)");
-
                     b.Property<DateTimeOffset>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -834,16 +724,8 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerOrderId")
-                        .IsUnique()
-                        .HasFilter("\"CustomerOrderId\" IS NOT NULL");
-
                     b.HasIndex("Number")
                         .IsUnique();
-
-                    b.HasIndex("SubiektSourceDocumentId")
-                        .IsUnique()
-                        .HasFilter("\"SubiektSourceDocumentId\" IS NOT NULL");
 
                     b.HasIndex("Status", "UpdatedAtUtc");
 
@@ -899,24 +781,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CustomerOrderItemId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CustomerPackagingCode")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<string>("CustomerPartNumber")
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
-                    b.Property<Guid?>("DefaultPackagingTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("EngineeringChange")
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
                     b.Property<DateTimeOffset?>("PackedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -970,9 +834,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<int?>("SubiektSourceItemId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Unit")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -991,15 +852,8 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerOrderItemId")
-                        .IsUnique()
-                        .HasFilter("\"CustomerOrderItemId\" IS NOT NULL");
-
-                    b.HasIndex("SubiektSourceItemId")
-                        .IsUnique()
-                        .HasFilter("\"SubiektSourceItemId\" IS NOT NULL");
-
-                    b.HasIndex("WarehouseOrderId", "ProductId");
+                    b.HasIndex("WarehouseOrderId", "ProductId")
+                        .IsUnique();
 
                     b.HasIndex("WarehouseOrderId", "Status");
 
@@ -1121,30 +975,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                     b.ToTable("authentication_sessions", "app");
                 });
 
-            modelBuilder.Entity("SubiektMobile.Domain.CustomerOrders.CustomerOrder", b =>
-                {
-                    b.HasOne("SubiektMobile.Domain.Customers.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SubiektMobile.Domain.Customers.CustomerSite", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerSiteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SubiektMobile.Domain.CustomerOrders.CustomerOrderItem", b =>
-                {
-                    b.HasOne("SubiektMobile.Domain.CustomerOrders.CustomerOrder", null)
-                        .WithMany("Items")
-                        .HasForeignKey("CustomerOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SubiektMobile.Domain.Customers.CustomerLogisticsProfile", b =>
                 {
                     b.HasOne("SubiektMobile.Domain.Customers.CustomerSite", null)
@@ -1241,14 +1071,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SubiektMobile.Domain.WarehouseOrders.WarehouseOrder", b =>
-                {
-                    b.HasOne("SubiektMobile.Domain.CustomerOrders.CustomerOrder", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerOrderId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("SubiektMobile.Domain.WarehouseOrders.WarehouseOrderAssignee", b =>
                 {
                     b.HasOne("SubiektMobile.Domain.Identity.Employee", null)
@@ -1272,11 +1094,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
 
             modelBuilder.Entity("SubiektMobile.Domain.WarehouseOrders.WarehouseOrderItem", b =>
                 {
-                    b.HasOne("SubiektMobile.Domain.CustomerOrders.CustomerOrderItem", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerOrderItemId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("SubiektMobile.Domain.WarehouseOrders.WarehouseOrder", null)
                         .WithMany("Items")
                         .HasForeignKey("WarehouseOrderId")
@@ -1315,11 +1132,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .WithMany()
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("SubiektMobile.Domain.CustomerOrders.CustomerOrder", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("SubiektMobile.Domain.Customers.Customer", b =>

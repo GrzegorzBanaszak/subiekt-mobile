@@ -12,6 +12,7 @@ public static class Permissions
     public const string PickingExecute = "picking.execute";
     public const string PalletsManage = "pallets.manage";
     public const string CustomersManage = "customers.manage";
+    public const string CustomerOrdersManage = "customer-orders.manage";
 
     public static IReadOnlyList<string> All { get; } =
     [
@@ -22,7 +23,8 @@ public static class Permissions
         WarehouseOrdersManage,
         PickingExecute,
         PalletsManage,
-        CustomersManage
+        CustomersManage,
+        CustomerOrdersManage
     ];
 
     public static IReadOnlyList<string> For(
@@ -31,8 +33,8 @@ public static class Permissions
     {
         ActorKind.Administrator =>
             isBootstrapAdministrator
-                ? [IdentityManage, AdministratorsManage, CatalogRead, WarehouseOrdersReadPublished, WarehouseOrdersManage, PickingExecute, PalletsManage, CustomersManage]
-                : [IdentityManage, CatalogRead, WarehouseOrdersReadPublished, WarehouseOrdersManage, PickingExecute, PalletsManage, CustomersManage],
+                ? [IdentityManage, AdministratorsManage, CatalogRead, WarehouseOrdersReadPublished, WarehouseOrdersManage, PickingExecute, PalletsManage, CustomersManage, CustomerOrdersManage]
+                : [IdentityManage, CatalogRead, WarehouseOrdersReadPublished, WarehouseOrdersManage, PickingExecute, PalletsManage, CustomersManage, CustomerOrdersManage],
         ActorKind.Employee =>
         [
             CatalogRead,

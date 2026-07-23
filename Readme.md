@@ -15,7 +15,7 @@ Najbliższa kolejność prac:
 
 1. stabilny odczyt i wyszukiwanie towarów z Subiekta,
 2. użytkownicy oraz uprawnienia,
-3. zamówienia tworzone w aplikacji,
+3. zamówienia od klientów pobierane z Subiekta GT i przetwarzane na zlecenia magazynowe,
 4. wieloosobowa kompletacja,
 5. paletyzacja i etykiety.
 
@@ -355,6 +355,22 @@ lub zablokowane nie są publikowane.
 
 Masa jednostkowa towaru jest odczytywana z masy brutto w Subiekcie GT i prezentowana
 w kilogramach. Wartość jest kopiowana do pozycji zamówienia jako migawka.
+
+## API zamówień klientów
+
+Endpointy zarządzania wymagają uprawnienia `customer-orders.manage`; konwersja wymaga
+dodatkowo `warehouse-orders.manage`:
+
+```text
+GET    /api/customer-orders?page=1&pageSize=20
+GET    /api/customer-orders/{sourceDocumentId}
+POST   /api/customer-orders/{sourceDocumentId}/convert
+```
+
+Lista i szczegóły są pobierane wyłącznie do odczytu z dokumentów `ZK` („Zamówienie od klienta”)
+w Subiekcie GT. Aplikacja nie tworzy ani nie edytuje tych dokumentów. Konwersja kopiuje pozycje
+do roboczego zamówienia magazynowego, jest atomowa i idempotentna: jeden dokument `ZK` może
+utworzyć dokładnie jedno zamówienie magazynowe.
 
 ## API zamówień magazynowych
 

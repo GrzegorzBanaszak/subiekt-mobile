@@ -29,7 +29,7 @@ konteneryzacji (typowo `nesting=1`). Szczegóły zależą od konfiguracji Proxmo
 3. W konfiguracji tunelu dodaj publiczny hostname:
 
    ```text
-   Hostname: quiz-volt.pl
+   Hostname: subiekt.example.com
    Service type: HTTP
    URL: http://web:80
    ```

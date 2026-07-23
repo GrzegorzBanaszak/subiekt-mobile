@@ -33,9 +33,20 @@ public sealed class WarehouseOrder
 
     private WarehouseOrder(Guid id, string number, string customerName, DateOnly dueDate,
         Guid createdById, string createdByName, DateTimeOffset createdAtUtc,
-        PickingMode pickingMode, IReadOnlyCollection<WarehouseOrderAssigneeCandidate> assignees)
+        PickingMode pickingMode, IReadOnlyCollection<WarehouseOrderAssigneeCandidate> assignees,
+        Guid? customerOrderId, string? customerDeliveryNoteNumber, int? subiektSourceDocumentId,
+        string? subiektSourceDocumentNumber)
     {
         Id = id;
+        if (customerOrderId == Guid.Empty) throw new ArgumentException("Customer order identifier cannot be empty.", nameof(customerOrderId));
+        CustomerOrderId = customerOrderId;
+        CustomerDeliveryNoteNumber = string.IsNullOrWhiteSpace(customerDeliveryNoteNumber)
+            ? null : RequireText(customerDeliveryNoteNumber, nameof(customerDeliveryNoteNumber), 80);
+        if (subiektSourceDocumentId <= 0)
+            throw new ArgumentOutOfRangeException(nameof(subiektSourceDocumentId));
+        SubiektSourceDocumentId = subiektSourceDocumentId;
+        SubiektSourceDocumentNumber = string.IsNullOrWhiteSpace(subiektSourceDocumentNumber)
+            ? null : RequireText(subiektSourceDocumentNumber, nameof(subiektSourceDocumentNumber), 40);
         Number = RequireText(number, nameof(number), 40);
         SetHeader(customerName, dueDate);
         Status = WarehouseOrderStatus.Draft;
@@ -50,6 +61,10 @@ public sealed class WarehouseOrder
     }
 
     public Guid Id { get; private set; }
+    public Guid? CustomerOrderId { get; private set; }
+    public string? CustomerDeliveryNoteNumber { get; private set; }
+    public int? SubiektSourceDocumentId { get; private set; }
+    public string? SubiektSourceDocumentNumber { get; private set; }
     public string Number { get; private set; } = string.Empty;
     public string CustomerName { get; private set; } = string.Empty;
     public DateOnly DueDate { get; private set; }
@@ -113,11 +128,14 @@ public sealed class WarehouseOrder
     public static WarehouseOrder Create(Guid id, string number, string customerName, DateOnly dueDate,
         Guid actorId, string actorName, DateTimeOffset now,
         PickingMode pickingMode = PickingMode.SingleAssignee,
-        IReadOnlyCollection<WarehouseOrderAssigneeCandidate>? assignees = null)
+        IReadOnlyCollection<WarehouseOrderAssigneeCandidate>? assignees = null,
+        Guid? customerOrderId = null, string? customerDeliveryNoteNumber = null,
+        int? subiektSourceDocumentId = null, string? subiektSourceDocumentNumber = null)
     {
         if (id == Guid.Empty || actorId == Guid.Empty) throw new ArgumentException("Identifiers are required.");
         return new WarehouseOrder(id, number, customerName, dueDate, actorId, actorName, now,
-            pickingMode, assignees ?? []);
+            pickingMode, assignees ?? [], customerOrderId, customerDeliveryNoteNumber, subiektSourceDocumentId,
+            subiektSourceDocumentNumber);
     }
 
     public void UpdateHeader(string customerName, DateOnly dueDate, Guid actorId, string actorName, DateTimeOffset now)
@@ -133,6 +151,38 @@ public sealed class WarehouseOrder
         EnsureDraft();
         if (_items.Any(x => x.ProductId == productId)) throw new InvalidOperationException("Product is already present in the order.");
         var item = WarehouseOrderItem.Create(Guid.NewGuid(), Id, productId, productName, productSymbol, quantity, unit, unitWeightKg);
+        _items.Add(item);
+        Touch(actorId, actorName, now);
+        return item;
+    }
+
+    public WarehouseOrderItem AddCustomerOrderItem(WarehouseOrderCustomerItemSource source, int productId,
+        string productName, string? productSymbol, decimal quantity, string unit, decimal? unitWeightKg,
+        Guid actorId, string actorName, DateTimeOffset now)
+    {
+        EnsureDraft();
+        if (CustomerOrderId is null)
+            throw new InvalidOperationException("Only a converted warehouse order can contain source items.");
+        if (_items.Any(x => x.CustomerOrderItemId == source.CustomerOrderItemId))
+            throw new InvalidOperationException("A source customer order item can be converted only once.");
+        var item = WarehouseOrderItem.Create(Guid.NewGuid(), Id, productId, productName, productSymbol, quantity,
+            unit, unitWeightKg, source);
+        _items.Add(item);
+        Touch(actorId, actorName, now);
+        return item;
+    }
+
+    public WarehouseOrderItem AddSubiektSourceItem(WarehouseOrderSubiektSourceItem source, int productId,
+        string productName, string? productSymbol, decimal quantity, string unit, decimal? unitWeightKg,
+        Guid actorId, string actorName, DateTimeOffset now)
+    {
+        EnsureDraft();
+        if (SubiektSourceDocumentId is null)
+            throw new InvalidOperationException("Only an order converted from Subiekt can contain Subiekt source items.");
+        if (_items.Any(x => x.SubiektSourceItemId == source.SourceItemId))
+            throw new InvalidOperationException("A Subiekt source item can be converted only once.");
+        var item = WarehouseOrderItem.Create(Guid.NewGuid(), Id, productId, productName, productSymbol, quantity,
+            unit, unitWeightKg, source);
         _items.Add(item);
         Touch(actorId, actorName, now);
         return item;
@@ -274,7 +324,8 @@ public sealed class WarehouseOrderItem
     private WarehouseOrderItem() { }
 
     private WarehouseOrderItem(Guid id, Guid warehouseOrderId, int productId, string productName, string? productSymbol,
-        decimal quantity, string unit, decimal? unitWeightKg)
+        decimal quantity, string unit, decimal? unitWeightKg, WarehouseOrderCustomerItemSource? source = null,
+        WarehouseOrderSubiektSourceItem? subiektSource = null)
     {
         if (productId <= 0) throw new ArgumentOutOfRangeException(nameof(productId));
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity), "Quantity must be greater than zero.");
@@ -287,12 +338,36 @@ public sealed class WarehouseOrderItem
         Quantity = quantity;
         Unit = WarehouseOrder.RequireText(unit, nameof(unit), 20);
         UnitWeightKg = unitWeightKg;
+        if (source is not null)
+        {
+            if (source.CustomerOrderItemId == Guid.Empty)
+                throw new ArgumentException("Source item identifier is required.", nameof(source));
+            CustomerOrderItemId = source.CustomerOrderItemId;
+            CustomerPartNumber = WarehouseOrder.RequireText(source.CustomerPartNumber, nameof(source.CustomerPartNumber), 80);
+            EngineeringChange = string.IsNullOrWhiteSpace(source.EngineeringChange)
+                ? null : WarehouseOrder.RequireText(source.EngineeringChange, nameof(source.EngineeringChange), 80);
+            DefaultPackagingTypeId = source.DefaultPackagingTypeId;
+            CustomerPackagingCode = string.IsNullOrWhiteSpace(source.CustomerPackagingCode)
+                ? null : WarehouseOrder.RequireText(source.CustomerPackagingCode, nameof(source.CustomerPackagingCode), 64);
+        }
+        if (subiektSource is not null)
+        {
+            if (subiektSource.SourceItemId <= 0)
+                throw new ArgumentOutOfRangeException(nameof(subiektSource));
+            SubiektSourceItemId = subiektSource.SourceItemId;
+        }
         Status = WarehouseOrderItemStatus.ToPick;
         Version = 1;
     }
 
     public Guid Id { get; private set; }
     public Guid WarehouseOrderId { get; private set; }
+    public Guid? CustomerOrderItemId { get; private set; }
+    public int? SubiektSourceItemId { get; private set; }
+    public string? CustomerPartNumber { get; private set; }
+    public string? EngineeringChange { get; private set; }
+    public Guid? DefaultPackagingTypeId { get; private set; }
+    public string? CustomerPackagingCode { get; private set; }
     public int ProductId { get; private set; }
     public string ProductName { get; private set; } = string.Empty;
     public string? ProductSymbol { get; private set; }
@@ -314,6 +389,16 @@ public sealed class WarehouseOrderItem
     internal static WarehouseOrderItem Create(Guid id, Guid warehouseOrderId, int productId, string productName,
         string? productSymbol, decimal quantity, string unit, decimal? unitWeightKg) =>
         new(id, warehouseOrderId, productId, productName, productSymbol, quantity, unit, unitWeightKg);
+
+    internal static WarehouseOrderItem Create(Guid id, Guid warehouseOrderId, int productId, string productName,
+        string? productSymbol, decimal quantity, string unit, decimal? unitWeightKg,
+        WarehouseOrderCustomerItemSource source) =>
+        new(id, warehouseOrderId, productId, productName, productSymbol, quantity, unit, unitWeightKg, source);
+
+    internal static WarehouseOrderItem Create(Guid id, Guid warehouseOrderId, int productId, string productName,
+        string? productSymbol, decimal quantity, string unit, decimal? unitWeightKg,
+        WarehouseOrderSubiektSourceItem source) =>
+        new(id, warehouseOrderId, productId, productName, productSymbol, quantity, unit, unitWeightKg, null, source);
 
     internal void Reserve(PickingActor actor, DateTimeOffset now)
     {
@@ -428,3 +513,8 @@ public sealed class WarehouseOrderItem
 }
 
 public sealed record PickingActor(ActorKind Kind, Guid Id, string DisplayName);
+
+public sealed record WarehouseOrderCustomerItemSource(Guid CustomerOrderItemId, string CustomerPartNumber,
+    string? EngineeringChange, Guid? DefaultPackagingTypeId, string? CustomerPackagingCode);
+
+public sealed record WarehouseOrderSubiektSourceItem(int SourceItemId);

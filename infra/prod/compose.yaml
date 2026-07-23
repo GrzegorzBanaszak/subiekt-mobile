@@ -87,6 +87,15 @@ services:
     networks:
       - public-proxy
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:?Set CLOUDFLARE_TUNNEL_TOKEN in .env}
+    depends_on:
+      - web
+    networks:
+      - public-proxy
+
 volumes:
   application-db-data:
   data-protection-keys:
@@ -95,5 +104,4 @@ networks:
   backend:
     internal: true
 
-  public-proxy:
-    external: true
+  public-proxy: {}

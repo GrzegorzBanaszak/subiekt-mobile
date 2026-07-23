@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SubiektMobile.Infrastructure.Persistence.Application;
@@ -11,9 +12,11 @@ using SubiektMobile.Infrastructure.Persistence.Application;
 namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260723162558_AddCustomerOrders")]
+    partial class AddCustomerOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -810,13 +813,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<int?>("SubiektSourceDocumentId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("SubiektSourceDocumentNumber")
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)");
-
                     b.Property<DateTimeOffset>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -840,10 +836,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
 
                     b.HasIndex("Number")
                         .IsUnique();
-
-                    b.HasIndex("SubiektSourceDocumentId")
-                        .IsUnique()
-                        .HasFilter("\"SubiektSourceDocumentId\" IS NOT NULL");
 
                     b.HasIndex("Status", "UpdatedAtUtc");
 
@@ -970,9 +962,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<int?>("SubiektSourceItemId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Unit")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -994,10 +983,6 @@ namespace SubiektMobile.Infrastructure.Persistence.Application.Migrations
                     b.HasIndex("CustomerOrderItemId")
                         .IsUnique()
                         .HasFilter("\"CustomerOrderItemId\" IS NOT NULL");
-
-                    b.HasIndex("SubiektSourceItemId")
-                        .IsUnique()
-                        .HasFilter("\"SubiektSourceItemId\" IS NOT NULL");
 
                     b.HasIndex("WarehouseOrderId", "ProductId");
 
